@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: krdlab/setup-haxe@v1
         with:
           haxe-version: 4.3.7
@@ -13,12 +13,17 @@ jobs:
           haxelib install lime
           haxelib install openfl
           haxelib install flixel
-          haxelib run lime setup
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install hscript
           haxelib install hxcpp
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git
+          haxelib run lime setup
       - name: Build Game
-        run: haxelib run lime build windows
+        run: haxelib run lime build windows -release
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: FNF-Build
+          name: FNF-BattleCats-Build
           path: export/release/windows/bin
