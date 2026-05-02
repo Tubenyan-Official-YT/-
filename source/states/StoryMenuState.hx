@@ -181,12 +181,24 @@ class StoryMenuState extends MusicBeatState
 		tracksSprite.antialiasing = ClientPrefs.data.antialiasing;
 		tracksSprite.x -= tracksSprite.width/2;
 		add(tracksSprite);
-
+		
 		txtTracklist = new FlxText(FlxG.width * 0.05, tracksSprite.y + 60, 0, "", 32);
 		txtTracklist.alignment = CENTER;
 		txtTracklist.font = Paths.font("vcr.ttf");
-		txtTracklist.color = 0xFFe55777;
+
+		try {
+			var path:String = Paths.txt('SongnameColor'); 
+			if (sys.FileSystem.exists(path)) {
+				var colorString:String = sys.io.File.getContent(path).trim();
+				txtTracklist.color = FlxColor.fromString(colorString);
+			} else {
+				txtTracklist.color = 0xFFe55777; 
+			}
+		} catch(e:Dynamic) {
+			txtTracklist.color = 0xFFe55777; 
+		}
 		add(txtTracklist);
+		
 		add(scoreText);
 		add(txtWeekTitle);
 
