@@ -1,0 +1,55 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [-90, -532],
+			"fps": 16,
+			"anim": "idle",
+			"indices": [],
+			"name": "idle"
+		},
+		{
+			"loop": false,
+			"offsets": [-60, -499],
+			"fps": 16,
+			"anim": "singLEFT",
+			"indices": [],
+			"name": "SingLeft"
+		},
+		{
+			"loop": false,
+			"offsets": [-20, -469],
+			"fps": 16,
+			"anim": "singDOWN",
+			"indices": [],
+			"name": "SingDown"
+		},
+		{
+			"loop": false,
+			"offsets": [-97, -443],
+			"fps": 16,
+			"anim": "singUP",
+			"indices": [],
+			"name": "SingUp"
+		},
+		{
+			"loop": false,
+			"offsets": [-73, -500],
+			"fps": 16,
+			"anim": "singRIGHT",
+			"indices": [],
+			"name": "SingRight"
+		}
+	],
+	"vocals_file": "",
+	"no_antialiasing": false,
+	"image": "characters/snake",
+	"position": [-200, -50],
+	"healthicon": "face",
+	"flip_x": false,
+	"healthbar_colors": [161, 161, 161],
+	"camera_position": [0, 360],
+	"sing_duration": 4,
+	"scale": 2.5,
+	"_editor_isPlayer": false
+}
