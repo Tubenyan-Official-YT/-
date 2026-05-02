@@ -1,0 +1,24 @@
+name: Build Game
+on: push
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.7
+      - name: Install Libraries
+        run: |
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib run lime setup
+          haxelib install hxcpp
+      - name: Build Game
+        run: haxelib run lime build windows
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: FNF-Build
+          path: export/release/windows/bin
