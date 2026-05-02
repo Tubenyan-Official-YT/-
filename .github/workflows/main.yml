@@ -10,11 +10,12 @@ jobs:
           haxe-version: 4.3.7
       - name: Install Libraries
         run: |
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
+          haxelib install lime 8.1.2
+          haxelib install openfl 9.3.3
+          haxelib install flixel 5.6.1
+          haxelib install flixel-addons 3.2.2
+          haxelib install flixel-ui 2.6.1
+          haxelib install flixel-tools
           haxelib install hscript
           haxelib install hxcpp
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
