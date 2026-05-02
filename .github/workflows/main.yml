@@ -18,9 +18,11 @@ jobs:
           haxelib install flixel-tools
           haxelib install hscript
           haxelib install hxcpp
+          haxelib install tjson 1.4.0
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git
           haxelib run lime setup
+          
       - name: Build Game
         run: haxelib run lime build windows -release
       - name: Upload Artifact
