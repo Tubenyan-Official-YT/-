@@ -149,6 +149,8 @@ class Paths
 
 	public static function getPath(file:String, ?type:AssetType = TEXT, ?parentfolder:String, ?modsAllowed:Bool = true):String
 	{
+		var directModPath:String = 'mods/' + file;
+		if (sys.FileSystem.exists(directModPath)) return directModPath;
 		#if MODS_ALLOWED
 		if(modsAllowed)
 		{
