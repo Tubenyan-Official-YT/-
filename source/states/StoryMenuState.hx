@@ -502,7 +502,7 @@ class StoryMenuState extends MusicBeatState
 		txtTracklist.text = txtTracklist.text.toUpperCase();
 		txtTracklist.alignment = LEFT;
 		txtTracklist.screenCenter(X);
-		txtTracklist.x -= FlxG.width * 0.45;
+		txtTracklist.x -= FlxG.width * 0.30;
 
 		#if !switch
 		intendedScore = Highscore.getWeekScore(loadedWeeks[curWeek].fileName, curDifficulty);
