@@ -65,7 +65,21 @@ class CreditsState extends MusicBeatState
 			["kawaisprite",			"kawaisprite",		"Composer of Friday Night Funkin'",							"https://x.com/kawaisprite",		"378FC7"],
 			[""],
 			["Psych Engine Discord"],
-			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"]
+			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"],
+			[""]
+			["SD Card Team"], // 새로운 카테고리 이름
+			["Tubenyan",            "tubenyan",         "Make Menu to Korean and did All this mod tasks",           "https://youtube.com/@tubenyan",     "41c0ff"], // 본인 정보
+			["NyangBab",            "nb",               'Test',                                                     "https://discord.gg/uwbTRBDJsb",     'FFFFFF'],// 한 줄 띄우기
+			["RTX 6090",            "6090",             'Nothing. He do not play FNF.',                             "https://discord.gg/zdfQhkVYTD",     '89C5CB'],// 한 줄 띄우기 FF740A
+			["2dles",               "2dles",            'Nothing. He do not play FNF, too.',            "https://discord.com/channels/@me/1449048458060234874",     'FF740A'],
+			["GEMINI",              "gemini",           'Made haxe Source for Tubenyan',                            "https://gemini.google.com/app",     '4285F4'],
+			[''],
+			["Our DISCORD"],
+			["Join our Hangout Server!!", "discord", "", "https://discord.gg/xQCgzngkYW", "5165F6"], 
+			["Join SD Card Community!!", "discord", "", "https://discord.gg/4K49EHG8P3", "5165F6"],
+			[""]
+			["Psych Engine Team"], // 여기서부터는 기존 코드
+			["Shadow Mario", "shadowmario", "Main Programmer and Head of Psych Engine", "https://ko-fi.com/shadowmario", "444444"],
 		];
 		
 		for(i in defaultList)
