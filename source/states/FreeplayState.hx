@@ -175,7 +175,7 @@ class FreeplayState extends MusicBeatState
 		bottomBG.alpha = 0.6;
 		add(bottomBG);
 
-		var leText:String = Language.getPhrase("freeplay_tip", "Press SPACE to listen to the Song / Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.");
+		var leText:String = Language.getPhrase("freeplay_tip", "스페이스 / 엔터를 눌러 곡 플레이! 위, 아래로 내려서 곡 선택 가능! 재밌게 플레이해보자! 기록을 갱신해보자!");
 		bottomString = leText;
 		var size:Int = 16;
 		bottomText = new FlxText(bottomBG.x, bottomBG.y + 4, FlxG.width, leText, size);
@@ -243,7 +243,7 @@ class FreeplayState extends MusicBeatState
 
 		if (!player.playingMusic)
 		{
-			scoreText.text = Language.getPhrase('personal_best', 'PERSONAL BEST: {1} ({2}%)', [lerpScore, ratingSplit.join('.')]);
+			scoreText.text = Language.getPhrase('personal_best', '내 최고점수 : {1} ({2}%)', [lerpScore, ratingSplit.join('.')]);
 			positionHighscore();
 			
 			if(songs.length > 1)
