@@ -216,7 +216,7 @@ class TitleState extends MusicBeatState
 	var animationName:String = 'gfDance';
 
 	var gfPosition:FlxPoint = FlxPoint.get(512, 40);
-	var logoPosition:FlxPoint = FlxPoint.get(-150, -100);
+	var logoPosition:FlxPoint = FlxPoint.get(0, 0);
 	var enterPosition:FlxPoint = FlxPoint.get(100, 576);
 	
 	var useIdle:Bool = false;
@@ -534,9 +534,9 @@ class TitleState extends MusicBeatState
 				case 5:
 					deleteCoolText();
 				case 6:
-					createCoolText(['Not associated', 'with'], -40);
+					createCoolText(['This mod is', 'made'], -40);
 				case 8:
-					addMoreText('newgrounds', -40);
+					addMoreText('in korea', -40);
 					ngSpr.visible = true;
 				case 9:
 					deleteCoolText();
@@ -548,11 +548,11 @@ class TitleState extends MusicBeatState
 				case 13:
 					deleteCoolText();
 				case 14:
-					addMoreText('Friday');
+					addMoreText('Vs');
 				case 15:
-					addMoreText('Night');
+					addMoreText('The battle');
 				case 16:
-					addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
+					addMoreText('Cats!'); // credTextShit.text += '\nFunkin';
 
 				case 17:
 					skipIntro();
