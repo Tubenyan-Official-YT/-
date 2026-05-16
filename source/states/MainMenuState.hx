@@ -83,7 +83,7 @@ class MainMenuState extends MusicBeatState
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 140) + 30);
 			if (option == 'story_mode') {
-        		item.y -= 100; // 100만큼 위로 이동 (원하는 만큼 숫자 조절)
+        		item.y -= 55; // 100만큼 위로 이동 (원하는 만큼 숫자 조절)
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
 			item.screenCenter(X);
