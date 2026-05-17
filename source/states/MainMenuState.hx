@@ -106,10 +106,10 @@ class MainMenuState extends MusicBeatState
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
-		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + gamever, 12);
-		gamever.scrollFactor.set();
-		gamever.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(gamever);
+		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "the battle cats : legend begins Mod' v" + gamever, 12);
+		gameVer.scrollFactor.set();
+		gameVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(gameVer);
 		changeItem();
 
 		#if ACHIEVEMENTS_ALLOWED
