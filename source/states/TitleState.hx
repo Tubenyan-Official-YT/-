@@ -429,7 +429,7 @@ class TitleState extends MusicBeatState
 							blackScreen.scrollFactor.set();
 							blackScreen.alpha = 1;
 							blackScreen.visible = true;
-							credGroup.add(blackScreen)
+							credGroup.add(blackScreen);
 							
 							
 
