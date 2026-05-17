@@ -64,6 +64,7 @@ class CreditsState extends MusicBeatState
 			["evilsk8r",			"evilsk8r",			"Artist of Friday Night Funkin'",							"https://x.com/evilsk8r",			"5ABD4B"],
 			["kawaisprite",			"kawaisprite",		"Composer of Friday Night Funkin'",							"https://x.com/kawaisprite",		"378FC7"],
 			[""],
+			
 			["Psych Engine Discord"],
 			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"],
 			[""],
@@ -97,18 +98,16 @@ class CreditsState extends MusicBeatState
 
 			if(isSelectable)
 			{
-				if(credit[5] != null)
-					Mods.currentModDirectory = credit[5];
+    			if(credit[5] != null)
+        			Mods.currentModDirectory = credit[5];
 
-				var str:String = 'credits/missing_icon';
-				if(credit[1] != null && credit[1].length > 0)
-				{
-					var fileName = 'credits/' + credit[1];
-					if (Paths.fileExists('images/$fileName.png', IMAGE)) str = fileName;
-					else if (Paths.fileExists('images/$fileName-pixel.png', IMAGE)) str = fileName + '-pixel';
-				}
+    			var str:String = 'credits/missing_icon';
+    			if(credit[1] != null && credit[1].length > 0)
+    			{
+        			str = 'credits/' + credit[1]; 
+    			}
 
-				var icon:AttachedSprite = new AttachedSprite(str);
+    			var icon:AttachedSprite = new AttachedSprite(str);
 				if(str.endsWith('-pixel')) icon.antialiasing = false;
 				icon.xAdd = optionText.width + 10;
 				icon.sprTracker = optionText;
