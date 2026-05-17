@@ -417,15 +417,18 @@ class TitleState extends MusicBeatState
 							black.updateHitbox();
 							black.screenCenter(); // 화면 중앙 정렬
 							black.scrollFactor.set();
+							black.alpha = 1;
+							black.visible = true;
 							add(black);
 							
 							var blackScreen:FlxSprite = new FlxSprite().loadGraphic(Paths.image('titleBG')); 
 							blackScreen.antialiasing = ClientPrefs.data.antialiasing;
-							blackScreen.updateHitbox();
 							blackScreen.screenCenter();
 							blackScreen.setGraphicSize(FlxG.width, FlxG.height);
+							blackScreen.updateHitbox();
 							blackScreen.scrollFactor.set();
-							blackScreen.screenCenter();
+							blackScreen.alpha = 1;
+							blackScreen.visible = true;
 							credGroup.add(blackScreen)
 							
 							
