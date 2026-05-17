@@ -8,6 +8,19 @@ jobs:
       - uses: krdlab/setup-haxe@v1
         with:
           haxe-version: 4.3.7
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+        # 라이브러리가 설치되는 모든 경로를 저장합니다.
+          path: |
+            /home/runner/haxelib
+            ~/.haxelib
+            .haxelib
+        # Project.xml이 수정되지 않으면, 이전에 받아둔 라이브러리를 그대로 꺼내 씁니다.
+        # 즉, 소스 코드(.hx)나 이미지(.png)만 고칠 때는 빌드 시간이 확 줄어듭니다!
+          key: ${{ runner.os }}-build-${{ hashFiles('**/Project.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
       - name: Install Libraries
         run: |
           haxelib install lime 8.1.2
