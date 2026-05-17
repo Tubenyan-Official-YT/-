@@ -181,13 +181,11 @@ class TitleState extends MusicBeatState
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 
-		blackScreen = new FlxSprite().loadGraphic(Paths.image('titleBG')); 
-		blackScreen.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
-		blackScreen.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
+		var blackScreen:FlxSprite = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+		blackScreen.scale.set(FlxG.width, FlxG.height);
 		blackScreen.updateHitbox();
-		blackScreen.screenCenter(); // 화면 중앙 정렬
-		blackScreen.scrollFactor.set();
-		credGroup.add(blackScreen);
+		blackScreen.alpha = 0;
+		add(blackScreen);
 
 		credTextShit = new Alphabet(0, 0, "", true);
 		credTextShit.screenCenter();
@@ -419,11 +417,13 @@ class TitleState extends MusicBeatState
 
 							FlxG.sound.play(Paths.sound('secret'));
 
-							var black:FlxSprite = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
-							black.scale.set(FlxG.width, FlxG.height);
+							black = new FlxSprite().loadGraphic(Paths.image('titleBG')); 
+							black.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
+							black.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
 							black.updateHitbox();
-							black.alpha = 0;
-							add(black);
+							black.screenCenter(); // 화면 중앙 정렬
+							black.scrollFactor.set();
+							credGroup.add(black);
 
 							FlxTween.tween(black, {alpha: 1}, 1, {onComplete:
 								function(twn:FlxTween) {
