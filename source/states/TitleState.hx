@@ -183,9 +183,10 @@ class TitleState extends MusicBeatState
 
 		blackScreen = new FlxSprite().loadGraphic(Paths.image('titleBG')); 
 		blackScreen.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
-		blackScreen.setGraphicSize(Std.int(FlxG.width)); // 가로 길이를 화면에 맞춤
+		blackScreen.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
 		blackScreen.updateHitbox();
 		blackScreen.screenCenter(); // 화면 중앙 정렬
+		blackScreen.scrollFactor.set();
 		credGroup.add(blackScreen);
 
 		credTextShit = new Alphabet(0, 0, "", true);
