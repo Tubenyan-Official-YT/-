@@ -107,9 +107,9 @@ class MainMenuState extends MusicBeatState
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
 		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + gamever, 12);
-		GameVer.scrollFactor.set();
-		GameVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(GameVer);
+		gamever.scrollFactor.set();
+		gamever.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(gamever);
 		changeItem();
 
 		#if ACHIEVEMENTS_ALLOWED
