@@ -181,9 +181,11 @@ class TitleState extends MusicBeatState
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 
-		blackScreen = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
-		blackScreen.scale.set(FlxG.width, FlxG.height);
+		blackScreen = new FlxSprite().loadGraphic(Paths.image('titleBG')); 
+		blackScreen.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
+		blackScreen.setGraphicSize(Std.int(FlxG.width)); // 가로 길이를 화면에 맞춤
 		blackScreen.updateHitbox();
+		blackScreen.screenCenter(); // 화면 중앙 정렬
 		credGroup.add(blackScreen);
 
 		credTextShit = new Alphabet(0, 0, "", true);
@@ -216,8 +218,8 @@ class TitleState extends MusicBeatState
 	var animationName:String = 'gfDance';
 
 	var gfPosition:FlxPoint = FlxPoint.get(512, 40);
-	var logoPosition:FlxPoint = FlxPoint.get(0, 0);
-	var enterPosition:FlxPoint = FlxPoint.get(100, 576);
+	var logoPosition:FlxPoint = FlxPoint.get(100, 150);
+	var enterPosition:FlxPoint = FlxPoint.get(100, 276);
 	
 	var useIdle:Bool = false;
 	var musicBPM:Float = 102;
