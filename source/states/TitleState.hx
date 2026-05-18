@@ -12,6 +12,7 @@ import haxe.Json;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
+import openfl.utils.Assets;
 
 import shaders.ColorSwap;
 
