@@ -181,8 +181,8 @@ class TitleState extends MusicBeatState
 		}
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
-
-		var black = new FlxSprite().loadGraphic(openfl.utils.Assets.getBitmapData("shared:images/TitleBack.png")); 
+		var customGraphic = FlxG.bitmap.addWithKey("assets/shared/images/TitleBack.png", "TitleBack_Custom");
+		var black = new FlxSprite().loadGraphic(custonGraphic); 
 		black.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
 		black.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
 		black.updateHitbox();
@@ -422,7 +422,8 @@ class TitleState extends MusicBeatState
 
 							FlxG.sound.play(Paths.sound('secret'));
 							
-							var blackScreen:FlxSprite = new FlxSprite().loadGraphic(openfl.utils.Assets.getBitmapData("shared:images/TitleBack.png")); 
+							var customGraphic = FlxG.bitmap.addWithKey("assets/shared/images/TitleBack.png", "TitleBack_Custom");
+							var blackScreen = new FlxSprite(0, 0).loadGraphic(customGraphic);
 							blackScreen.antialiasing = ClientPrefs.data.antialiasing;
 							blackScreen.screenCenter();
 							blackScreen.setGraphicSize(FlxG.width, FlxG.height);
