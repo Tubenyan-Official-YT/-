@@ -181,8 +181,8 @@ class TitleState extends MusicBeatState
 		}
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
-		var customGraphic = FlxG.bitmap.addWithKey("assets/shared/images/TitleBack.png", "TitleBack_Custom");
-		var black = new FlxSprite().loadGraphic(custonGraphic); 
+		var customGraphic = FlxG.bitmap.add("assets/shared/images/TitleBack.png", "TitleBack_Custom");
+		var black = new FlxSprite().loadGraphic(customGraphic); 
 		black.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
 		black.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
 		black.updateHitbox();
