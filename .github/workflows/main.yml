@@ -8,14 +8,17 @@ jobs:
       - uses: krdlab/setup-haxe@v1
         with:
           haxe-version: 4.3.7
-      - name: Cache Haxe Compiler Generation (.haxecache)
+      - name: Cache Windows Build Object Files
         uses: actions/cache@v4
         with:
-          path: .haxecache
-          key: ${{ runner.os }}-haxe-generation-${{ github.sha }}
+          path: |
+            export/release/windows/obj
+            .haxecache
+        # 프로젝트 폴더 내 파일이 바뀌어도 엔진(플릭셀) 라이브러리는 그대로이므로 
+        # haxelib 장부 기준(Project.xml이나 유사 파일)으로 키를 생성해 고정합니다.
+          key: ${{ runner.os }}-build-obj-${{ hashFiles('**/Project.xml') }}
           restore-keys: |
-            ${{ runner.os }}-haxe-generation-
-
+            ${{ runner.os }}-build-obj-
     # 2. 오직 이 빌드 스텝 안에서만 캐시 환경 변수와 플래그가 작동하도록 묶기
       - name: Install Libraries
         run: |
@@ -41,7 +44,7 @@ jobs:
           HAXE_CACHE: .haxecache
           HAXE_COMPILER_CACHE: .haxecache
         run: |
-          haxelib run lime build windows -D haxe-cache=.haxecache
+          haxelib run lime build windows
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
