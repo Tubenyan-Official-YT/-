@@ -12,7 +12,6 @@ import haxe.Json;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-import openfl.utils.Assets;
 
 import shaders.ColorSwap;
 
@@ -181,16 +180,13 @@ class TitleState extends MusicBeatState
 		}
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
-		
-		var black = new FlxSprite().loadGraphic("assets/shared/images/TitleBack.png"); 
-		black.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
-		black.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
-		black.updateHitbox();
-		black.screenCenter(); // 화면 중앙 정렬
-		black.scrollFactor.set();
-		black.visible = true;
-		add(black);
-		
+
+		var blackScreen:FlxSprite = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
+		blackScreen.scale.set(FlxG.width, FlxG.height);
+		blackScreen.updateHitbox();
+		blackScreen.alpha = 0;
+		credGroup.add(blackScreen);
+
 		credTextShit = new Alphabet(0, 0, "", true);
 		credTextShit.screenCenter();
 		credTextShit.visible = false;
@@ -420,17 +416,14 @@ class TitleState extends MusicBeatState
 							FlxG.save.flush();
 
 							FlxG.sound.play(Paths.sound('secret'));
-							
-							var blackScreen = new FlxSprite(0, 0).loadGraphic("assets/shared/images/TitleBack.png");
-							blackScreen.antialiasing = ClientPrefs.data.antialiasing;
-							blackScreen.screenCenter();
-							blackScreen.setGraphicSize(FlxG.width, FlxG.height);
-							blackScreen.updateHitbox();
-							blackScreen.scrollFactor.set();
-							blackScreen.visible = true;
-							credGroup.add(blackScreen);
-							
-							
+
+							black = new FlxSprite().loadGraphic(Paths.image('titleBG')); 
+							black.antialiasing = ClientPrefs.data.antialiasing; // 안티앨리어싱 설정 (선택사항)
+							black.setGraphicSize(FlxG.width, FlxG.height);// 가로 길이를 화면에 맞춤
+							black.updateHitbox();
+							black.screenCenter(); // 화면 중앙 정렬
+							black.scrollFactor.set();
+							add(black);
 
 							FlxTween.tween(black, {alpha: 1}, 1, {onComplete:
 								function(twn:FlxTween) {
