@@ -181,7 +181,7 @@ class TitleState extends MusicBeatState
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 
-		var blackScreen = new FlxSprite(0, 0);
+		blackScreen = new FlxSprite(0, 0);
 		blackScreen.loadGraphic(Paths.image('TitleBack'));
 		blackScreen.setGraphicSize(FlxG.width, FlxG.height);
 		blackScreen.updateHitbox();
