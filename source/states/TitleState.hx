@@ -135,6 +135,13 @@ class TitleState extends MusicBeatState
 		logoBl.animation.play('bump');
 		logoBl.updateHitbox();
 
+		var bg = new FlxSprite(0, 0);
+		bg.loadGraphic(Paths.image('TitleBack'));
+		bg.setGraphicSize(FlxG.width, FlxG.height);
+		bg.updateHitbox();
+		bg.scrollFactor.set(0, 0);
+		add(bg);  // ← 제일 먼저 add해야 다른것들 뒤에 깔림
+		
 		gfDance = new FlxSprite(gfPosition.x, gfPosition.y);
 		gfDance.antialiasing = ClientPrefs.data.antialiasing;
 		
