@@ -182,9 +182,12 @@ class TitleState extends MusicBeatState
 		titleText.updateHitbox();
 
 		var blackScreen = new FlxSprite(0, 0);
-		// 가로 1280, 세로 720 사이즈의 순수한 검은색(BLACK) 사각형을 메모리에서 바로 만듭니다.
-		blackScreen.makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE); 
-		add(blackScreen);
+		blackScreen.loadGraphic(Paths.image('TitleBack'));
+		blackScreen.setGraphicSize(FlxG.width, FlxG.height);
+		blackScreen.updateHitbox();
+		blackScreen.visible = true;
+		blackScreen.scrollFactor.set(0, 0);
+		credGroup.add(blackScreen);
 
 		credTextShit = new Alphabet(0, 0, "", true);
 		credTextShit.screenCenter();
@@ -417,7 +420,11 @@ class TitleState extends MusicBeatState
 							FlxG.sound.play(Paths.sound('secret'));
 
 							black = new FlxSprite(0, 0);
-							black.makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE); 
+							black.loadGraphic(Paths.image('TitleBack'));
+							black.setGraphicSize(FlxG.width, FlxG.height);
+							black.updateHitbox();
+							black.visible = true;
+							black.scrollFactor.set(0, 0);
 							add(black);
 
 							FlxTween.tween(black, {alpha: 1}, 1, {onComplete:
