@@ -419,7 +419,7 @@ class TitleState extends MusicBeatState
 
 							FlxG.sound.play(Paths.sound('secret'));
 
-							black = new FlxSprite(0, 0);
+							var black = new FlxSprite(0, 0);
 							black.loadGraphic(Paths.image('TitleBack'));
 							black.setGraphicSize(FlxG.width, FlxG.height);
 							black.updateHitbox();
