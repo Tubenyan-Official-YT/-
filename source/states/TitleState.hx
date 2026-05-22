@@ -206,7 +206,14 @@ class TitleState extends MusicBeatState
 		ngSpr.updateHitbox();
 		ngSpr.screenCenter(X);
 		ngSpr.antialiasing = ClientPrefs.data.antialiasing;
-
+		
+		var bg = new FlxSprite(0, 0);
+		bg.loadGraphic(Paths.image('TitleBack'));
+		bg.setGraphicSize(FlxG.width, FlxG.height);
+		bg.updateHitbox();
+		bg.scrollFactor.set(0, 0);
+		add(bg);
+		
 		add(gfDance);
 		add(logoBl); //FNF Logo
 		add(titleText); //"Press Enter to Begin" text
