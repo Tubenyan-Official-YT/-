@@ -162,6 +162,7 @@ class TitleState extends MusicBeatState
 		var animFrames:Array<FlxFrame> = [];
 		titleText = new FlxSprite(enterPosition.x, enterPosition.y);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
+		titleText.antiailasing = ClientPrefs.data.antialiasing;
 		@:privateAccess
 		{
 			titleText.animation.findByPrefix(animFrames, "ENTER IDLE");
@@ -201,6 +202,7 @@ class TitleState extends MusicBeatState
 		ngSpr.antialiasing = ClientPrefs.data.antialiasing;
 		
 		var bg = new FlxSprite(0, 0);
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.loadGraphic(Paths.image('TitleBack'));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.updateHitbox();
@@ -386,7 +388,7 @@ class TitleState extends MusicBeatState
 				
 				if(titleText != null) titleText.animation.play('press');
 
-				FlxG.camera.flash(ClientPrefs.data.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 1);
+				FlxG.camera.flash(ClientPrefs.data.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 4);
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
 				transitioning = true;
