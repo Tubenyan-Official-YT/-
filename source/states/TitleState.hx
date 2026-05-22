@@ -134,13 +134,6 @@ class TitleState extends MusicBeatState
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 		logoBl.animation.play('bump');
 		logoBl.updateHitbox();
-
-		var bg = new FlxSprite(0, 0);
-		bg.loadGraphic(Paths.image('TitleBack'));
-		bg.setGraphicSize(FlxG.width, FlxG.height);
-		bg.updateHitbox();
-		bg.scrollFactor.set(0, 0);
-		add(bg);  // ← 제일 먼저 add해야 다른것들 뒤에 깔림
 		
 		gfDance = new FlxSprite(gfPosition.x, gfPosition.y);
 		gfDance.antialiasing = ClientPrefs.data.antialiasing;
@@ -189,7 +182,7 @@ class TitleState extends MusicBeatState
 		titleText.updateHitbox();
 
 		blackScreen = new FlxSprite(0, 0);
-		blackScreen.loadGraphic(Paths.image('TitleBack'));
+		blackScreen.loadGraphic(Paths.image('credBack'));
 		blackScreen.setGraphicSize(FlxG.width, FlxG.height);
 		blackScreen.updateHitbox();
 		blackScreen.visible = true;
@@ -384,9 +377,6 @@ class TitleState extends MusicBeatState
 					timer = (-timer) + 2;
 				
 				timer = FlxEase.quadInOut(timer);
-				
-				titleText.color = FlxColor.interpolate(titleTextColors[0], titleTextColors[1], timer);
-				titleText.alpha = FlxMath.lerp(titleTextAlphas[0], titleTextAlphas[1], timer);
 			}
 			
 			if(pressedEnter)
@@ -546,10 +536,9 @@ class TitleState extends MusicBeatState
 					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
-					createCoolText(['Psych Engine by'], 40);
+					createCoolText(['Vs Battle Cats : legend begins mod by'], 40);
 				case 4:
-					addMoreText('Shadow Mario', 40);
-					addMoreText('Riveren', 40);
+					addMoreText('tubenyan', 40);
 				case 5:
 					deleteCoolText();
 				case 6:
@@ -569,9 +558,9 @@ class TitleState extends MusicBeatState
 				case 14:
 					addMoreText('Vs');
 				case 15:
-					addMoreText('The battle');
+					addMoreText('The battle Cats');
 				case 16:
-					addMoreText('Cats!'); // credTextShit.text += '\nFunkin';
+					addMoreText(': Legend begins'); // credTextShit.text += '\nFunkin';
 
 				case 17:
 					skipIntro();
