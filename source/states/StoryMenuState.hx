@@ -295,10 +295,11 @@ class StoryMenuState extends MusicBeatState
 
 		super.update(elapsed);
 		
-		var offX:Float = grpWeekText.members[curWeek].x;
-		var targetOffX:Float = FlxG.width / 2 - offX - grpWeekText.members[curWeek].width / 2;
+		var selectedInitialX:Float = weekInitialX[curWeek];
+		var targetOffX:Float = FlxG.width / 2 - selectedInitialX - grpWeekText.members[curWeek].width / 2;
 		for (num => item in grpWeekText.members)
-    		item.x = FlxMath.lerp(item.x + targetOffX, item.x, Math.exp(-elapsed * 10.2));
+   			item.x = FlxMath.lerp(weekInitialX[num] + targetOffX, item.x, Math.exp(-elapsed * 10.2));
+
 
 		for (num => lock in grpLocks.members)
 			lock.y = grpWeekText.members[lock.ID].y + grpWeekText.members[lock.ID].height/2 - lock.height/2;
