@@ -102,6 +102,8 @@ class StoryMenuState extends MusicBeatState
 		var num:Int = 0;
 		var itemTargetX:Float = 0;  // Y → X로 변경
 		for (i in 0...WeekData.weeksList.length) {
+			var weekFile:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
+			var isLocked:Bool = weekIsLocked(WeekData.weeksList[i]);
 			if (!isLocked || !weekFile.hiddenUntilUnlocked)
 			{
     			var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, WeekData.weeksList[i]);
