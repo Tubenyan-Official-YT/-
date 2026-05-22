@@ -42,7 +42,7 @@ class StoryMenuState extends MusicBeatState
 	var rightArrow:FlxSprite;
 
 	var loadedWeeks:Array<WeekData> = [];
-
+	var weekInitialX:Array<Float> = [];
 	override function create()
 	{
 		Paths.clearStoredMemory();
@@ -99,7 +99,7 @@ class StoryMenuState extends MusicBeatState
 
 		grpLocks = new FlxTypedGroup<FlxSprite>();
 		add(grpLocks);
-
+		if (!isLocked || !weekFile.hiddenUntilUnlocked) {
 			var num:Int = 0;
 			var itemTargetX:Float = 0;  // Y → X로 변경
 			for (i in 0...WeekData.weeksList.length)
@@ -108,6 +108,7 @@ class StoryMenuState extends MusicBeatState
     			weekThing.ID = num;
     			weekThing.targetY = 0;  // Y는 고정
     			weekThing.x = itemTargetX;  // X로 배치
+				weekInitialX.push(itemTargetX);
     			itemTargetX += weekThing.width + 200;
 				grpWeekText.add(weekThing);
 				
@@ -253,12 +254,12 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty();
 			}
 
-			if (controls.UI_RIGHT)
+			if (controls.UI_UP)
 				rightArrow.animation.play('press')
 			else
 				rightArrow.animation.play('idle');
 
-			if (controls.UI_LEFT)
+			if (controls.UI_DOWN)
 				leftArrow.animation.play('press');
 			else
 				leftArrow.animation.play('idle');
@@ -294,9 +295,10 @@ class StoryMenuState extends MusicBeatState
 
 		super.update(elapsed);
 		
-		var offY:Float = grpWeekText.members[curWeek].targetY;
+		var offX:Float = grpWeekText.members[curWeek].x;
+		var targetOffX:Float = FlxG.width / 2 - offX - grpWeekText.members[curWeek].width / 2;
 		for (num => item in grpWeekText.members)
-			item.y = FlxMath.lerp(item.targetY - offY + 480, item.y, Math.exp(-elapsed * 10.2));
+    		item.x = FlxMath.lerp(item.x + targetOffX, item.x, Math.exp(-elapsed * 10.2));
 
 		for (num => lock in grpLocks.members)
 			lock.y = grpWeekText.members[lock.ID].y + grpWeekText.members[lock.ID].height/2 - lock.height/2;
