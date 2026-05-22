@@ -162,7 +162,7 @@ class TitleState extends MusicBeatState
 		var animFrames:Array<FlxFrame> = [];
 		titleText = new FlxSprite(enterPosition.x, enterPosition.y);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
-		titleText.antiailasing = ClientPrefs.data.antialiasing;
+		titleText.antialilasing = ClientPrefs.data.antialiasing;
 		@:privateAccess
 		{
 			titleText.animation.findByPrefix(animFrames, "ENTER IDLE");
