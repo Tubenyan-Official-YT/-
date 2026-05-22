@@ -100,27 +100,17 @@ class StoryMenuState extends MusicBeatState
 		grpLocks = new FlxTypedGroup<FlxSprite>();
 		add(grpLocks);
 
-		var num:Int = 0;
-		var itemTargetY:Float = 0;
-		for (i in 0...WeekData.weeksList.length)
-		{
-			var weekFile:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
-			var isLocked:Bool = weekIsLocked(WeekData.weeksList[i]);
-			if(!isLocked || !weekFile.hiddenUntilUnlocked)
+			var num:Int = 0;
+			var itemTargetX:Float = 0;  // Y → X로 변경
+			for (i in 0...WeekData.weeksList.length)
 			{
-				loadedWeeks.push(weekFile);
-				WeekData.setDirectoryFromWeek(weekFile);
-				var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, WeekData.weeksList[i]);
-				weekThing.y += ((weekThing.height + 20) * num);
-				weekThing.ID = num;
-				weekThing.targetY = itemTargetY;
-				itemTargetY += Math.max(weekThing.height, 110) + 10;
+    			var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, WeekData.weeksList[i]);
+    			weekThing.ID = num;
+    			weekThing.targetY = 0;  // Y는 고정
+    			weekThing.x = itemTargetX;  // X로 배치
+    			itemTargetX += weekThing.width + 200;
 				grpWeekText.add(weekThing);
-
-				weekThing.screenCenter(X);
-				// weekThing.updateHitbox();
-
-				// Needs an offset thingie
+				
 				if (isLocked)
 				{
 					var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
@@ -242,14 +232,14 @@ class StoryMenuState extends MusicBeatState
 		if (!movedBack && !selectedWeek)
 		{
 			var changeDiff = false;
-			if (controls.UI_UP_P)
+			if (controls.UI_LEFT_P)
 			{
 				changeWeek(-1);
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeDiff = true;
 			}
 
-			if (controls.UI_DOWN_P)
+			if (controls.UI_RIGHT_P)
 			{
 				changeWeek(1);
 				FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -273,9 +263,9 @@ class StoryMenuState extends MusicBeatState
 			else
 				leftArrow.animation.play('idle');
 
-			if (controls.UI_RIGHT_P)
+			if (controls.UI_UP_P)
 				changeDifficulty(1);
-			else if (controls.UI_LEFT_P)
+			else if (controls.UI_DOWN_P)
 				changeDifficulty(-1);
 			else if (changeDiff)
 				changeDifficulty();
