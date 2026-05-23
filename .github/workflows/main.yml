@@ -10,10 +10,11 @@ jobs:
           haxe-version: 4.3.7
       - name: Find hxcpp cache
         run: |
-          echo "=== AppData Local ==="
-          dir C:\Users\runneradmin\AppData\Local\
-          echo "=== hxcpp folder ==="
-          dir C:\Users\runneradmin\AppData\Local\hxcpp\ 2>nul || echo "hxcpp 폴더 없음"
+          echo "=== haxelib 경로 ==="
+          haxelib config
+          echo "=== hxcpp 찾기 ==="
+          Get-ChildItem -Path C:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
+          Get-ChildItem -Path D:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
       - name: Cache Windows Build Object Files
         uses: actions/cache@v4
         with:
