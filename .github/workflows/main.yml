@@ -13,6 +13,7 @@ jobs:
         with:
           path: |
             export/release/windows/obj
+            C:/Users/runneradmin/AppData/Local/hxcpp
             .haxecache
         # 프로젝트 폴더 내 파일이 바뀌어도 엔진(플릭셀) 라이브러리는 그대로이므로 
         # haxelib 장부 기준(Project.xml이나 유사 파일)으로 키를 생성해 고정합니다.
