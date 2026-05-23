@@ -122,12 +122,6 @@ class FreeplayState extends MusicBeatState
 			songImage.ID = i;
 			songImage.visible = songImage.active = false;
 			grpSongs.add(songImage);
-
-			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-			icon.sprTracker = songImage;
-			icon.visible = icon.active = false;
-			iconArray.push(icon);
-			add(icon);
 		}
 		WeekData.setDirectoryFromWeek();
 
@@ -523,13 +517,10 @@ class FreeplayState extends MusicBeatState
 
 		for (num => item in grpSongs.members)
 		{
-			var icon:HealthIcon = iconArray[num];
 			item.alpha = 0.6;
-			icon.alpha = 0.6;
 			if (item.ID == curSelected)
 			{
 				item.alpha = 1;
-				icon.alpha = 1;
 			}
 		}
 		
@@ -572,7 +563,6 @@ class FreeplayState extends MusicBeatState
 		for (i in _lastVisibles)
 		{
 			grpSongs.members[i].visible = grpSongs.members[i].active = false;
-			iconArray[i].visible = iconArray[i].active = false;
 		}
 		_lastVisibles = [];
 
@@ -585,9 +575,6 @@ class FreeplayState extends MusicBeatState
 			// 가로 배치 - 선택된 곡 중앙, 나머지 좌우로
 			item.x = FlxG.width / 2 + (item.ID - lerpSelected) * (item.width + 30) - item.width / 2;
 			item.y = 20;  // 화면 상단
-
-			var icon:HealthIcon = iconArray[i];
-			icon.visible = icon.active = true;
 			_lastVisibles.push(i);
 		}
 	}
