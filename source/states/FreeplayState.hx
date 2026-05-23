@@ -41,7 +41,6 @@ class FreeplayState extends MusicBeatState
 	private var iconArray:Array<HealthIcon> = [];
 
 	var bg:FlxSprite;
-	var intendedColor:Int;
 
 	var missingTextBG:FlxSprite;
 	var missingText:FlxText;
@@ -151,8 +150,6 @@ class FreeplayState extends MusicBeatState
 		add(missingText);
 
 		if(curSelected >= songs.length) curSelected = 0;
-		bg.color = songs[curSelected].color;
-		intendedColor = bg.color;
 		lerpSelected = curSelected;
 
 		curDifficulty = Math.round(Math.max(0, Difficulty.defaultList.indexOf(lastDifficultyName)));
@@ -506,14 +503,6 @@ class FreeplayState extends MusicBeatState
 		curSelected = FlxMath.wrap(curSelected + change, 0, songs.length-1);
 		_updateSongLastDifficulty();
 		if(playSound) FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-
-		var newColor:Int = songs[curSelected].color;
-		if(newColor != intendedColor)
-		{
-			intendedColor = newColor;
-			FlxTween.cancelTweensOf(bg);
-			FlxTween.color(bg, 1, bg.color, intendedColor);
-		}
 
 		for (num => item in grpSongs.members)
 		{
