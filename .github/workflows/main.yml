@@ -38,6 +38,7 @@ jobs:
           haxelib install tjson 1.4.0
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git linc_luajit https://github.com/ShadowMario/linc_luajit
+          haxelib run lime setup
       - name: Build Psych Engine
         env:
           HAXE_CACHE: .haxecache
