@@ -254,7 +254,7 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty();
 			}
 
-			if (controls.UI_UP || controls.UI_DOWN)
+			if (controls.UI_UP_P || controls.UI_DOWN_P)
 			{
 				if (SelectMode == 'week') {
 					SelectMode = 'diff';
@@ -266,6 +266,12 @@ class StoryMenuState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('scrollMenu'));
     				updateModeAlpha();
 				}
+			}
+			if (controls.UI_RIGHT){
+				rightArrow.animation.play('press');
+			}
+			else if (controls.UI_LEFT){
+				leftArrow.animation.play('press');
 			}
 			if(FlxG.keys.justPressed.CONTROL)
 			{
