@@ -29,8 +29,6 @@ class StoryMenuState extends MusicBeatState
 
 	private static var curWeek:Int = 0;
 
-	var txtTracklist:FlxText;
-
 	var grpWeekText:FlxTypedGroup<MenuItem>;
 	var grpWeekCharacters:FlxTypedGroup<MenuCharacter>;
 
@@ -176,28 +174,6 @@ class StoryMenuState extends MusicBeatState
 		
 		add(bgSprite);
 		add(grpWeekCharacters);
-
-		var tracksSprite:FlxSprite = new FlxSprite(FlxG.width * 0.07 + 100, bgSprite.y + 425).loadGraphic(Paths.image('Menu_Tracks'));
-		tracksSprite.antialiasing = ClientPrefs.data.antialiasing;
-		tracksSprite.x -= tracksSprite.width/2;
-		add(tracksSprite);
-		
-		txtTracklist = new FlxText(FlxG.width * 0.05, tracksSprite.y + 60, 0, "", 32);
-		txtTracklist.alignment = CENTER;
-		txtTracklist.font = Paths.font("vcr.ttf");
-
-		try {
-			var path:String = Paths.txt('SongnameColor'); 
-			if (sys.FileSystem.exists(path)) {
-				var colorString:String = sys.io.File.getContent(path).trim();
-				txtTracklist.color = FlxColor.fromString(colorString);
-			} else {
-				txtTracklist.color = 0xFFe55777; 
-			}
-		} catch(e:Dynamic) {
-			txtTracklist.color = 0xFFe55777; 
-		}
-		add(txtTracklist);
 		
 		add(scoreText);
 		add(txtWeekTitle);
@@ -290,7 +266,7 @@ class StoryMenuState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('scrollMenu'));
     				updateModeAlpha();
 				}
-
+			}
 			if(FlxG.keys.justPressed.CONTROL)
 			{
 				persistentUpdate = false;
@@ -505,17 +481,6 @@ class StoryMenuState extends MusicBeatState
 		for (i in 0...leWeek.songs.length) {
 			stringThing.push(leWeek.songs[i][0]);
 		}
-
-		txtTracklist.text = '';
-		for (i in 0...stringThing.length)
-		{
-			txtTracklist.text += stringThing[i] + '\n';
-		}
-
-		txtTracklist.text = txtTracklist.text.toUpperCase();
-		txtTracklist.alignment = LEFT;
-		txtTracklist.screenCenter(X);
-		txtTracklist.x -= FlxG.width * 0.29;
 
 		#if !switch
 		intendedScore = Highscore.getWeekScore(loadedWeeks[curWeek].fileName, curDifficulty);
