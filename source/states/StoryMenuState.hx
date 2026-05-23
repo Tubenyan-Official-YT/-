@@ -40,11 +40,13 @@ class StoryMenuState extends MusicBeatState
 	var sprDifficulty:FlxSprite;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
-
+	
 	var loadedWeeks:Array<WeekData> = [];
 	var weekInitialX:Array<Float> = [];
 	override function create()
 	{
+		var SelectMode:String = 'week';
+		var bottomUIY:Float = 560;
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
@@ -143,7 +145,7 @@ class StoryMenuState extends MusicBeatState
 		difficultySelectors = new FlxGroup();
 		add(difficultySelectors);
 
-		leftArrow = new FlxSprite(850, grpWeekText.members[0].y + 10);
+		leftArrow = new FlxSprite(850, bottomUIY);
 		leftArrow.antialiasing = ClientPrefs.data.antialiasing;
 		leftArrow.frames = ui_tex;
 		leftArrow.animation.addByPrefix('idle', "arrow left");
@@ -240,16 +242,32 @@ class StoryMenuState extends MusicBeatState
 			var changeDiff = false;
 			if (controls.UI_LEFT_P)
 			{
-				changeWeek(-1);
-				FlxG.sound.play(Paths.sound('scrollMenu'));
-				changeDiff = true;
+				if (SelectMode == 'week') {
+					changeWeek(-1);
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeDiff = true;
+				else if (SelectMode == "diff") {
+					changeDifficulty(-1);
+					leftArrow.animation.play('press');
+				}
+				else if (changeDiff) {
+					changeDifficulty();
+				}
 			}
 
 			if (controls.UI_RIGHT_P)
 			{
-				changeWeek(1);
-				FlxG.sound.play(Paths.sound('scrollMenu'));
-				changeDiff = true;
+				if (SelectMode == 'week') {
+					changeWeek(1);
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeDiff = true;
+				else if (SelectMode == "diff") {
+					changeDifficulty(1);
+					rightArrow.animation.play('press');
+				}
+				else if (changeDiff) {
+					changeDifficulty();
+				}
 			}
 
 			if(FlxG.mouse.wheel != 0)
@@ -259,22 +277,17 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty();
 			}
 
-			if (controls.UI_UP)
-				rightArrow.animation.play('press')
+			if (controls.UI_UP || controls.UP_DOWN)
+			{
+				if (SelectMode == 'week') {
+					SelectMode = 'diff';
+				{
+				else if (SelectMode == 'diff') {
+					SelectMode = 'week';
+				{	
 			else
 				rightArrow.animation.play('idle');
-
-			if (controls.UI_DOWN)
-				leftArrow.animation.play('press');
-			else
-				leftArrow.animation.play('idle');
-
-			if (controls.UI_UP_P)
-				changeDifficulty(1);
-			else if (controls.UI_DOWN_P)
-				changeDifficulty(-1);
-			else if (changeDiff)
-				changeDifficulty();
+			
 
 			if(FlxG.keys.justPressed.CONTROL)
 			{
@@ -287,7 +300,7 @@ class StoryMenuState extends MusicBeatState
 				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
 				//FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
-			else if (controls.ACCEPT)
+			else if (controls.ACCEPT && SelectMode == "week")
 				selectWeek();
 		}
 
