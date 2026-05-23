@@ -8,13 +8,7 @@ jobs:
       - uses: krdlab/setup-haxe@v1
         with:
           haxe-version: 4.3.7
-      - name: Find hxcpp cache
-        run: |
-          echo "=== haxelib 경로 ==="
-          haxelib config
-          echo "=== hxcpp 찾기 ==="
-          Get-ChildItem -Path C:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
-          Get-ChildItem -Path D:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
+      
       - name: Cache Windows Build Object Files
         uses: actions/cache@v4
         with:
@@ -42,18 +36,21 @@ jobs:
           haxelib install hxcpp
           haxelib install hscript-iris 1.1.3
           haxelib install tjson 1.4.0
-          haxelib git linc_luajit https://github.com/superpowers04/linc_luajit
-          haxelib install hxdiscord_rpc
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit.git
-          haxelib run lime setup
       - name: Build Psych Engine
         env:
           HAXE_CACHE: .haxecache
           HAXE_COMPILER_CACHE: .haxecache
         run: |
           haxelib run lime build windows
-        
+      - name: Find hxcpp cache
+        run: |
+          echo "=== haxelib 경로 ==="
+          haxelib config
+          echo "=== hxcpp 찾기 ==="
+          Get-ChildItem -Path C:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
+          Get-ChildItem -Path D:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
