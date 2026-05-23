@@ -14,7 +14,7 @@ jobs:
         with:
           path: |
             export/release/windows/obj
-            C:/Users/runneradmin/AppData/Local/hxcpp
+            C:\hostedtoolcache\windows\haxe\4.3.7\x64\lib\hxcpp
             .haxecache
         # 프로젝트 폴더 내 파일이 바뀌어도 엔진(플릭셀) 라이브러리는 그대로이므로 
         # haxelib 장부 기준(Project.xml이나 유사 파일)으로 키를 생성해 고정합니다.
@@ -45,13 +45,7 @@ jobs:
           HAXE_COMPILER_CACHE: .haxecache
         run: |
           haxelib run lime build windows
-      - name: Find hxcpp cache
-        run: |
-          echo "=== haxelib 경로 ==="
-          haxelib config
-          echo "=== hxcpp 찾기 ==="
-          Get-ChildItem -Path C:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
-          Get-ChildItem -Path D:\ -Recurse -Filter "hxcpp" -Directory -ErrorAction SilentlyContinue | Select-Object FullName
+          
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
