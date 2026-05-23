@@ -8,6 +8,12 @@ jobs:
       - uses: krdlab/setup-haxe@v1
         with:
           haxe-version: 4.3.7
+      - name: Find hxcpp cache
+        run: |
+          echo "=== AppData Local ==="
+          dir C:\Users\runneradmin\AppData\Local\
+          echo "=== hxcpp folder ==="
+          dir C:\Users\runneradmin\AppData\Local\hxcpp\ 2>nul || echo "hxcpp 폴더 없음"
       - name: Cache Windows Build Object Files
         uses: actions/cache@v4
         with:
