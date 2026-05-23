@@ -45,7 +45,6 @@ class StoryMenuState extends MusicBeatState
 	var weekInitialX:Array<Float> = [];
 	override function create()
 	{
-		var SelectMode:String = 'week';
 		var bottomUIY:Float = 560;
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
@@ -242,9 +241,6 @@ class StoryMenuState extends MusicBeatState
 					changeDifficulty(1);
 					rightArrow.animation.play('press');
 				}
-				else if (changeDiff) {
-					changeDifficulty();
-				}
 			}
 
 			if(FlxG.mouse.wheel != 0)
@@ -267,16 +263,19 @@ class StoryMenuState extends MusicBeatState
     				updateModeAlpha();
 				}
 			}
-			if (controls.UI_RIGHT){
-				rightArrow.animation.play('press');
-			}
-			else if (controls.UI_LEFT){
-				leftArrow.animation.play('press');
-			}
-			else {
+			if (SelectMode == "diff"){
+				if (controls.UI_RIGHT){
+					rightArrow.animation.play('press');
+				}
+				else if (controls.UI_LEFT){
+					aleftArrow.animation.play('press');
+				}
+			
+				else {
    				 // 꾹 누르고 있는 게 아니라면 양쪽 화살표 모두 기본(idle) 상태로 되돌립니다.
-    			rightArrow.animation.play('idle');
-    			leftArrow.animation.play('idle');
+    				rightArrow.animation.play('idle');
+    				leftArrow.animation.play('idle');
+				}
 			}
 			if(FlxG.keys.justPressed.CONTROL)
 			{
