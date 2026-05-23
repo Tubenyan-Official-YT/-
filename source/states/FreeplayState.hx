@@ -35,7 +35,7 @@ class FreeplayState extends MusicBeatState
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
 
-	private var grpSongs:FlxTypedGroup<Alphabet>;
+	private var grpSongs:FlxTypedGroup<FlxSprite>;
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
@@ -108,34 +108,26 @@ class FreeplayState extends MusicBeatState
 		add(bg);
 		bg.screenCenter();
 
-		grpSongs = new FlxTypedGroup<Alphabet>();
+		grpSongs = new FlxTypedGroup<FlxSprite>();
 		add(grpSongs);
 
 		for (i in 0...songs.length)
 		{
-			var songText:Alphabet = new Alphabet(90, 320, songs[i].songName, true);
-			songText.targetY = i;
-			grpSongs.add(songText);
-
-			songText.scaleX = Math.min(1, 980 / songText.width);
-			songText.snapToPosition();
-
 			Mods.currentModDirectory = songs[i].folder;
+			var songImage:FlxSprite = new FlxSprite(0, 20);
+			songImage.loadGraphic(Paths.image('freeplay/' + Paths.formatToSongPath(songs[i].songName)));
+			songImage.setGraphicSize(0, 120);
+			songImage.updateHitbox();
+			songImage.antialiasing = ClientPrefs.data.antialiasing;
+			songImage.ID = i;
+			songImage.visible = songImage.active = false;
+			grpSongs.add(songImage);
+
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-			icon.sprTracker = songText;
-
-			
-			// too laggy with a lot of songs, so i had to recode the logic for it
-			songText.visible = songText.active = songText.isMenuItem = false;
+			icon.sprTracker = songImage;
 			icon.visible = icon.active = false;
-
-			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);
 			add(icon);
-
-			// songText.x += 40;
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-			// songText.screenCenter(X);
 		}
 		WeekData.setDirectoryFromWeek();
 
@@ -260,26 +252,28 @@ class FreeplayState extends MusicBeatState
 					changeSelection();
 					holdTime = 0;	
 				}
-				if (controls.UI_UP_P)
+				if (controls.UI_LEFT_P)
 				{
 					changeSelection(-shiftMult);
 					holdTime = 0;
 				}
-				if (controls.UI_DOWN_P)
+				if (controls.UI_RIGHT_P)
 				{
 					changeSelection(shiftMult);
 					holdTime = 0;
 				}
 
-				if(controls.UI_DOWN || controls.UI_UP)
+				if(controls.UI_LEFT || controls.UI_RIGHT)
 				{
 					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
 					holdTime += elapsed;
 					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
 
 					if(holdTime > 0.5 && checkNewHold - checkLastHold > 0)
-						changeSelection((checkNewHold - checkLastHold) * (controls.UI_UP ? -shiftMult : shiftMult));
+						changeSelection((checkNewHold - checkLastHold) * (controls.UI_LEFT ? -shiftMult : shiftMult));
 				}
+				else
+					holdTime = 0;
 
 				if(FlxG.mouse.wheel != 0)
 				{
@@ -288,12 +282,12 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 
-			if (controls.UI_LEFT_P)
+			if (controls.UI_UP_P)
 			{
 				changeDiff(-1);
 				_updateSongLastDifficulty();
 			}
-			else if (controls.UI_RIGHT_P)
+			else if (controls.UI_DOWN_P)
 			{
 				changeDiff(1);
 				_updateSongLastDifficulty();
@@ -532,7 +526,7 @@ class FreeplayState extends MusicBeatState
 			var icon:HealthIcon = iconArray[num];
 			item.alpha = 0.6;
 			icon.alpha = 0.6;
-			if (item.targetY == curSelected)
+			if (item.ID == curSelected)
 			{
 				item.alpha = 1;
 				icon.alpha = 1;
@@ -586,10 +580,11 @@ class FreeplayState extends MusicBeatState
 		var max:Int = Math.round(Math.max(0, Math.min(songs.length, lerpSelected + _drawDistance)));
 		for (i in min...max)
 		{
-			var item:Alphabet = grpSongs.members[i];
+			var item:FlxSprite = grpSongs.members[i];
 			item.visible = item.active = true;
-			item.x = ((item.targetY - lerpSelected) * item.distancePerItem.x) + item.startPosition.x;
-			item.y = ((item.targetY - lerpSelected) * 1.3 * item.distancePerItem.y) + item.startPosition.y;
+			// 가로 배치 - 선택된 곡 중앙, 나머지 좌우로
+			item.x = FlxG.width / 2 + (item.ID - lerpSelected) * (item.width + 30) - item.width / 2;
+			item.y = 20;  // 화면 상단
 
 			var icon:HealthIcon = iconArray[i];
 			icon.visible = icon.active = true;
