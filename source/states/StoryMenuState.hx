@@ -268,7 +268,7 @@ class StoryMenuState extends MusicBeatState
 					rightArrow.animation.play('press');
 				}
 				else if (controls.UI_LEFT){
-					aleftArrow.animation.play('press');
+					leftArrow.animation.play('press');
 				}
 			
 				else {
