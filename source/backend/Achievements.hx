@@ -32,33 +32,16 @@ enum abstract AchievementOp(String)
 class Achievements {
 	public static function init()
 	{
-		createAchievement('friday_night_play',		{name: "Freaky on a Friday Night", description: "Play on a Friday... Night.", hidden: true});
+		createAchievement('friday_night_play',		{name: "Friday night에 Friday night funkin 플레이하기", description: "금요일 밤에.... 플레이하기.", hidden: true});
+		createAchievement('ur_bad',					{name: "이게 뭔 재앙이냐?", description: "정확도 20%보다 더 떨어지게 곡 끝내기"});
+		createAchievement('ur_good',				{name: "완벽주의자", description: "100% 정확도로 곡 끝내기"});
+		createAchievement('oversinging', 			{name: "과도한 발성..??", description: "기본 상태로 안 돌아가고 10초동안 화살표 누르고 있기"});
+		createAchievement('hype',					{name: "Hyperactive", description: "노래 부르는 상태에서 곡 끝내기"});
+		createAchievement('two_keys',				{name: "Just the Two of Us", description: "두개의 키를 누른 상태에서 곡 끝내기"});
+		createAchievement('nyan', {name: "냥!!", description: "냥코를 이기기"});
 		#if BASE_GAME_FILES
-		createAchievement('week1_nomiss',			{name: "She Calls Me Daddy Too", description: "Beat Week 1 on Hard with no Misses."});
-		createAchievement('week2_nomiss',			{name: "No More Tricks", description: "Beat Week 2 on Hard with no Misses."});
-		createAchievement('week3_nomiss',			{name: "Call Me The Hitman", description: "Beat Week 3 on Hard with no Misses."});
-		createAchievement('week4_nomiss',			{name: "Lady Killer", description: "Beat Week 4 on Hard with no Misses."});
-		createAchievement('week5_nomiss',			{name: "Missless Christmas", description: "Beat Week 5 on Hard with no Misses."});
-		createAchievement('week6_nomiss',			{name: "Highscore!!", description: "Beat Week 6 on Hard with no Misses."});
-		createAchievement('week7_nomiss',			{name: "God Effing Damn It!", description: "Beat Week 7 on Hard with no Misses."});
-		createAchievement('weekend1_nomiss',		{name: "Just a Friendly Sparring", description: "Beat Weekend 1 on Hard with no Misses."});
+		createAchievement('debugger',				{name: "디버거", description: "Test 곡을 차트에디터에서 플레이하기", hidden: true});
 		#end
-		createAchievement('ur_bad',					{name: "What a Funkin' Disaster!", description: "Complete a Song with a rating lower than 20%."});
-		createAchievement('ur_good',				{name: "Perfectionist", description: "Complete a Song with a rating of 100%."});
-		#if BASE_GAME_FILES
-		createAchievement('roadkill_enthusiast',	{name: "Roadkill Enthusiast", description: "Watch the Henchmen die 50 times.", maxScore: 50, maxDecimals: 0});
-		#end
-		createAchievement('oversinging', 			{name: "Oversinging Much...?", description: "Sing for 10 seconds without going back to Idle."});
-		createAchievement('hype',					{name: "Hyperactive", description: "Finish a Song without going back to Idle."});
-		createAchievement('two_keys',				{name: "Just the Two of Us", description: "Finish a Song pressing only two keys."});
-		createAchievement('toastie',				{name: "Toaster Gamer", description: "Have you tried to run the game on a toaster?"});
-		#if BASE_GAME_FILES
-		createAchievement('debugger',				{name: "Debugger", description: "Beat the \"Test\" Stage from the Chart Editor.", hidden: true});
-		#end
-		#if (TITLE_SCREEN_EASTER_EGG || PSYCH_WATERMARKS)
-		createAchievement('pessy_easter_egg',		{name: "Engine Gal Pal", description: "Teehee, you found me~!", hidden: true});
-		#end
-
 		//dont delete this thing below
 		_originalLength = _sortID + 1;
 	}
