@@ -464,7 +464,7 @@ class StoryMenuState extends MusicBeatState
 		updateText();
 	}
 	function updateModeAlpha():Void {
-    	var diffAlpha:Float = (settingMode == 'diff') ? 1.0 : 0.4;
+    	var diffAlpha:Float = (SelectMode == 'diff') ? 1.0 : 0.4;
    		leftArrow.alpha = diffAlpha;
     	rightArrow.alpha = diffAlpha;
     	sprDifficulty.alpha = diffAlpha;
