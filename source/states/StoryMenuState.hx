@@ -40,6 +40,8 @@ class StoryMenuState extends MusicBeatState
 	var sprDifficulty:FlxSprite;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
+
+	var SelectMode:String = 'week'; // 선택모드를 결정
 	
 	var loadedWeeks:Array<WeekData> = [];
 	var weekInitialX:Array<Float> = [];
@@ -246,6 +248,7 @@ class StoryMenuState extends MusicBeatState
 					changeWeek(-1);
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 					changeDiff = true;
+				}
 				else if (SelectMode == "diff") {
 					changeDifficulty(-1);
 					leftArrow.animation.play('press');
@@ -261,6 +264,7 @@ class StoryMenuState extends MusicBeatState
 					changeWeek(1);
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 					changeDiff = true;
+				}
 				else if (SelectMode == "diff") {
 					changeDifficulty(1);
 					rightArrow.animation.play('press');
@@ -277,17 +281,18 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty();
 			}
 
-			if (controls.UI_UP || controls.UP_DOWN)
+			if (controls.UI_UP || controls.UI_DOWN)
 			{
 				if (SelectMode == 'week') {
 					SelectMode = 'diff';
-				{
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+    				updateModeAlpha();
+				}
 				else if (SelectMode == 'diff') {
 					SelectMode = 'week';
-				{	
-			else
-				rightArrow.animation.play('idle');
-			
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+    				updateModeAlpha();
+				}
 
 			if(FlxG.keys.justPressed.CONTROL)
 			{
