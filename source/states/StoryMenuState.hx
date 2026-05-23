@@ -253,9 +253,6 @@ class StoryMenuState extends MusicBeatState
 					changeDifficulty(-1);
 					leftArrow.animation.play('press');
 				}
-				else if (changeDiff) {
-					changeDifficulty();
-				}
 			}
 
 			if (controls.UI_RIGHT_P)
