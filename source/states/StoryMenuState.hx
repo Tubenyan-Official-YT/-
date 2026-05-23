@@ -273,6 +273,11 @@ class StoryMenuState extends MusicBeatState
 			else if (controls.UI_LEFT){
 				leftArrow.animation.play('press');
 			}
+			else {
+   				 // 꾹 누르고 있는 게 아니라면 양쪽 화살표 모두 기본(idle) 상태로 되돌립니다.
+    			rightArrow.animation.play('idle');
+    			leftArrow.animation.play('idle');
+			}
 			if(FlxG.keys.justPressed.CONTROL)
 			{
 				persistentUpdate = false;
