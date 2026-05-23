@@ -2396,6 +2396,9 @@ class PlayState extends MusicBeatState
 	public var transitioning = false;
 	public function endSong()
 	{
+		if (SONG.song.toLowerCase() == 'nyan'){
+    		Achievements.unlock('nyan');
+		}
 		//Should kill you if you tried to cheat
 		if(!startingSong)
 		{
