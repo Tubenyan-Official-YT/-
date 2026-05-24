@@ -424,6 +424,7 @@ class PlayState extends MusicBeatState
 			for (key => spr in list)
 				if(!StageData.reservedNames.contains(key))
 					variables.set(key, spr);
+			add(dad2Group);  // stageData 있어도 dad2Group은 항상 추가
 		}
 		else
 		{
@@ -3279,6 +3280,8 @@ class PlayState extends MusicBeatState
 			boyfriend.dance();
 		if (dad != null && beat % dad.danceEveryNumBeats == 0 && !dad.getAnimationName().startsWith('sing') && !dad.stunned)
 			dad.dance();
+		if (dad2 != null && beat % dad2.danceEveryNumBeats == 0 && !dad2.getAnimationName().startsWith('sing') && !dad2.stunned)
+			dad2.dance();
 	}
 
 	public function playerDance():Void
