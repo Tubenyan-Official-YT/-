@@ -3023,6 +3023,18 @@ class PlayState extends MusicBeatState
 			dad.specialAnim = true;
 			dad.heyTimer = 0.6;
 		}
+		else if(note.noteType == 'Dad2 Sing' && dad2 != null)
+		{
+			// dad2 전용 싱 애니메이션
+			var animToPlay:String = singAnimations[Std.int(Math.abs(Math.min(singAnimations.length-1, note.noteData)))] + note.animSuffix;
+			if(note.isSustainNote)
+			{
+				var holdAnim:String = animToPlay + '-hold';
+				if(dad2.animation.exists(holdAnim)) animToPlay = holdAnim;
+			}
+			dad2.playAnim(animToPlay, true);
+			dad2.holdTimer = 0;
+		}
 		else if(!note.noAnimation)
 		{
 			var char:Character = dad;
