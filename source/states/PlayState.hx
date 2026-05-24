@@ -154,6 +154,8 @@ class PlayState extends MusicBeatState
 	public var dad:Character = null;
 	public var gf:Character = null;
 	public var boyfriend:Character = null;
+	public var dad2:Character = null;
+	public var dad2Group:FlxSpriteGroup;
 
 	public var notes:FlxTypedGroup<Note>;
 	public var unspawnNotes:Array<Note> = [];
@@ -374,6 +376,7 @@ class PlayState extends MusicBeatState
 
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
+		dad2Group = new FlxSpriteGroup(DAD_X + 300, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 
 		switch (curStage)
@@ -426,6 +429,7 @@ class PlayState extends MusicBeatState
 		{
 			add(gfGroup);
 			add(dadGroup);
+			add(dad2Group);
 			add(boyfriendGroup);
 		}
 		
@@ -2182,6 +2186,33 @@ class PlayState extends MusicBeatState
 					}
 				}
 
+
+			case 'Spawn Dad2':
+				var pos:Array<String> = value2.split(',');
+				var posX:Float = (pos[0] != null && pos[0].trim().length > 0) ? Std.parseFloat(pos[0].trim()) : DAD_X + 300;
+				var posY:Float = (pos[1] != null && pos[1].trim().length > 0) ? Std.parseFloat(pos[1].trim()) : DAD_Y;
+				dad2Group.x = posX;
+				dad2Group.y = posY;
+				if(dad2 == null)
+				{
+					dad2 = new Character(0, 0, value1, false);
+					startCharacterPos(dad2, true);
+					dad2Group.add(dad2);
+				}
+				else
+				{
+					dad2.alpha = 0.00001;
+					dad2 = new Character(0, 0, value1, false);
+					startCharacterPos(dad2, true);
+					dad2Group.add(dad2);
+					dad2.alpha = 1;
+				}
+				setOnScripts('dad2Name', dad2.curCharacter);
+				setOnScripts('dad2', dad2);
+
+			case 'Dad2 Visible':
+				if(dad2 != null)
+					dad2.visible = (value1.toLowerCase().trim() == 'true');
 
 			case 'Change Character':
 				var charType:Int = 0;
