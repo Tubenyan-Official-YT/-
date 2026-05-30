@@ -55,11 +55,11 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var yScroll:Float = 0.25;
-		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
+		var yScroll:Float = 0;
+		var bg:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('menuBG'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.scrollFactor.set(0, yScroll);
-		bg.setGraphicSize(Std.int(bg.width * 1.175));
+		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
@@ -82,30 +82,30 @@ class MainMenuState extends MusicBeatState
 		for (num => option in optionShit)
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 140) + 30);
-			if (option == 'story_mode' || option == 'freeplay' || option == 'mods') {
+			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') {
         		item.y -= 55; 
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
-			item.screenCenter(X);
+			item.x = -100
 		}
 
 		if (leftOption != null)
-			leftItem = createMenuItem(leftOption, 60, 490);
+			leftItem = createMenuItem(leftOption, -80, 520);
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, FlxG.width - 60, 490);
+			rightItem = createMenuItem(rightOption, FlxG.width - 60, 520);
 			rightItem.x -= rightItem.width;
 		}
 
-		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, "Psych Engine v" + psychEngineVersion, 12);
+		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, "싸이크엔진 버전: " + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(psychVer);
-		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
+		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, "프나펑 버전: " + Application.current.meta.get('version'), 12);
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
-		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "냥코대전쟁 - 전설의 시작 모드" + gamever, 12);
+		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "냥코대전쟁 - 전설의 시작 모드 버전: " + gamever, 12);
 		gameVer.scrollFactor.set();
 		gameVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(gameVer);
