@@ -91,6 +91,7 @@ class MainMenuState extends MusicBeatState
 		}
 
 		if (leftOption != null)
+		{
 			leftItem = createMenuItem(leftOption, -80, 520);
 		}
 		if (rightOption != null)
