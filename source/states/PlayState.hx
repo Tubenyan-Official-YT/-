@@ -428,9 +428,10 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			add(gfGroup);
+			
 			add(dadGroup);
 			add(dad2Group);
+			add(gfGroup);
 			add(boyfriendGroup);
 		}
 		
