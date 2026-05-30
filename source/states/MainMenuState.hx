@@ -87,7 +87,7 @@ class MainMenuState extends MusicBeatState
         		item.y -= 55; 
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
-			item.x = -50;
+			item.x = -20;
 		}
 
 		if (leftOption != null)
@@ -96,7 +96,7 @@ class MainMenuState extends MusicBeatState
 		}
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, -20, 520);
+			rightItem = createMenuItem(rightOption, 0, 520);
 		}
 
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, "싸이크엔진 버전: " + psychEngineVersion, 12);
