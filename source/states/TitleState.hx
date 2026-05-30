@@ -473,17 +473,18 @@ class TitleState extends MusicBeatState
 
 	function createCoolText(textArray:Array<String>, ?offset:Float = 0)
 	{
-		for (i in 0...textArray.length)
-		{
-			var money:Alphabet = new Alphabet(0, 0, textArray[i], true);
-			money.screenCenter(X);
-			money.y += (i * 60) + 200 + offset;
-			if(credGroup != null && textGroup != null)
-			{
-				credGroup.add(money);
-				textGroup.add(money);
-			}
-		}
+    	for (i in 0...textArray.length)
+    	{
+        	var money:FlxText = new FlxText(0, 0, FlxG.width, textArray[i]);
+        	money.setFormat(Paths.font('title.ttf'), 32, FlxColor.WHITE, CENTER);
+			money.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+        	money.y += (i * 60) + 200 + offset;
+        	if(credGroup != null && textGroup != null)
+        	{
+            	credGroup.add(money);
+            	textGroup.add(money);
+        	}
+    	}
 	}
 
 	function addMoreText(text:String, ?offset:Float = 0)
@@ -538,15 +539,15 @@ class TitleState extends MusicBeatState
 					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
-					createCoolText(['Vs Battle Cats : legend begins mod by'], 40);
+					createCoolText(['냥코대전쟁:전설의 시작'], 40);
 				case 4:
-					addMoreText('tubenyan', 40);
+					addMoreText('냥코 유튜버 튜브냥이 제작', 40);
 				case 5:
 					deleteCoolText();
 				case 6:
-					createCoolText(['This mod is', 'made'], -40);
+					createCoolText(['이', '모드는'], -40);
 				case 8:
-					addMoreText('in korea', -40);
+					addMoreText('국산이고', -40);
 					ngSpr.visible = true;
 				case 9:
 					deleteCoolText();
@@ -560,9 +561,9 @@ class TitleState extends MusicBeatState
 				case 14:
 					addMoreText('Vs');
 				case 15:
-					addMoreText('The battle Cats');
+					addMoreText('냥코 대전쟁');
 				case 16:
-					addMoreText(': Legend begins'); // credTextShit.text += '\nFunkin';
+					addMoreText(': 전설의 시작'); // credTextShit.text += '\nFunkin';
 
 				case 17:
 					skipIntro();
