@@ -84,7 +84,7 @@ class MainMenuState extends MusicBeatState
 			var item:FlxSprite = createMenuItem(option, 0, (num * 140) + 30);
 			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
 			{
-        		item.y -= 55; 
+        		item.y -= 15; 
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
 			item.x = 50;
@@ -92,11 +92,11 @@ class MainMenuState extends MusicBeatState
 
 		if (leftOption != null)
 		{
-			leftItem = createMenuItem(leftOption, 100, 520);
+			leftItem = createMenuItem(leftOption, 50, 520);
 		}
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, 200, 520);
+			rightItem = createMenuItem(rightOption, 300, 520);
 		}
 
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, "싸이크엔진 버전: " + psychEngineVersion, 12);
