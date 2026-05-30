@@ -16,7 +16,7 @@ class MainMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '1.0.4'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
-	public static var gamever:String = 'pre demo 4';
+	public static var gamever:String = 'ALPHA 1.0';
 	public static var curColumn:MainMenuColumn = LEFT;
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
@@ -81,7 +81,7 @@ class MainMenuState extends MusicBeatState
 
 		for (num => option in optionShit)
 		{
-			var item:FlxSprite = createMenuItem(option, 0, (num * 140) + 30);
+			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
 			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
 			{
         		item.y -= 15; 
