@@ -87,16 +87,16 @@ class MainMenuState extends MusicBeatState
         		item.y -= 55; 
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
-			item.x = -20;
+			item.x = 50;
 		}
 
 		if (leftOption != null)
 		{
-			leftItem = createMenuItem(leftOption, -50, 520);
+			leftItem = createMenuItem(leftOption, 100, 520);
 		}
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, 0, 520);
+			rightItem = createMenuItem(rightOption, 200, 520);
 		}
 
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, "싸이크엔진 버전: " + psychEngineVersion, 12);
