@@ -81,7 +81,7 @@ class MainMenuState extends MusicBeatState
 
 		for (num => option in optionShit)
 		{
-			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
+			var item:FlxSprite = createMenuItem(option, 0, (num * 120) + 30);
 			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
 			{
         		item.y -= 15; 
