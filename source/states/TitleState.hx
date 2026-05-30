@@ -489,13 +489,14 @@ class TitleState extends MusicBeatState
 
 	function addMoreText(text:String, ?offset:Float = 0)
 	{
-		if(textGroup != null && credGroup != null) {
-			var coolText:Alphabet = new Alphabet(0, 0, text, true);
-			coolText.screenCenter(X);
-			coolText.y += (textGroup.length * 60) + 200 + offset;
-			credGroup.add(coolText);
-			textGroup.add(coolText);
-		}
+    	if(textGroup != null && credGroup != null) {
+        	var coolText:FlxText = new FlxText(0, 0, FlxG.width, text);
+        	coolText.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
+        	coolText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+        	coolText.y += (textGroup.length * 60) + 200 + offset;
+        	credGroup.add(coolText);
+        	textGroup.add(coolText);
+    	}
 	}
 
 	function deleteCoolText()
