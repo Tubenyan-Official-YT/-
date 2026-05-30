@@ -476,7 +476,7 @@ class TitleState extends MusicBeatState
     	for (i in 0...textArray.length)
     	{
         	var money:FlxText = new FlxText(0, 0, FlxG.width, textArray[i]);
-        	money.setFormat(Paths.font('title.ttf'), 32, FlxColor.WHITE, CENTER);
+        	money.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
 			money.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
         	money.y += (i * 60) + 200 + offset;
         	if(credGroup != null && textGroup != null)
