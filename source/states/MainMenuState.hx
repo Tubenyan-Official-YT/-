@@ -44,7 +44,6 @@ class MainMenuState extends MusicBeatState
 		balloonText = new FlxText(870, 180, 550, "", 24);
 		balloonText.setFormat(Paths.font('title.otf'), 24, FlxColor.WHITE, CENTER);
 		balloonText.scrollFactor.set(0, 0);
-		add(balloonText);
 		
 		super.create();
 
@@ -91,7 +90,7 @@ class MainMenuState extends MusicBeatState
 			result += i+'\n';
 		}
 		balloonText.text = result;
-		
+		add(balloonText);
 		
 		for (num => option in optionShit)
 		{
