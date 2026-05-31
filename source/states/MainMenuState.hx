@@ -41,8 +41,8 @@ class MainMenuState extends MusicBeatState
 	static var showOutdatedWarning:Bool = true;
 	override function create()
 	{
-		balloonText = new FlxText(870, 180, 550, "", 24);
-		balloonText.setFormat(Paths.font('title.otf'), 24, FlxColor.WHITE, CENTER);
+		balloonText = new FlxText(850, 200, 530, "", 32);
+		balloonText.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
 		balloonText.scrollFactor.set(0, 0);
 		
 		super.create();
@@ -74,7 +74,7 @@ class MainMenuState extends MusicBeatState
 		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuBG2'));
 		magenta.antialiasing = ClientPrefs.data.antialiasing;
 		magenta.scrollFactor.set(0, yScroll);
-		magenta.setGraphicSize(Std.int(magenta.width * 1.175));
+		magenta.setGraphicSize(FlxG.width,FlxG.height);
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
