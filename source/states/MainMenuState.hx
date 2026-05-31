@@ -23,7 +23,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	var leftItem:FlxSprite;
 	var rightItem:FlxSprite;
-
+	var balloonText:FlxText;
 	//Centered/Text options
 	var optionShit:Array<String> = [
 		'story_mode',
@@ -41,6 +41,11 @@ class MainMenuState extends MusicBeatState
 	static var showOutdatedWarning:Bool = true;
 	override function create()
 	{
+		balloonText = new FlxText(870, 180, 550, "", 24);
+		balloonText.setFormat(Paths.font('title.otf'), 24, FlxColor.WHITE, CENTER);
+		balloonText.scrollFactor.set(0, 0);
+		add(balloonText);
+		
 		super.create();
 
 		#if MODS_ALLOWED
@@ -78,7 +83,16 @@ class MainMenuState extends MusicBeatState
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
+		
+		var g = FlxG.random.getObject(getIntroTextShit());
 
+		var result:String = "";
+		for (i in g) {
+			result += i+'\n';
+		}
+		balloonText.text = result;
+		
+		
 		for (num => option in optionShit)
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 130) + 30);
@@ -153,6 +167,23 @@ class MainMenuState extends MusicBeatState
 	var selectedSomethin:Bool = false;
 
 	var timeNotMoving:Float = 0;
+
+	function getIntroTextShit():Array<Array<String>>
+		{
+    		#if MODS_ALLOWED
+    		var firstArray:Array<String> = Mods.mergeAllTextsNamed('data/balloonText.txt');
+    		#else
+    		var fullText:String = Assets.getText(Paths.txt('balloonText'));
+    		var firstArray:Array<String> = fullText.split('\n');
+    		#end
+    		var swagGoodArray:Array<Array<String>> = [];
+    		for (i in firstArray)
+    		{
+        		swagGoodArray.push(i.split('--'));
+    		}
+    		return swagGoodArray;
+		}
+	
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)
