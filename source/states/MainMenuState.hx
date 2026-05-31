@@ -44,6 +44,7 @@ class MainMenuState extends MusicBeatState
 		balloonText = new FlxText(850, 200, 530, "", 32);
 		balloonText.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
 		balloonText.scrollFactor.set(0, 0);
+		balloonText.antialiasing = ClientPrefs.data.antialiasing;
 		
 		super.create();
 
