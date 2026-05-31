@@ -35,7 +35,7 @@ class FreeplayState extends MusicBeatState
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
 	var misses:Int;
-	var misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
+	misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
 	
 	private var grpSongs:FlxTypedGroup<FlxSprite>;
 	private var curPlaying:Bool = false;
