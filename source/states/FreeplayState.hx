@@ -34,8 +34,6 @@ class FreeplayState extends MusicBeatState
 	var lerpRating:Float = 0;
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
-	var misses:Int;
-	misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
 	
 	private var grpSongs:FlxTypedGroup<FlxSprite>;
 	private var curPlaying:Bool = false;
@@ -478,7 +476,7 @@ class FreeplayState extends MusicBeatState
 	{
 		if (player.playingMusic)
 			return;
-
+		var misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
 		curDifficulty = FlxMath.wrap(curDifficulty + change, 0, Difficulty.list.length-1);
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
