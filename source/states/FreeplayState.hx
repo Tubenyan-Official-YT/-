@@ -34,7 +34,9 @@ class FreeplayState extends MusicBeatState
 	var lerpRating:Float = 0;
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
-
+	var misses:Int;
+	var misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
+	
 	private var grpSongs:FlxTypedGroup<FlxSprite>;
 	private var curPlaying:Bool = false;
 
@@ -226,7 +228,7 @@ class FreeplayState extends MusicBeatState
 
 		if (!player.playingMusic)
 		{
-			scoreText.text = Language.getPhrase('personal_best', '내 최고점수 : {1} ({2}%)', [lerpScore, ratingSplit.join('.')]);
+			scoreText.text = '내 최고점수 : ' + lerpScore + '\n정확도: ' + ratingSplit.join('.') + '%'+'\n미스: '+misses;
 			positionHighscore();
 			
 			if(songs.length > 1)
