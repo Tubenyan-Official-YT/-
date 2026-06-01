@@ -20,7 +20,7 @@ import haxe.Json;
 class FreeplayState extends MusicBeatState
 {
 	var songs:Array<SongMetadata> = [];
-
+	var misses:Int = 0;
 	var selector:FlxText;
 	private static var curSelected:Int = 0;
 	var lerpSelected:Float = 0;
@@ -476,7 +476,7 @@ class FreeplayState extends MusicBeatState
 	{
 		if (player.playingMusic)
 			return;
-		var misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
+		misses:Int = Highscore.getMisses(songs[curSelected].songName, curDifficulty);
 		curDifficulty = FlxMath.wrap(curDifficulty + change, 0, Difficulty.list.length-1);
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
