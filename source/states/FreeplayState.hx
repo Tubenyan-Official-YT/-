@@ -114,7 +114,9 @@ class FreeplayState extends MusicBeatState
 		{
 			Mods.currentModDirectory = songs[i].folder;
 			var songImage:FlxSprite = new FlxSprite(0, 20);
-			songImage.loadGraphic(Paths.image('freeplay/' + Paths.formatToSongPath(songs[i].songName)));
+			var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
+			var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
+			songImage.loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
 			songImage.setGraphicSize(0, 120);
 			songImage.updateHitbox();
 			songImage.antialiasing = ClientPrefs.data.antialiasing;
@@ -124,14 +126,13 @@ class FreeplayState extends MusicBeatState
 		}
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
-
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
-		scoreBG.alpha = 0.6;
-		add(scoreBG);
-
-		diffText = new FlxText(scoreText.x, scoreText.y + 36, 0, "", 24);
+		scoreText = new FlxText(0, 60, 0, "", 24);
+		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
+		scoreText = new FlxText(0, 60, 0, "", 24);
+		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
+// 검은색(FlxColor.BLACK)으로 두께 5짜리 외곽선(OUTLINE)을 입힙니다.
+		scoreText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 5);
+		diffText = new FlxText(FlxG.width * 0.7, 5, 0, "", 24);
 		diffText.font = scoreText.font;
 		add(diffText);
 
