@@ -116,10 +116,15 @@ class FreeplayState extends MusicBeatState
 			var songImage:FlxSprite = new FlxSprite(0, 20);
 	
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
-			var diffs:Array<String> = Difficulty.loadFromWeek(WeekData.weeksLoaded.get(Std.string(songs[i].week)));
+			Difficulty.loadFromWeek(WeekData.weeksLoaded.get(Std.string(songs[i].week)));
+
+// 2. 로드된 결과물인 Difficulty.list에서 난이도 배열을 복사해 옵니다.
+			var diffs:Array<String> = Difficulty.list.copy();
 			if (diffs == null || diffs.length == 0) diffs = Difficulty.defaultList.copy();
+
+// 3. 그 곡의 0번째(첫 번째) 난이도 이름을 포맷팅하여 파일명 뒤에 붙입니다.
 			var firstDiff:String = Paths.formatToSongPath(diffs[0]);
-	
+
 			songImage.loadGraphic(Paths.image('freeplay/' + songName + '-' + firstDiff));
 	
 			songImage.setGraphicSize(0, 120);
