@@ -114,34 +114,16 @@ class FreeplayState extends MusicBeatState
 		{
 			Mods.currentModDirectory = songs[i].folder;
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
-	
-	// 1. 이 곡이 실제로 가지고 있는 모든 난이도 리스트를 가져옵니다.
-			Difficulty.loadFromWeek(WeekData.weeksLoaded.get(Std.string(songs[i].week)));
-			var diffs:Array<String> = Difficulty.list.copy();
-			if (diffs == null || diffs.length == 0) diffs = Difficulty.defaultList.copy();
-	
-	// 2. [수정된 부분] 이 곡이 가진 난이도 개수만큼 반복문을 한 번 더 돌려서 다 만듭니다.
-			for (j in 0...diffs.length)
-			{
-				var songImage:FlxSprite = new FlxSprite(0, 20);
-				var diffName:String = Paths.formatToSongPath(diffs[j]);
-		
-		// 골뱅이(@) 규칙을 사용하여 해당 난이도의 이미지를 로드합니다 (예: 곡이름@1장)
-				songImage.loadGraphic(Paths.image('freeplay/' + songName + '@' + diffName));
-		
-				songImage.setGraphicSize(0, 120);
-				songImage.updateHitbox();
-				songImage.antialiasing = ClientPrefs.data.antialiasing;
-		
-		// 나중에 관리하기 편하도록 ID와 고유 태그를 설정합니다.
-				songImage.ID = i; 
-		
-		// 처음에는 일단 전부 숨겨둡니다.
-				songImage.visible = songImage.active = false;
-		
-		// 그룹에 싹 다 집어넣어 로드해 둡니다.
-				grpSongs.add(songImage);
-			}
+
+			var songImage:FlxSprite = new FlxSprite(0, 20);
+			var diffName:String = Paths.formatToSongPath(Difficulty.defaultList[0]);
+			songImage.loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
+			songImage.setGraphicSize(0, 120);
+			songImage.updateHitbox();
+			songImage.antialiasing = ClientPrefs.data.antialiasing;
+			songImage.ID = i;
+			songImage.visible = songImage.active = false;
+			grpSongs.add(songImage);
 		}
 		WeekData.setDirectoryFromWeek();
 
