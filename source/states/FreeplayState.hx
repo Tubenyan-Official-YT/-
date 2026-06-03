@@ -137,6 +137,11 @@ class FreeplayState extends MusicBeatState
 		diffText.font = scoreText.font;
 		add(diffText);
 
+		// scoreText 아래에 추가
+		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
+		scoreBG.alpha = 0.6;
+		add(scoreBG);
+		
 		add(scoreText);
 
 
