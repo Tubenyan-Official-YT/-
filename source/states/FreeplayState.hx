@@ -116,8 +116,8 @@ class FreeplayState extends MusicBeatState
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
 
 			var songImage:FlxSprite = new FlxSprite(0, 20);
-			var diffName:String = 'normal';
 			// var diffName:String = Paths.formatToSongPath(Difficulty.defaultList[0]);
+			var diffName:String = Paths.formatToSongPath(Difficulty.list.length > 0 ? Difficulty.list[curDifficulty] : 'normal');
 			songImage.loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
 			songImage.setGraphicSize(0, 120);
 			songImage.updateHitbox();
