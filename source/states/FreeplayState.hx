@@ -114,9 +114,14 @@ class FreeplayState extends MusicBeatState
 		{
 			Mods.currentModDirectory = songs[i].folder;
 			var songImage:FlxSprite = new FlxSprite(0, 20);
-			var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
-			var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
-			songImage.loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
+	
+			var songName:String = Paths.formatToSongPath(songs[i].songName);
+			var diffs:Array<String> = Difficulty.loadFromWeek(WeekData.weeksLoaded.get(songs[i].week));
+			if (diffs == null || diffs.length == 0) diffs = Difficulty.defaultList.copy();
+			var firstDiff:String = Paths.formatToSongPath(diffs[0]);
+	
+			songImage.loadGraphic(Paths.image('freeplay/' + songName + '-' + firstDiff));
+	
 			songImage.setGraphicSize(0, 120);
 			songImage.updateHitbox();
 			songImage.antialiasing = ClientPrefs.data.antialiasing;
@@ -490,7 +495,12 @@ class FreeplayState extends MusicBeatState
 			diffText.text = '< ' + displayDiff.toUpperCase() + ' >';
 		else
 			diffText.text = displayDiff.toUpperCase();
+		
+		var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
+		var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
 
+		grpSongs.members[curSelected].loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
+		
 		positionHighscore();
 		missingText.visible = false;
 		missingTextBG.visible = false;
