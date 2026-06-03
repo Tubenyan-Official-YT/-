@@ -116,7 +116,7 @@ class FreeplayState extends MusicBeatState
 			var songImage:FlxSprite = new FlxSprite(0, 20);
 	
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
-			var diffs:Array<String> = Difficulty.loadFromWeek(WeekData.weeksLoaded.get(songs[i].week));
+			var diffs:Array<String> = Difficulty.loadFromWeek(WeekData.weeksLoaded.get(Std.string(songs[i].week)));
 			if (diffs == null || diffs.length == 0) diffs = Difficulty.defaultList.copy();
 			var firstDiff:String = Paths.formatToSongPath(diffs[0]);
 	
