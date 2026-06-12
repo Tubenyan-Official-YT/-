@@ -38,7 +38,7 @@ class Achievements {
 		createAchievement('oversinging', 			{name: "과도한 발성..??", description: "기본 상태로 안 돌아가고 10초동안 화살표 누르고 있기"});
 		createAchievement('hype',					{name: "Hyperactive", description: "노래 부르는 상태에서 곡 끝내기"});
 		createAchievement('two_keys',				{name: "Just the Two of Us", description: "두개의 키를 누른 상태에서 곡 끝내기"});
-		createAchievement('nyan', {name: "냥!!", description: "냥코를 이기기"});
+		
 		#if BASE_GAME_FILES
 		createAchievement('debugger',				{name: "디버거", description: "Test 곡을 차트에디터에서 플레이하기", hidden: true});
 		#end
