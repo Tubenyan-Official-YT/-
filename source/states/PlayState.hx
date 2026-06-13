@@ -82,9 +82,9 @@ class PlayState extends MusicBeatState
 		['겁내 못하네', 0.5], //From 40% to 49%
 		['못하네', 0.6], //From 50% to 59%
 		['별로야', 0.69], //From 60% to 68%
-		['나쁘지 않다?', 0.7], //69%
-		['괜찮네~', 0.8], //From 70% to 79%
-		['꽤 한다!', 0.9], //From 80% to 89%
+		['조금만 더', 0.7], //69%
+		['좀만 더 잘해봐~', 0.8], //From 70% to 79%
+		['아쉽누?', 0.9], //From 80% to 89%
 		['되게 잘하네~!', 1], //From 90% to 99%
 		['정말 최고야!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
