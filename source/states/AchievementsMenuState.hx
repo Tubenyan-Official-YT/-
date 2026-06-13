@@ -54,7 +54,7 @@ class AchievementsMenuState extends MusicBeatState
 		options.sort(sortByID);
 		for (option in options)
 		{
-			var optionGrp:FlxSpriteGroup = new FlxSpriteGroup;
+			var optionGrp:FlxSpriteGroup = new FlxSpriteGroup();
 			var hasAntialias:Bool = ClientPrefs.data.antialiasing;
 			var graphic = null;
 			if(option.unlocked)
