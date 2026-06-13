@@ -75,11 +75,11 @@ class AchievementsMenuState extends MusicBeatState
 			var spr:FlxSprite = new FlxSprite(440, grpOptions.members.length * 180).loadGraphic(graphic);
 			spr.scrollFactor.x = 0;
 			spr.screenCenter(X);
-			spr.x = spr.x - 100;
+			spr.x = spr.x - 180;
 			spr.ID = options.indexOf(option);
 			spr.antialiasing = hasAntialias;
-			var name:FlxText = new FlxText(spr.x + spr.width + 20, spr.y);
-			var desc:FlxText = new FlxText(spr.x + spr.width + 20, spr.y + 20);
+			var name:FlxText = new FlxText(spr.x + spr.width + 20, spr.y + 50);
+			var desc:FlxText = new FlxText(spr.x + spr.width + 20, spr.y + 70);
 			name.text = option.displayName;
 			desc.text = option.description;
 			name.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE);
