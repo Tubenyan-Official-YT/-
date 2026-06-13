@@ -112,7 +112,7 @@ class AchievementsMenuState extends MusicBeatState
 		progressBar.scrollFactor.set();
 		progressBar.enabled = false;
 		
-		progressTxt = new FlxText;
+		progressTxt = new FlxText();
 
 		add(progressBar);
 		add(progressTxt);
