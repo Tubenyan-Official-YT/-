@@ -10,13 +10,13 @@ class AchievementsMenuState extends MusicBeatState
 	public var curSelected:Int = 0;
 
 	public var options:Array<Dynamic> = [];
-	public var grpOptions:FlxSpriteGroup();
-	public var nameText:FlxText();
-	public var descText:FlxText();
-	public var progressTxt:FlxText();
-	public var progressBar:Bar();
+	public var grpOptions:FlxSpriteGroup;
+	public var nameText:FlxText;
+	public var descText:FlxText;
+	public var progressTxt:FlxText;
+	public var progressBar:Bar;
 
-	var camFollow:FlxObject();
+	var camFollow:FlxObject;
 
 	var MAX_PER_ROW:Int = 4;
 
