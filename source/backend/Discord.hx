@@ -98,7 +98,7 @@ class DiscordClient
 		isInitialized = true;
 	}
 
-	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float, largeImageKey:String = 'icon')
+	public static function changePresence(details:String = '메인 메뉴', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float, largeImageKey:String = 'icon')
 	{
 		var startTimestamp:Float = 0;
 		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
