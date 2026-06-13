@@ -193,7 +193,9 @@ class AchievementsMenuState extends MusicBeatState
     	}
     	else progressBar.percent = 0;
 
-    	camFollow.setPosition(0, grpOptions.members[curSelected][0].getGraphicMidpoint().y);
+    	var optionGrp:FlxSpriteGroup = cast grpOptions.members[curSelected];
+		var spr:FlxSprite = cast optionGrp.members[0];
+		camFollow.setPosition(0, spr.getGraphicMidpoint().y);
 
     	for(i in 0...grpOptions.members.length)
         	grpOptions.members[i].alpha = (i == curSelected) ? 1 : 0.6;
@@ -273,7 +275,7 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 				if(option.maxProgress > 0) state.progressTxt.text = '0 / ' + option.maxProgress;
 				
 				var optionGrp:FlxSpriteGroup = cast state.grpOptions.members[state.curSelected];
-				var spr = cast(optionGrp.members[0], FlxSprite);
+				var spr:FlxSprite = cast optionGrp.members[0];
 				spr.loadGraphic(Paths.image('achievements/lockedachievement'));
 				spr.antialiasing = ClientPrefs.data.antialiasing;
 
