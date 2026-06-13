@@ -271,7 +271,7 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 				option.name = '???';
 				if(option.maxProgress > 0) state.progressTxt.text = '0 / ' + option.maxProgress;
 				
-				var optionGrp = cast(state.grpOptions.members[state.curSelected], FlxSpriteGroup);
+				var optionGrp:FlxSpriteGroup = cast state.grpOptions.members[state.curSelected];
 				var spr = cast(optionGrp.members[0], FlxSprite);
 				spr.loadGraphic(Paths.image('achievements/lockedachievement'));
 				spr.antialiasing = ClientPrefs.data.antialiasing;
