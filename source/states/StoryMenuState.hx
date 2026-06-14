@@ -93,7 +93,7 @@ class StoryMenuState extends MusicBeatState
 		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
 
-		var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BLACK);
+		var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BROWN);
 		add(blackBarThingie);
 
 		grpWeekCharacters = new FlxTypedGroup<MenuCharacter>();
@@ -110,7 +110,8 @@ class StoryMenuState extends MusicBeatState
 			loadedWeeks.push(weekFile);
 			if (!isLocked || !weekFile.hiddenUntilUnlocked)
 			{
-    			var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, WeekData.weeksList[i]);
+    			var weekThing:MenuItem = new MenuItem(0, 0, WeekData.weeksList[i]);
+				weekThing.screenCenter(Y);
     			weekThing.ID = num;
     			weekThing.targetY = 0;  // Y는 고정
     			weekThing.x = itemTargetX;  // X로 배치
