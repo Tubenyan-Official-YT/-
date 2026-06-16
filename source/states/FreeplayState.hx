@@ -124,12 +124,12 @@ class FreeplayState extends MusicBeatState
 			var imgPath:String = "freeplay/" + songName + "-" + diffName;
 			var pathStr:String = Paths.mods("images/" + imgPath + ".png");
 			var fallbackStr:String = Paths.mods("images/freeplay/" + songName + "-normal.png");
-			if (sys.io.FileSystem.exists(pathStr)) {
+			if (sys.FileSystem.exists(pathStr)) {
 				var bytes = sys.io.File.getBytes(pathStr);
 				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
 				songImage.loadGraphic(bitmapData);
 			}
-			else if (sys.io.FileSystem.exists(fallbackStr)) {
+			else if (sys.FileSystem.exists(fallbackStr)) {
 				var bytes = sys.io.File.getBytes(fallbackStr);
 				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
 				songImage.loadGraphic(bitmapData);
