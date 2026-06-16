@@ -113,17 +113,26 @@ class FreeplayState extends MusicBeatState
 		for (i in 0...songs.length)
 		{
 			Mods.currentModDirectory = songs[i].folder;
-			var songName:String = Paths.formatToSongPath(songs[i].songName);
-
-			var songImage:FlxSprite = new FlxSprite(0, 20);
-			// var diffName:String = Paths.formatToSongPath(Difficulty.defaultList[0]);
-			var diffName:String = Paths.formatToSongPath(Difficulty.list.length > 0 ? Difficulty.list[curDifficulty] : 'normal');
-			var imgPath:String = 'freeplay/' + songName + '-' + diffName;
-			if ((Paths.fileExists((('images/' + imgPath) + '.png'), IMAGE))) {
-    			songImage.loadGraphic(Paths.image(imgPath));
+			var songName:String = songs[i].songName.toLowerCase().split(" ").join("-");
+			var baseDiff:String = "normal";
+			if (Difficulty.list.length > 0) 
+			{
+				baseDiff = Difficulty.list[curDifficulty];
 			}
-			else {
-    			songImage.loadGraphic(Paths.image(('freeplay/' + (songName + '-normal'))));
+			var diffName:String = baseDiff.toLowerCase().split(" ").join("-");
+			var songImage:FlxSprite = new FlxSprite(0, 20);
+			var imgPath:String = "freeplay/" + songName + "-" + diffName;
+			var pathStr:String = Paths.mods("images/" + imgPath + ".png");
+			var fallbackStr:String = Paths.mods("images/freeplay/" + songName + "-normal.png");
+			if (sys.io.FileSystem.exists(pathStr)) {
+				var bytes = sys.io.File.getBytes(pathStr);
+				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
+				songImage.loadGraphic(bitmapData);
+			}
+			else if (sys.io.FileSystem.exists(fallbackStr)) {
+				var bytes = sys.io.File.getBytes(fallbackStr);
+				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
+				songImage.loadGraphic(bitmapData);
 			}
 			songImage.setGraphicSize(0, 120);
 			songImage.updateHitbox();
