@@ -127,12 +127,12 @@ class FreeplayState extends MusicBeatState
 			if (sys.FileSystem.exists(pathStr)) {
 				var bytes = sys.io.File.getBytes(pathStr);
 				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
-				songImage.loadGraphic(bitmapData);
+				songImage.loadGraphic(flixel.graphics.FlixelGraphics.fromBitmapData(bitmapData));
 			}
 			else if (sys.FileSystem.exists(fallbackStr)) {
 				var bytes = sys.io.File.getBytes(fallbackStr);
 				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
-				songImage.loadGraphic(bitmapData);
+				songImage.loadGraphic(flixel.graphics.FlixelGraphics.fromBitmapData(bitmapData));
 			}
 			songImage.setGraphicSize(0, 120);
 			songImage.updateHitbox();
