@@ -109,30 +109,20 @@ class FreeplayState extends MusicBeatState
 
 		grpSongs = new FlxTypedGroup<FlxSprite>();
 		add(grpSongs);
-
 		for (i in 0...songs.length)
 		{
 			Mods.currentModDirectory = songs[i].folder;
-			var songName:String = songs[i].songName.toLowerCase().split(" ").join("-");
-			var baseDiff:String = "normal";
-			if (Difficulty.list.length > 0) 
-			{
-				baseDiff = Difficulty.list[curDifficulty];
-			}
-			var diffName:String = baseDiff.toLowerCase().split(" ").join("-");
+			var songName:String = Paths.formatToSongPath(songs[i].songName);
+
 			var songImage:FlxSprite = new FlxSprite(0, 20);
-			var imgPath:String = "freeplay/" + songName + "-" + diffName;
-			var pathStr:String = Paths.mods("images/" + imgPath + ".png");
-			var fallbackStr:String = Paths.mods("images/freeplay/" + songName + "-normal.png");
-			if (sys.FileSystem.exists(pathStr)) {
-				var bytes = sys.io.File.getBytes(pathStr);
-				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
-				songImage.loadGraphic(flixel.graphics.FlixelGraphic.fromBitmapData(bitmapData));
+			// var diffName:String = Paths.formatToSongPath(Difficulty.defaultList[0]);
+			var diffName:String = Paths.formatToSongPath(Difficulty.list.length > 0 ? Difficulty.list[curDifficulty] : 'normal');
+			var imgPath:String = 'freeplay/' + songName + '-' + diffName;
+			if ((Paths.fileExists((('images/' + imgPath) + '.png'), IMAGE))) {
+    			songImage.loadGraphic(Paths.image(imgPath));
 			}
-			else if (sys.FileSystem.exists(fallbackStr)) {
-				var bytes = sys.io.File.getBytes(fallbackStr);
-				var bitmapData = openfl.display.BitmapData.fromBytes(bytes);
-				songImage.loadGraphic(flixel.graphics.FlixelGraphic.fromBitmapData(bitmapData));
+			else {
+    			songImage.loadGraphic(Paths.image(('freeplay/' + (songName + '-normal'))));
 			}
 			songImage.setGraphicSize(0, 120);
 			songImage.updateHitbox();
@@ -141,6 +131,7 @@ class FreeplayState extends MusicBeatState
 			songImage.visible = songImage.active = false;
 			grpSongs.add(songImage);
 		}
+
 		WeekData.setDirectoryFromWeek();
 
 		scoreText = new FlxText(0, 60, 0, "", 24);
