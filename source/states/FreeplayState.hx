@@ -111,25 +111,40 @@ class FreeplayState extends MusicBeatState
 		add(grpSongs);
 		for (i in 0...songs.length)
 		{
-			Mods.currentModDirectory = songs[i].folder;
-			var songName:String = Paths.formatToSongPath(songs[i].songName);
+    		Mods.currentModDirectory = songs[i].folder;
+    		var songName:String = Paths.formatToSongPath(songs[i].songName);
 
-			var songImage:FlxSprite = new FlxSprite(0, 20);
-			// var diffName:String = Paths.formatToSongPath(Difficulty.defaultList[0]);
-			var diffName:String = Paths.formatToSongPath(Difficulty.list.length > 0 ? Difficulty.list[curDifficulty] : 'normal');
-			var imgPath:String = 'freeplay/' + songName + '-' + diffName;
-			if ((Paths.fileExists((('images/' + imgPath) + '.png'), IMAGE))) {
-    			songImage.loadGraphic(Paths.image(imgPath));
-			}
-			else {
-    			songImage.loadGraphic(Paths.image(('freeplay/' + (songName + '-normal'))));
-			}
-			songImage.setGraphicSize(0, 120);
-			songImage.updateHitbox();
-			songImage.antialiasing = ClientPrefs.data.antialiasing;
-			songImage.ID = i;
-			songImage.visible = songImage.active = false;
-			grpSongs.add(songImage);
+    		var songImage:FlxSprite = new FlxSprite(0, 20);
+
+    		// 해당 곡이 속한 주차(Week)의 데이터를 가져와 설정된 첫 번째 난이도를 초기 기본값으로 사용합니다.
+    		var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
+    		var baseDiff:String = 'normal';
+    		if (leWeek != null && leWeek.difficulties != null && leWeek.difficulties.trim() != '') {
+        		baseDiff = leWeek.difficulties.split(',')[0].trim();
+    		}
+
+    		var diffName:String = Paths.formatToSongPath(baseDiff);
+    		var imgPath:String = 'freeplay/' + songName + '-' + diffName;
+    
+    		if ((Paths.fileExists((('images/' + imgPath) + '.png'), IMAGE))) {
+        		songImage.loadGraphic(Paths.image(imgPath));
+    		}
+    		else {
+        // 커스텀 난이도 및 기본 normal 이미지 둘 다 없을 경우를 대비해 투명한 그래픽으로 안전하게 예외 처리합니다.
+        		var fallbackPath:String = 'freeplay/' + songName + '-normal';
+        		if ((Paths.fileExists((('images/' + fallbackPath) + '.png'), IMAGE))) {
+            		songImage.loadGraphic(Paths.image(fallbackPath));
+        		} 
+				else {
+            		songImage.makeGraphic(1, 1, 0x00000000);
+        		}
+    		}
+    		songImage.setGraphicSize(0, 120);
+    		songImage.updateHitbox();
+    		songImage.antialiasing = ClientPrefs.data.antialiasing;
+    		songImage.ID = i;
+    		songImage.visible = songImage.active = false;
+    		grpSongs.add(songImage);
 		}
 
 		WeekData.setDirectoryFromWeek();
@@ -557,7 +572,7 @@ class FreeplayState extends MusicBeatState
 	private function positionHighscore()
 	{
 		scoreText.screenCenter(X);
-		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
+		scoreBG.scale.x = 100;
 		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
