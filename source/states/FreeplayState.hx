@@ -522,7 +522,10 @@ class FreeplayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
 		var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
 
-		grpSongs.members[curSelected].loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
+		var item = grpSongs.members[curSelected];
+		item.loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
+		item.setGraphicSize(0, 120); // 새로 불러온 이미지의 높이를 다시 120으로 제한
+		item.updateHitbox();        // 변경된 크기에 맞게 히트박스(크기 정보) 재계산
 		
 		positionHighscore();
 		missingText.visible = false;
