@@ -149,13 +149,14 @@ class FreeplayState extends MusicBeatState
 
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(0, 120, 0, "", 24);
+		scoreText = new FlxText(0, 240, 0, "", 24);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
 		scoreText = new FlxText(0, 60, 0, "", 24);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
 // 검은색(FlxColor.BLACK)으로 두께 5짜리 외곽선(OUTLINE)을 입힙니다.
 		scoreText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 5);
 		diffText = new FlxText(FlxG.width * 0.7, 5, 0, "", 24);
+		diffText.screenCenter(X);
 		diffText.font = scoreText.font;
 		add(diffText);
 
@@ -522,10 +523,34 @@ class FreeplayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
 		var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
 
-		var item = grpSongs.members[curSelected];
-		item.loadGraphic(Paths.image('freeplay/' + songName + '-' + diffName));
-		item.setGraphicSize(0, 120); // 새로 불러온 이미지의 높이를 다시 120으로 제한
-		item.updateHitbox();        // 변경된 크기에 맞게 히트박스(크기 정보) 재계산
+		for (i in 0...songs.length)
+		{
+			var item = grpSongs.members[i];
+			if (item == null) continue;
+
+			// 각 인덱스(i)에 맞는 곡 폴더 경로 지정
+			Mods.currentModDirectory = songs[i].folder;
+			var songName:String = Paths.formatToSongPath(songs[i].songName);
+			var imgPath:String = 'freeplay/' + songName + '-' + diffName;
+
+			// 변경된 난이도의 이미지가 존재하는지 확인
+			if (Paths.fileExists(('images/' + imgPath + '.png'), IMAGE)) {
+				item.loadGraphic(Paths.image(imgPath));
+			}
+			else {
+				// 해당 난이도 이미지가 없을 경우 기본 normal 이미지로 예외 처리
+				var fallbackPath:String = 'freeplay/' + songName + '-normal';
+				if (Paths.fileExists(('images/' + fallbackPath + '.png'), IMAGE)) {
+					item.loadGraphic(Paths.image(fallbackPath));
+				} 
+				else {
+					// normal 이미지마저 없다면 투명 처리
+					item.makeGraphic(1, 1, 0x00000000);
+				}
+			}
+			item.setGraphicSize(0, 120); // 모든 이미지의 높이를 120으로 유지
+			item.updateHitbox();         // 크기 변경에 따른 히트박스 재계산
+		}
 		
 		positionHighscore();
 		missingText.visible = false;
