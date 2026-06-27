@@ -380,7 +380,10 @@ class Paths
 		#if MODS_ALLOWED
 		var xmlExists:Bool = false;
 
-		var xml:String = modsXml(key);
+		var translatedKey:String = Language.getFileTranslation('images/$key');
+		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+
+		var xml:String = modsXml(translatedKey);
 		if(FileSystem.exists(xml)) xmlExists = true;
 
 		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder)));
@@ -395,7 +398,10 @@ class Paths
 		#if MODS_ALLOWED
 		var txtExists:Bool = false;
 		
-		var txt:String = modsTxt(key);
+		var translatedKey:String = Language.getFileTranslation('images/$key');
+		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+
+		var txt:String = modsTxt(translatedKey);
 		if(FileSystem.exists(txt)) txtExists = true;
 
 		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? File.getContent(txt) : getPath(Language.getFileTranslation('images/$key') + '.txt', TEXT, parentFolder)));
@@ -410,7 +416,10 @@ class Paths
 		#if MODS_ALLOWED
 		var jsonExists:Bool = false;
 
-		var json:String = modsImagesJson(key);
+		var translatedKey:String = Language.getFileTranslation('images/$key');
+		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+
+		var json:String = modsImagesJson(translatedKey);
 		if(FileSystem.exists(json)) jsonExists = true;
 
 		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, (jsonExists ? File.getContent(json) : getPath(Language.getFileTranslation('images/$key') + '.json', TEXT, parentFolder)));
