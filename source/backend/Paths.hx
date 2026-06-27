@@ -228,50 +228,39 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), modsAllowed);
 
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
-static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
+	inline static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
-		// 1. 현재 설정된 언어 확인 (Language.currentLanguage 사용)
-		var currentLang:String = 'en';
-		try {
-			if (Type.resolveClass('backend.Language') != null) {
-				var lang = Reflect.field(Type.resolveClass('backend.Language'), 'currentLanguage');
-				if (lang != null) currentLang = lang;
-			}
-		} catch(e:Dynamic) {}
-
-		// 2. 언어 전용 폴더가 포함된 경로 우선 확인 (예: images/ko/key.png)
-		var langKey:String = 'images/' + currentLang + '/' + key;
+		var currentLang:String = 'ko-KR'; // 현재 설정된 언어 (Language.currentLanguage 등으로 대체 가능)
+		
+		// 1. 사용자님이 만드신 ko-KR 폴더를 최우선으로 탐색
+		var langKey:String = 'images/$currentLang/$key';
 		var path:String = getPath(langKey + '.png', IMAGE, parentFolder, true);
 		
 		var finalKey:String = key;
-		var fileExists:Bool = false;
-
+		
+		// 2. 파일 존재 여부 확인 후 경로 결정
 		#if MODS_ALLOWED
 		if (sys.FileSystem.exists(path)) {
-			fileExists = true;
 			finalKey = langKey;
+		} else {
+			finalKey = Language.getFileTranslation('images/$key');
 		}
 		#else
 		if (openfl.utils.Assets.exists(path, IMAGE)) {
-			fileExists = true;
 			finalKey = langKey;
+		} else {
+			finalKey = Language.getFileTranslation('images/$key');
 		}
 		#end
 
-		// 3. 파일이 없다면 기존 방식대로 기본 경로 사용
-		if (!fileExists) {
-			finalKey = Language.getFileTranslation('images/$key');
-		}
-
-		// 4. 캐시된 그래픽이 있는지 확인 후 반환 (Unknown identifier 문제 해결)
-		var bitmap:BitmapData = null;
-		if (currentTrackedAssets.exists(finalKey + '.png'))
+		// 3. 캐시 처리 (인라인 함수 내에서 호출 가능하도록)
+		var keyWithExt:String = finalKey + '.png';
+		if (currentTrackedAssets.exists(keyWithExt))
 		{
-			localTrackedAssets.push(finalKey + '.png');
-			return currentTrackedAssets.get(finalKey + '.png');
+			localTrackedAssets.push(keyWithExt);
+			return currentTrackedAssets.get(keyWithExt);
 		}
-		
-		return cacheBitmap(finalKey + '.png', parentFolder, bitmap, allowGPU);
+		return cacheBitmap(keyWithExt, parentFolder, null, allowGPU);
 	}
 
 	public static function cacheBitmap(key:String, ?parentFolder:String = null, ?bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic
