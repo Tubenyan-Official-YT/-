@@ -1,12 +1,11 @@
 package objects;
 
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.group.FlxSpriteGroup;
+import haxe.Json;
+import openfl.utils.Assets;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.util.FlxColor;
-import flixel.text.FlxText;
 
 using StringTools;
 
@@ -22,19 +21,23 @@ class Alphabet extends FlxSpriteGroup
 	public var text(default, set):String;
 
 	public var bold:Bool = false;
-	public var letters:Array<FlxSprite> = [];
+	public var letters:Array<Dynamic> = []; // 기존 코드 호환용 빈 배열 유지
 
 	public var isMenuItem:Bool = false;
-	public var targetY:Float = 0;
+	public var targetY:Int = 0;
 	public var changeX:Bool = true;
 	public var changeY:Bool = true;
 
 	public var alignment(default, set):Alignment = LEFT;
 	public var scaleX(default, set):Float = 1;
 	public var scaleY(default, set):Float = 1;
+	public var rows:Int = 0;
 
 	public var distancePerItem:FlxPoint = new FlxPoint(20, 120);
 	public var startPosition:FlxPoint = new FlxPoint(0, 0);
+
+	// 전체 렌더링을 담당할 고정 FlxText 컴포넌트
+	private var nativeText:FlxText = null;
 
 	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = true)
 	{
@@ -43,158 +46,9 @@ class Alphabet extends FlxSpriteGroup
 		this.startPosition.x = x;
 		this.startPosition.y = y;
 		this.bold = bold;
-
 		this.text = text;
 	}
 
-	override function update(elapsed:Float)
-	{
-		if (isMenuItem)
-		{
-			var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
-			if (changeX)
-				x = FlxMath.lerp(x, (targetY * distancePerItem.x) + startPosition.x, lerpVal);
-			if (changeY)
-				y = FlxMath.lerp(y, (targetY * 1.3 * distancePerItem.y) + startPosition.y, lerpVal);
-		}
-
-		super.update(elapsed);
-	}
-
-	public function snapToPosition()
-	{
-		if (isMenuItem)
-		{
-			if (changeX)
-				x = (targetY * distancePerItem.x) + startPosition.x;
-			if (changeY)
-				y = (targetY * 1.3 * distancePerItem.y) + startPosition.y;
-		}
-	}
-
-	private function set_text(newText:String):String
-	{
-		newText = backend.Language.getPhrase(newText, newText);
-		text = newText;
-		clearLetters();
-		createLetters(newText);
-		return text;
-	}
-
-	public function clearLetters()
-	{
-		for (letter in letters)
-		{
-			remove(letter);
-			letter.destroy();
-		}
-		letters = [];
-	}
-
-	private function createLetters(newText:String)
-	{
-		var xPos:Float = 0;
-		var yPos:Float = 0;
-		
-		// alphabet.xml의 높이 실측치 기반 추출 (Bold: 64, Normal: 40)
-		var fontSize:Int = bold ? 64 : 40;
-		var fontName:String = Paths.font("vcr.ttf"); 
-
-		var splitText:Array<String> = newText.split("");
-		
-		for (char in splitText)
-		{
-			if (char == "\n")
-			{
-				xPos = 0;
-				yPos += bold ? 80 : 50;
-				continue;
-			}
-
-			if (char == " ")
-			{
-				xPos += bold ? 28 : 20;
-				continue;
-			}
-
-			var letter:FlxText = new FlxText(xPos, yPos, 0, char);
-			letter.setFormat(fontName, fontSize, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			letter.borderSize = bold ? 5 : 2;
-			letter.updateHitbox();
-
-			letter.scale.set(scaleX, scaleY);
-			
-			add(letter);
-			letters.push(letter);
-
-			xPos += letter.width + (bold ? 4 : 2);
-		}
-
-		updateAlignment();
-	}
-
-	public function changeText(newText:String)
-	{
-		this.text = newText;
-	}
-
-	private function set_alignment(value:Alignment):Alignment
-	{
-		alignment = value;
-		updateAlignment();
-		return alignment;
-	}
-
-	private function updateAlignment()
-	{
-		if (letters.length == 0) return;
-
-		var minX:Float = 999999;
-		var maxX:Float = -999999;
-		for (letter in letters)
-		{
-			if (letter.x < minX) minX = letter.x;
-			if (letter.x + letter.width > maxX) maxX = letter.x + letter.width;
-		}
-		var totalWidth:Float = maxX - minX;
-
-		for (letter in letters)
-		{
-			switch (alignment)
-			{
-				case CENTERED:
-					letter.offset.x = totalWidth / 2;
-				case RIGHT:
-					letter.offset.x = totalWidth;
-				default:
-					letter.offset.x = 0;
-			}
-		}
-	}
-
-	private function set_scaleX(value:Float):Float
-	{
-		scaleX = value;
-		for (letter in letters)
-		{
-			letter.scale.x = scaleX;
-			letter.updateHitbox();
-		}
-		updateAlignment();
-		return scaleX;
-	}
-
-	private function set_scaleY(value:Float):Float
-	{
-		scaleY = value;
-		for (letter in letters)
-		{
-			letter.scale.y = scaleY;
-			letter.updateHitbox();
-		}
-		return scaleY;
-	}
-	
 	public function setAlignmentFromString(align:String)
 	{
 		switch(align.toLowerCase().trim())
@@ -206,5 +60,89 @@ class Alphabet extends FlxSpriteGroup
 			default:
 				alignment = LEFT;
 		}
+	}
+
+	private function set_text(newText:String)
+	{
+		newText = newText.replace('\\n', '\n');
+		text = newText;
+		
+		// 기존에 생성되어 있던 컴포넌트 정리
+		if (nativeText != null) {
+			remove(nativeText);
+			nativeText.destroy();
+			nativeText = null;
+		}
+
+		if (text.length == 0) return text;
+
+		// 영문/다국어 구분 없이 무조건 FlxText 컴포넌트 생성 후 폰트 자동 일괄 적용
+		nativeText = new FlxText(0, 0, 0, text);
+		
+		// shared 통합 폰트 에셋 로드 (mods/fonts/font.ttf)
+		var fontName:String = Paths.font("font.ttf");
+		var fontSize:Int = bold ? 56 : 36;
+		
+		nativeText.setFormat(fontName, fontSize, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		nativeText.borderSize = bold ? 5 : 3;
+		nativeText.antialiasing = ClientPrefs.data.antialiasing;
+		
+		add(nativeText);
+		updateAlignment();
+
+		// 행(Row) 수 계산
+		rows = text.split('\n').length;
+
+		return text;
+	}
+
+	private function updateAlignment()
+	{
+		if (nativeText == null) return;
+
+		// 텍스트 정렬 기준에 맞춘 상대 좌표 오프셋 설정
+		switch (alignment)
+		{
+			case CENTERED:
+				nativeText.x = -nativeText.width / 2;
+			case RIGHT:
+				nativeText.x = -nativeText.width;
+			default:
+				nativeText.x = 0;
+		}
+	}
+
+	private function set_alignment(value:Alignment)
+	{
+		alignment = value;
+		updateAlignment();
+		return value;
+	}
+
+	private function set_scaleX(value:Float)
+	{
+		scaleX = value;
+		scale.x = value;
+		return value;
+	}
+
+	private function set_scaleY(value:Float)
+	{
+		scaleY = value;
+		scale.y = value;
+		return value;
+	}
+
+	override function update(elapsed:Float)
+	{
+		if (isMenuItem)
+		{
+			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, distancePerItem.y);
+			var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
+			
+			if (changeX) x = FlxMath.lerp(x, (targetY * distancePerItem.x) + startPosition.x, lerpVal);
+			if (changeY) y = FlxMath.lerp(y, scaledY + startPosition.y, lerpVal);
+		}
+		super.update(elapsed);
 	}
 }
