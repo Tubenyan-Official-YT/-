@@ -228,16 +228,43 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), modsAllowed);
 
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
-	static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
+	inline static public function image(key:String, ?library:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
-		key = Language.getFileTranslation('images/$key') + '.png';
-		var bitmap:BitmapData = null;
-		if (currentTrackedAssets.exists(key))
-		{
-			localTrackedAssets.push(key);
-			return currentTrackedAssets.get(key);
+		// [자동 파싱 핵심 로직] 
+		// 1. 현재 설정된 언어 코드를 안전하게 가져옵니다. (기본값 'en')
+		var currentLang:String = 'en';
+		try {
+			if (Type.resolveClass('backend.Language') != null) {
+				currentLang = Reflect.field(Type.resolveClass('backend.Language'), 'currentLanguage');
+				if (currentLang == null) currentLang = 'en';
+			}
+		} catch(e:Dynamic) {
+			currentLang = 'en';
 		}
-		return cacheBitmap(key, parentFolder, bitmap, allowGPU);
+
+		// 2. 먼저 현재 언어 전용 폴더의 이미지 경로를 구성합니다. (예: images/ko/menuText.png)
+		var langKey:String = currentLang + '/' + key;
+		var path:String = getPath('images/$langKey.png', IMAGE, library);
+
+		// 3. 해당 언어 폴더 내에 번역된 이미지가 실제로 존재하는지 검사합니다.
+		var fileExists:Bool = false;
+		#if MODS_ALLOWED
+		// mods 폴더 내에서 파일이 존재안하거나 리턴값이 null인지 체크
+		if (FileSystem.exists(path)) {
+			fileExists = true;
+		}
+		#else
+		if (OpenFlAssets.exists(path, IMAGE)) {
+			fileExists = true;
+		}
+		#end
+
+		// 4. 언어별 전용 파일이 없다면, 원래 기본 이미지 경로로 롤백(Fallback)합니다.
+		if (!fileExists) {
+			path = getPath('images/$key.png', IMAGE, library);
+		}
+
+		return returnGraphic(path, allowGPU);
 	}
 
 	public static function cacheBitmap(key:String, ?parentFolder:String = null, ?bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic
