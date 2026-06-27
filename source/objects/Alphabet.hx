@@ -2,11 +2,12 @@ package objects;
 
 import haxe.Json;
 import openfl.utils.Assets;
+import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.group.FlxSpriteGroup;
+import flixel.FlxG;
 
 using StringTools;
 
@@ -22,7 +23,7 @@ class Alphabet extends FlxSpriteGroup
 	public var text(default, set):String;
 
 	public var bold:Bool = false;
-	public var letters:Array<Dynamic> = []; // 기존 소스 호환용 빈 배열 유지
+	public var letters:Array<Dynamic> = []; // 외부 호환성을 위해 빈 배열 유지
 
 	public var isMenuItem:Bool = false;
 	public var targetY:Int = 0;
@@ -49,13 +50,25 @@ class Alphabet extends FlxSpriteGroup
 		this.text = text;
 	}
 
-	// [컴파일 에러 해결 핵심] 외부 파일에서 setScale을 호출할 때 그룹 전체 크기를 안전하게 변환합니다.
-	public function setScale(setX:Float, ?setY:Null<Float> = null):Void
+	// 외부에서 호출되는 그룹 전체 크기 제어 함수 구현
+	public function setScale(newX:Float, newY:Null<Float> = null)
 	{
-		if (setY == null) setY = setX;
-		scaleX = setX;
-		scaleY = setY;
-		scale.set(setX, setY);
+		if(newY == null) newY = newX;
+		scaleX = newX;
+		scaleY = newY;
+		scale.set(newX, newY);
+	}
+
+	// [컴파일 에러 해결] CreditsState 등에서 호출되는 정렬 함수 구현
+	public function snapToPosition()
+	{
+		if (isMenuItem)
+		{
+			if(changeX)
+				x = (targetY * distancePerItem.x) + startPosition.x;
+			if(changeY)
+				y = (targetY * 1.3 * distancePerItem.y) + startPosition.y;
+		}
 	}
 
 	public function setAlignmentFromString(align:String)
@@ -71,6 +84,28 @@ class Alphabet extends FlxSpriteGroup
 		}
 	}
 
+	private function set_alignment(align:Alignment)
+	{
+		alignment = align;
+		updateAlignment();
+		return align;
+	}
+
+	private function updateAlignment()
+	{
+		if (nativeText == null) return;
+
+		switch(alignment)
+		{
+			case CENTERED:
+				nativeText.x = -nativeText.width / 2;
+			case RIGHT:
+				nativeText.x = -nativeText.width;
+			default:
+				nativeText.x = 0;
+		}
+	}
+
 	private function set_text(newText:String)
 	{
 		newText = newText.replace('\\n', '\n');
@@ -82,46 +117,29 @@ class Alphabet extends FlxSpriteGroup
 			nativeText = null;
 		}
 
-		if (text.length == 0) return text;
+		if (text.length == 0) return newText;
 
 		nativeText = new FlxText(0, 0, 0, text);
 		
-		// mods/fonts/font.ttf 경로의 통합 폰트를 자동으로 적용합니다.
+		// shared/fonts/font.ttf 경로의 통합 폰트를 자동으로 적용합니다.
 		var fontName:String = Paths.font("font.ttf");
 		var fontSize:Int = bold ? 56 : 36;
 		
 		nativeText.setFormat(fontName, fontSize, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		nativeText.borderSize = bold ? 5 : 3;
-		nativeText.antialiasing = ClientPrefs.data.antialiasing;
+		
+		try {
+			nativeText.antialiasing = ClientPrefs.data.antialiasing;
+		} catch(e:Dynamic) {
+			nativeText.antialiasing = true;
+		}
 		
 		add(nativeText);
 		updateAlignment();
 
 		rows = text.split('\n').length;
 
-		return text;
-	}
-
-	private function updateAlignment()
-	{
-		if (nativeText == null) return;
-
-		switch (alignment)
-		{
-			case CENTERED:
-				nativeText.x = -nativeText.width / 2;
-			case RIGHT:
-				nativeText.x = -nativeText.width;
-			default:
-				nativeText.x = 0;
-		}
-	}
-
-	private function set_alignment(value:Alignment)
-	{
-		alignment = value;
-		updateAlignment();
-		return value;
+		return newText;
 	}
 
 	private function set_scaleX(value:Float)
@@ -142,12 +160,28 @@ class Alphabet extends FlxSpriteGroup
 	{
 		if (isMenuItem)
 		{
-			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, distancePerItem.y);
-			var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
-			
-			if (changeX) x = FlxMath.lerp(x, (targetY * distancePerItem.x) + startPosition.x, lerpVal);
-			if (changeY) y = FlxMath.lerp(y, scaledY + startPosition.y, lerpVal);
+			var lerpVal:Float = Math.exp(-elapsed * 9.6);
+			if(changeX)
+				x = FlxMath.lerp((targetY * distancePerItem.x) + startPosition.x, x, lerpVal);
+			if(changeY)
+				y = FlxMath.lerp((targetY * 1.3 * distancePerItem.y) + startPosition.y, y, lerpVal);
 		}
 		super.update(elapsed);
+	}
+}
+
+// [컴파일 에러 해결] Language.hx 등 외부 파일들의 참조 파괴를 막기 위한 상속 구조 및 static 함수 더미 유지
+class AlphaCharacter extends flixel.FlxSprite
+{
+	public static var allLetters:Map<String, Dynamic> = new Map<String, Dynamic>();
+	
+	public static function loadAlphabetData(request:String = 'alphabet')
+	{
+		// FlxText 시스템을 사용하므로 내부 데이터를 로드할 필요가 없어 더미로 비워둡니다.
+	}
+
+	public static function isTypeAlphabet(c:String):Bool
+	{
+		return true;
 	}
 }
