@@ -228,39 +228,20 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), modsAllowed);
 
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
-	inline static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
+	static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
-		var currentLang:String = 'ko-KR'; // 현재 설정된 언어 (Language.currentLanguage 등으로 대체 가능)
-		
-		// 1. 사용자님이 만드신 ko-KR 폴더를 최우선으로 탐색
-		var langKey:String = 'images/$currentLang/$key';
-		var path:String = getPath(langKey + '.png', IMAGE, parentFolder, true);
-		
-		var finalKey:String = key;
-		
-		// 2. 파일 존재 여부 확인 후 경로 결정
-		#if MODS_ALLOWED
-		if (sys.FileSystem.exists(path)) {
-			finalKey = langKey;
-		} else {
-			finalKey = Language.getFileTranslation('images/$key');
-		}
-		#else
-		if (openfl.utils.Assets.exists(path, IMAGE)) {
-			finalKey = langKey;
-		} else {
-			finalKey = Language.getFileTranslation('images/$key');
-		}
-		#end
+		// Language.hx의 .lang 파일 번역 시스템을 그대로 사용 (font(), sound(), getSparrowAtlas() 등과 동일한 방식)
+		// .lang 파일에 'images/key: "images/ko/key"' 형태로 적어두면 해당 경로로 자동 매핑됨
+		var finalKey:String = Language.getFileTranslation('images/$key') + '.png';
 
-		// 3. 캐시 처리 (인라인 함수 내에서 호출 가능하도록)
-		var keyWithExt:String = finalKey + '.png';
-		if (currentTrackedAssets.exists(keyWithExt))
+		// 캐시된 그래픽이 있는지 확인 후 반환
+		if (currentTrackedAssets.exists(finalKey))
 		{
-			localTrackedAssets.push(keyWithExt);
-			return currentTrackedAssets.get(keyWithExt);
+			localTrackedAssets.push(finalKey);
+			return currentTrackedAssets.get(finalKey);
 		}
-		return cacheBitmap(keyWithExt, parentFolder, null, allowGPU);
+
+		return cacheBitmap(finalKey, parentFolder, null, allowGPU);
 	}
 
 	public static function cacheBitmap(key:String, ?parentFolder:String = null, ?bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic
@@ -392,26 +373,20 @@ class Paths
 		return parentFrames;
 	}
 
-	inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null):FlxAtlasFrames
+	inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
-    // 핵심: 현재 설정된 언어 폴더 경로를 직접 생성
-    	var currentLang:String = Language.currentLanguage; // 예: 'en-US' 또는 'ko-KR'
-    
-    // 1. 언어 폴더 내부의 XML 경로를 우선 탐색
-    	var langPath:String = 'images/$currentLang/$key.xml';
-    
-    // 2. 해당 언어 폴더에 XML이 있는지 확인
-    	var path:String = getPath(langPath, TEXT, parentFolder);
-    
-    // 3. 만약 없으면, 기본 경로에서 로드 (Fallback)
-    	#if MODS_ALLOWED
-    	if(!sys.FileSystem.exists(path)) {
-        	path = getPath('images/$key.xml', TEXT, parentFolder);
-    	}
-    	#end
+		if(key.contains('psychic')) trace(key, parentFolder, allowGPU);
+		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
+		#if MODS_ALLOWED
+		var xmlExists:Bool = false;
 
-    // 4. 로드할 때 위에서 찾은 정확한 path를 사용
-    	return FlxAtlasFrames.fromSparrow(image(key, parentFolder), path);
+		var xml:String = modsXml(key);
+		if(FileSystem.exists(xml)) xmlExists = true;
+
+		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder)));
+		#else
+		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder));
+		#end
 	}
 
 	inline static public function getPackerAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
