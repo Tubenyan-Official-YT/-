@@ -6,6 +6,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.group.FlxSpriteGroup;
 
 using StringTools;
 
@@ -21,7 +22,7 @@ class Alphabet extends FlxSpriteGroup
 	public var text(default, set):String;
 
 	public var bold:Bool = false;
-	public var letters:Array<Dynamic> = []; // 기존 코드 호환용 빈 배열 유지
+	public var letters:Array<Dynamic> = []; // 기존 소스 호환용 빈 배열 유지
 
 	public var isMenuItem:Bool = false;
 	public var targetY:Int = 0;
@@ -36,7 +37,6 @@ class Alphabet extends FlxSpriteGroup
 	public var distancePerItem:FlxPoint = new FlxPoint(20, 120);
 	public var startPosition:FlxPoint = new FlxPoint(0, 0);
 
-	// 전체 렌더링을 담당할 고정 FlxText 컴포넌트
 	private var nativeText:FlxText = null;
 
 	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = true)
@@ -47,6 +47,15 @@ class Alphabet extends FlxSpriteGroup
 		this.startPosition.y = y;
 		this.bold = bold;
 		this.text = text;
+	}
+
+	// [컴파일 에러 해결 핵심] 외부 파일에서 setScale을 호출할 때 그룹 전체 크기를 안전하게 변환합니다.
+	public function setScale(setX:Float, ?setY:Null<Float> = null):Void
+	{
+		if (setY == null) setY = setX;
+		scaleX = setX;
+		scaleY = setY;
+		scale.set(setX, setY);
 	}
 
 	public function setAlignmentFromString(align:String)
@@ -67,7 +76,6 @@ class Alphabet extends FlxSpriteGroup
 		newText = newText.replace('\\n', '\n');
 		text = newText;
 		
-		// 기존에 생성되어 있던 컴포넌트 정리
 		if (nativeText != null) {
 			remove(nativeText);
 			nativeText.destroy();
@@ -76,10 +84,9 @@ class Alphabet extends FlxSpriteGroup
 
 		if (text.length == 0) return text;
 
-		// 영문/다국어 구분 없이 무조건 FlxText 컴포넌트 생성 후 폰트 자동 일괄 적용
 		nativeText = new FlxText(0, 0, 0, text);
 		
-		// shared 통합 폰트 에셋 로드 (mods/fonts/font.ttf)
+		// mods/fonts/font.ttf 경로의 통합 폰트를 자동으로 적용합니다.
 		var fontName:String = Paths.font("font.ttf");
 		var fontSize:Int = bold ? 56 : 36;
 		
@@ -90,7 +97,6 @@ class Alphabet extends FlxSpriteGroup
 		add(nativeText);
 		updateAlignment();
 
-		// 행(Row) 수 계산
 		rows = text.split('\n').length;
 
 		return text;
@@ -100,7 +106,6 @@ class Alphabet extends FlxSpriteGroup
 	{
 		if (nativeText == null) return;
 
-		// 텍스트 정렬 기준에 맞춘 상대 좌표 오프셋 설정
 		switch (alignment)
 		{
 			case CENTERED:
