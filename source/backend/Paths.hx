@@ -228,43 +228,50 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), modsAllowed);
 
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
-	inline static public function image(key:String, ?library:String = null, ?allowGPU:Bool = true):FlxGraphic
+static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
-		// [자동 파싱 핵심 로직] 
-		// 1. 현재 설정된 언어 코드를 안전하게 가져옵니다. (기본값 'en')
+		// 1. 현재 설정된 언어 확인 (Language.currentLanguage 사용)
 		var currentLang:String = 'en';
 		try {
 			if (Type.resolveClass('backend.Language') != null) {
-				currentLang = Reflect.field(Type.resolveClass('backend.Language'), 'currentLanguage');
-				if (currentLang == null) currentLang = 'en';
+				var lang = Reflect.field(Type.resolveClass('backend.Language'), 'currentLanguage');
+				if (lang != null) currentLang = lang;
 			}
-		} catch(e:Dynamic) {
-			currentLang = 'en';
-		}
+		} catch(e:Dynamic) {}
 
-		// 2. 먼저 현재 언어 전용 폴더의 이미지 경로를 구성합니다. (예: images/ko/menuText.png)
-		var langKey:String = currentLang + '/' + key;
-		var path:String = getPath('images/$langKey.png', IMAGE, library);
-
-		// 3. 해당 언어 폴더 내에 번역된 이미지가 실제로 존재하는지 검사합니다.
+		// 2. 언어 전용 폴더가 포함된 경로 우선 확인 (예: images/ko/key.png)
+		var langKey:String = 'images/' + currentLang + '/' + key;
+		var path:String = getPath(langKey + '.png', IMAGE, parentFolder, true);
+		
+		var finalKey:String = key;
 		var fileExists:Bool = false;
+
 		#if MODS_ALLOWED
-		// mods 폴더 내에서 파일이 존재안하거나 리턴값이 null인지 체크
-		if (FileSystem.exists(path)) {
+		if (sys.FileSystem.exists(path)) {
 			fileExists = true;
+			finalKey = langKey;
 		}
 		#else
-		if (OpenFlAssets.exists(path, IMAGE)) {
+		if (openfl.utils.Assets.exists(path, IMAGE)) {
 			fileExists = true;
+			finalKey = langKey;
 		}
 		#end
 
-		// 4. 언어별 전용 파일이 없다면, 원래 기본 이미지 경로로 롤백(Fallback)합니다.
+		// 3. 파일이 없다면 기존 방식대로 기본 경로 사용
 		if (!fileExists) {
-			path = getPath('images/$key.png', IMAGE, library);
+			finalKey = Language.getFileTranslation('images/$key');
 		}
 
-		return returnGraphic(path, allowGPU);
+		// 4. 캐시된 그래픽이 있는지 확인 후 반환 (Unknown identifier 문제 해결)
+		var bitmap:BitmapData = null;
+		if (currentTrackedAssets.exists(finalKey + '.png'))
+		{
+			localTrackedAssets.push(finalKey + '.png');
+			return currentTrackedAssets.get(finalKey + '.png');
+		}
+		
+		return cacheBitmap(finalKey + '.png', parentFolder, bitmap, allowGPU);
 	}
 
 	public static function cacheBitmap(key:String, ?parentFolder:String = null, ?bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic
