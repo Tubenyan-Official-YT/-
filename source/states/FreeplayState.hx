@@ -283,6 +283,11 @@ class FreeplayState extends MusicBeatState
 					changeSelection(shiftMult);
 					holdTime = 0;
 				}
+				if (FlxG.keys.justPressed.TAB)
+				{
+    				FlxG.sound.play(Paths.sound('scrollMenu'));
+    				MusicBeatState.switchState(new CharacterSelectState());
+				}
 
 				if(controls.UI_LEFT || controls.UI_RIGHT)
 				{
@@ -305,12 +310,12 @@ class FreeplayState extends MusicBeatState
 
 			if (controls.UI_UP_P)
 			{
-				changeDiff(-1);
+				changeDiff(1);
 				_updateSongLastDifficulty();
 			}
 			else if (controls.UI_DOWN_P)
 			{
-				changeDiff(1);
+				changeDiff(-1);
 				_updateSongLastDifficulty();
 			}
 		}
