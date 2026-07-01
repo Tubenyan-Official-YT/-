@@ -538,17 +538,35 @@ class FreeplayState extends MusicBeatState
 				item.loadGraphic(Paths.image(imgPath));
 			}
 			else {
-				// 해당 난이도 이미지가 없을 경우 기본 normal 이미지로 예외 처리
-				var fallbackPath:String = 'freeplay/' + songName + '-normal';
+				// 해당 난이도 이미지가 없을 경우, 이 곡이 속한 주차(Week)의 첫 번째 기본 난이도로 예외 처리합니다.
+				var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
+				var baseDiff:String = 'normal';
+				if (leWeek != null && leWeek.difficulties != null && leWeek.difficulties.trim() != '') {
+					baseDiff = leWeek.difficulties.split(',')[0].trim();
+				}
+				
+				var baseDiffName:String = Paths.formatToSongPath(baseDiff);
+				var fallbackPath:String = 'freeplay/' + songName + '-' + baseDiffName;
+
 				if (Paths.fileExists(('images/' + fallbackPath + '.png'), IMAGE)) {
 					item.loadGraphic(Paths.image(fallbackPath));
 				} 
 				else {
-					// normal 이미지마저 없다면 투명 처리
-					item.makeGraphic(1, 1, 0x00000000);
+					// 기본 난이도 이미지마저 없다면 일반 -normal 이나 순수 곡 이름 이미지를 체크한 뒤 최종 투명 처리합니다.
+					var normalPath:String = 'freeplay/' + songName + '-normal';
+					if (Paths.fileExists(('images/' + normalPath + '.png'), IMAGE)) {
+						item.loadGraphic(Paths.image(normalPath));
+					}
+					else if (Paths.fileExists(('images/freeplay/' + songName + '.png'), IMAGE)) {
+						item.loadGraphic(Paths.image('freeplay/' + songName));
+					}
+					else {
+						item.makeGraphic(1, 1, 0x00000000);
+					}
 				}
 			}
-			item.setGraphicSize(0, 120); // 모든 이미지의 높이를 120으로 유지
+			item.setGraphicSize(0, 120);
+			// 모든 이미지의 높이를 120으로 유지
 			item.updateHitbox();         // 크기 변경에 따른 히트박스 재계산
 		}
 		
@@ -556,7 +574,6 @@ class FreeplayState extends MusicBeatState
 		missingText.visible = false;
 		missingTextBG.visible = false;
 	}
-
 	function changeSelection(change:Int = 0, playSound:Bool = true)
 	{
 		if (player.playingMusic)
