@@ -55,7 +55,10 @@ class FreeplayState extends MusicBeatState
 	{
 		//Paths.clearStoredMemory();
 		//Paths.clearUnusedMemory();
-		
+		if (FlxG.save.data.selectedSongGroup == null) {
+        	FlxG.save.data.selectedSongGroup = "bf_songs";
+        	FlxG.save.data.flush(); // 즉시 물리적 저장
+    	}
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
@@ -81,7 +84,7 @@ class FreeplayState extends MusicBeatState
 
 			// [체크 포인트] 현재 열려 있는 주차 파일명이 선택한 그룹명과 다르면 프리플레이 리스트에 넣지 않고 스킵합니다.
 			// 예: 캐릭터창에서 'bf'를 골라selectedSongGroup이 'bf_songs'가 되었다면, 파일명이 'bf_songs'인 것만 통과시킵니다.
-			if(WeekData.weeksList[i] != CharacterSelectState.selectedSongGroup) continue;
+			if(WeekData.weeksList[i] != FlxG.save.data.selectedSongGroup) continue;
 
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var leSongs:Array<String> = [];
