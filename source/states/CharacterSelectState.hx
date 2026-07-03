@@ -8,6 +8,9 @@ import openfl.utils.Assets;
 
 class CharacterSelectState extends MusicBeatState
 {
+
+    public static var selectedSongGroup:String = "bf_songs";
+    // 위의 항목은 캐릭터선택임
     var charData:Map<String, Array<String>> = new Map<String, Array<String>>();
     var charList:Array<String> = [];
     var curSelected:Int = 0;
