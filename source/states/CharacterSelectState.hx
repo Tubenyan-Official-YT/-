@@ -51,7 +51,7 @@ class CharacterSelectState extends MusicBeatState
 
     function loadCharacterJson()
     {
-        var rawJson:String = Assets.getText(Paths.json('characterSelect'));
+        var rawJson:String = Paths.getTextFromFile(Paths.json('characterSelect'));
         var parsed:Dynamic = Json.parse(rawJson);
         for (field in Reflect.fields(parsed)) {
             charData.set(field, Reflect.field(parsed, field));
