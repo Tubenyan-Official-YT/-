@@ -428,11 +428,19 @@ class Paths
 		#end
 	}
 
-	inline static public function formatToSongPath(path:String) {
-		final invalidChars = ~/[~&;:<>#\s]/g;
-		final hideChars = ~/[.,'"%?!]/g;
-
-		return hideChars.replace(invalidChars.replace(path, '-'), '').trim().toLowerCase();
+	inline static function formatToSongPath(path:String):String {
+    	if (path == null) return '';
+    
+    // 경로에 슬래시(/)가 있으면 폴더 구조를 유지하기 위해 슬래시 기준으로 쪼개서 각각 포맷팅합니다.
+    	if (path.contains('/')) {
+        	var parts:Array<String> = path.split('/');
+        	for (i in 0...parts.length) {
+            	parts[i] = parts[i].toLowerCase().trim().replace(' ', '-');
+        	}
+        	return parts.join('/'); // 슬래시를 다시 붙여서 경로 구분자로 살려둡니다.
+    	}
+    
+    	return path.toLowerCase().trim().replace(' ', '-');
 	}
 
 	public static var currentTrackedSounds:Map<String, Sound> = [];
