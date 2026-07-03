@@ -106,7 +106,14 @@ class CharacterSelectState extends MusicBeatState
     {
         isTransitioning = true;
         var name:String = charList[curSelected];
-        
+    
+        var data:Array<String> = charData.get(name);
+        if (data != null && data.length > 0) {
+        // 선택한 캐릭터의 주차 그룹명을 세이브 데이터에 직접 쓰고 물리 저장
+            FlxG.save.data.selectedSongGroup = data[0]; 
+            FlxG.save.data.flush();
+        }
+    
         FlxG.sound.play(Paths.sound('charSelect/' + name));
         charSprite.loadGraphic(Paths.image('charSelect/' + name + 'go'));
         charSprite.screenCenter();
