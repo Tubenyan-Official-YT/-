@@ -48,16 +48,36 @@ class CharacterSelectState extends MusicBeatState
         if (controls.ACCEPT) selectCharacter();
         if (controls.BACK) MusicBeatState.switchState(new MainMenuState());
     }
-
     function loadCharacterJson()
     {
-        var rawJson:String = Paths.getTextFromFile(Paths.json('characterSelect'));
-        var parsed:Dynamic = Json.parse(rawJson);
-        for (field in Reflect.fields(parsed)) {
-            charData.set(field, Reflect.field(parsed, field));
-            charList.push(field);
+        var path:String = Paths.modsJson('characterSelect');
+    
+        if (sys.FileSystem.exists(path)) {
+        // 파일을 읽어온 뒤, 혹시 모를 공백이나 유령 문자를 trim()으로 완전히 잘라냅니다.
+            var rawJson:String = sys.io.File.getContent(path).trim();
+        
+        // 가져온 텍스트가 제대로 열리고 닫혔는지 검사합니다.
+            if (rawJson.startsWith('{') && rawJson.endsWith('}')) {
+                var parsed:Dynamic = Json.parse(rawJson);
+                for (field in Reflect.fields(parsed)) {
+                // 내부 배열 데이터를 안전하게 String 배열로 캐스팅하여 맵에 넣습니다.
+                    var dataArray:Array<Dynamic> = Reflect.field(parsed, field);
+                    var stringArray:Array<String> = [];
+                    for (item in dataArray) {
+                        stringArray.push(Std.string(item));
+                    }
+                
+                    charData.set(field, stringArray);
+                    charList.push(field);
+                }
+            } else {
+                trace("JSON 형식이 올바르지 않습니다. 중괄호 세팅을 확인하세요.");
+            }
+        } else {
+            trace("JSON 파일을 찾을 수 없습니다: " + path);
         }
     }
+    
 
     function changeSelection(change:Int = 0)
     {
