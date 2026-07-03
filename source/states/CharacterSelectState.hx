@@ -82,24 +82,24 @@ class CharacterSelectState extends MusicBeatState
     }
     
 
-    function changeSelection(change:Int = 0)
+    function selectCharacter()
     {
-        curSelected += (change % charList.length + charList.length) % charList.length;
-        curSelected %= charList.length;
-
-        FlxG.sound.play(Paths.sound('scrollMenu'));
-
+        isTransitioning = true;
         var name:String = charList[curSelected];
-        var data:Array<String> = charData.get(name); // [노래폴더, 배경이미지]
-
-        // 이미지 적용
-        bg.loadGraphic(Paths.image(data[1])); 
-        charSprite.loadGraphic(Paths.image('charSelect/' + name));
+        
+        // 엔터 친 캐릭터의 데이터 배열 [곡 그룹, 배경] 가져오기
+        var data:Array<String> = charData.get(name);
+        if (data != null && data.length > 0) {
+            selectedSongGroup = data[0]; // "bf_songs" 등의 그룹명이 전역 변수에 저장됨
+        }
+        
+        FlxG.sound.play(Paths.sound('charSelect/' + name));
+        charSprite.loadGraphic(Paths.image('charSelect/' + name + 'go'));
         charSprite.screenCenter();
 
-        // 이름 이미지 적용 (shared/images/charNames/ 폴더 활용)
-        nameSprite.loadGraphic(Paths.image('charNames/' + name));
-        nameSprite.screenCenter(X);
+        new FlxTimer().start(1.5, function(tmr:FlxTimer) {
+            MusicBeatState.switchState(new FreeplayState());
+        });
     }
 
     function selectCharacter()
