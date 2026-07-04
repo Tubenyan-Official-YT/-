@@ -89,11 +89,12 @@ class WeekData {
 		var originalLength:Int = directories.length;
 		#end
 
-		// [★ 세이브 데이터 그룹 폴더명 추출 ★]
-		var currentGroup:String = "bf_songs";
-		if (flixel.FlxG.save.data.selectedSongGroup != null) {
-			currentGroup = flixel.FlxG.save.data.selectedSongGroup;
+		// [★ 핵심 수정: 세이브 데이터가 null이면 기본값 강제 지정 ★]
+		if (flixel.FlxG.save.data.selectedSongGroup == null) {
+			flixel.FlxG.save.data.selectedSongGroup = "bf_songs"; // 또는 원하시는 기본 폴더명
+			flixel.FlxG.save.data.flush();
 		}
+		var currentGroup:String = flixel.FlxG.save.data.selectedSongGroup;
 
 		// 지정된 캐릭터 하위 폴더 경로 내의 weekList.txt 로드
 		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getSharedPath('weeks/' + currentGroup + '/weekList.txt'));
@@ -119,6 +120,33 @@ class WeekData {
 				}
 			}
 		}
+
+		#if MODS_ALLOWED
+		for (i in 0...directories.length) {
+			var directory:String = directories[i] + 'weeks/' + currentGroup + '/';
+			if(FileSystem.exists(directory)) {
+				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
+				for (daWeek in listOfWeeks)
+				{
+					var path:String = directory + daWeek + '.json';
+					if(FileSystem.exists(path))
+					{
+						addWeek(daWeek, path, directories[i], i, originalLength);
+					}
+				}
+
+				for (file in FileSystem.readDirectory(directory))
+				{
+					var path = haxe.io.Path.join([directory, file]);
+					if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
+					{
+						addWeek(file.substr(0, file.length - 5), path, directories[i], i, originalLength);
+					}
+				}
+			}
+		}
+		#end
+	}
 
 		#if MODS_ALLOWED
 		for (i in 0...directories.length) {
