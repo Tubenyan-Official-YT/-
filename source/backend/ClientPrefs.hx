@@ -8,6 +8,7 @@ import states.TitleState;
 
 // Add a variable here and it will get automatically saved
 @:structInit class SaveVariables {
+	public var selectedSongGroup:String = 'bf_songs'; //새로추가
 	public var downScroll:Bool = false;
 	public var middleScroll:Bool = false;
 	public var opponentStrums:Bool = true;
@@ -173,10 +174,25 @@ class ClientPrefs {
 	public static function loadPrefs() {
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
+		// 모든 필드를 차별 없이 순회하며 데이터 정합성을 맞춥니다.
 		for (key in Reflect.fields(data))
-			if (key != 'gameplaySettings' && Reflect.hasField(FlxG.save.data, key))
+		{
+			if (key == 'gameplaySettings') continue;
+
+			// 세이브 파일에 이미 데이터가 존재한다면 그 값을 가져옵니다.
+			if (Reflect.hasField(FlxG.save.data, key)) {
 				Reflect.setField(data, key, Reflect.field(FlxG.save.data, key));
+			}
+			// 세이브 파일에 데이터가 없다면(새로 추가된 변수 등), 구조체의 기본값으로 파일에 동등하게 채워줍니다.
+			else {
+				var defaultValue = Reflect.field(defaultData, key);
+				Reflect.setField(FlxG.save.data, key, defaultValue);
+			}
+		}
 		
+		// 구조적 규칙에 의해 갱신된 세이브 데이터를 하드디스크에 기록합니다.
+		FlxG.save.flush();
+
 		if(Main.fpsVar != null)
 			Main.fpsVar.visible = data.showFPS;
 
