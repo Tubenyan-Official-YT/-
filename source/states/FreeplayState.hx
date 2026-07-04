@@ -268,10 +268,10 @@ class FreeplayState extends MusicBeatState
 					changeSelection(shiftMult);
 					holdTime = 0;
 				}
-				if (FlxG.keys.justPressed.TAB)
+				if (FlxG.keys.checkStatus(flixel.input.keyboard.FlxKey.TAB, JUST_PRESSED))
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-					MusicBeatState.switchState(new CharacterSelectState());
+    				FlxG.sound.play(Paths.sound('scrollMenu'));
+    				MusicBeatState.switchState(new CharacterSelectState());
 				}
 
 				if(controls.UI_LEFT || controls.UI_RIGHT)
