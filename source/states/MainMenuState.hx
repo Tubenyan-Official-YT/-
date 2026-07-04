@@ -41,6 +41,9 @@ class MainMenuState extends MusicBeatState
 	static var showOutdatedWarning:Bool = true;
 	override function create()
 	{
+		FlxG.sound.music.stop();
+		FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		
 		balloonText = new FlxText(730, 170, 530, "", 32);
 		balloonText.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
 		balloonText.scrollFactor.set(0, 0);
@@ -55,7 +58,7 @@ class MainMenuState extends MusicBeatState
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence("메인메뉴", null);
 		#end
 
 		persistentUpdate = persistentDraw = true;
