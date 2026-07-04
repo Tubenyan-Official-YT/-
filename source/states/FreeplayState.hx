@@ -12,7 +12,6 @@ import substates.ResetScoreSubState;
 
 import flixel.math.FlxMath;
 import flixel.util.FlxDestroyUtil;
-
 import openfl.utils.Assets;
 
 import haxe.Json;
@@ -26,7 +25,6 @@ class FreeplayState extends MusicBeatState
 	var lerpSelected:Float = 0;
 	var curDifficulty:Int = -1;
 	private static var lastDifficultyName:String = Difficulty.getDefault();
-
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
 	var diffText:FlxText;
@@ -41,7 +39,6 @@ class FreeplayState extends MusicBeatState
 	private var iconArray:Array<HealthIcon> = [];
 
 	var bg:FlxSprite;
-
 	var missingTextBG:FlxSprite;
 	var missingText:FlxText;
 
@@ -53,18 +50,14 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
-		//Paths.clearStoredMemory();
-		//Paths.clearUnusedMemory();
 		if (FlxG.save.data.selectedSongGroup == null) {
-        	FlxG.save.data.selectedSongGroup = "bf_songs";
-        	FlxG.save.data.flush(); // 즉시 물리적 저장
-    	}
+			FlxG.save.data.selectedSongGroup = "bf_songs";
+			FlxG.save.data.flush();
+		}
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
-
 		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
 		DiscordClient.changePresence("프리플레이 메뉴", null);
 		#end
 
@@ -78,14 +71,11 @@ class FreeplayState extends MusicBeatState
 			return;
 		}
 
-        for (i in 0...WeekData.weeksList.length)
+		for (i in 0...WeekData.weeksList.length)
 		{
 			if(weekIsLocked(WeekData.weeksList[i])) continue;
 
-			// [체크 포인트] 현재 열려 있는 주차 파일명이 선택한 그룹명과 다르면 프리플레이 리스트에 넣지 않고 스킵합니다.
-			// 예: 캐릭터창에서 'bf'를 골라selectedSongGroup이 'bf_songs'가 되었다면, 파일명이 'bf_songs'인 것만 통과시킵니다.
-			if(WeekData.weeksList[i] != FlxG.save.data.selectedSongGroup) continue;
-
+			// [★ 수정 완료 ★] WeekData에서 지정된 캐릭터 폴더의 위크들만 이미 수집했으므로 잘못된 중복 필터링을 제거합니다.
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var leSongs:Array<String> = [];
 			var leChars:Array<String> = [];
@@ -118,63 +108,54 @@ class FreeplayState extends MusicBeatState
 		add(grpSongs);
 		for (i in 0...songs.length)
 		{
-    		Mods.currentModDirectory = songs[i].folder;
-    		var songName:String = Paths.formatToSongPath(songs[i].songName);
+			Mods.currentModDirectory = songs[i].folder;
+			var songName:String = Paths.formatToSongPath(songs[i].songName);
+			var songImage:FlxSprite = new FlxSprite(0, 20);
 
-    		var songImage:FlxSprite = new FlxSprite(0, 20);
+			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
+			var baseDiff:String = 'normal';
+			if (leWeek != null && leWeek.difficulties != null && leWeek.difficulties.trim() != '') {
+				baseDiff = leWeek.difficulties.split(',')[0].trim();
+			}
 
-    		// 해당 곡이 속한 주차(Week)의 데이터를 가져와 설정된 첫 번째 난이도를 초기 기본값으로 사용합니다.
-    		var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
-    		var baseDiff:String = 'normal';
-    		if (leWeek != null && leWeek.difficulties != null && leWeek.difficulties.trim() != '') {
-        		baseDiff = leWeek.difficulties.split(',')[0].trim();
-    		}
-
-    		var diffName:String = Paths.formatToSongPath(baseDiff);
-    		var imgPath:String = 'freeplay/' + songName + '-' + diffName;
-    
-    		if ((Paths.fileExists((('images/' + imgPath) + '.png'), IMAGE))) {
-        		songImage.loadGraphic(Paths.image(imgPath));
-    		}
-    		else {
-        // 커스텀 난이도 및 기본 normal 이미지 둘 다 없을 경우를 대비해 투명한 그래픽으로 안전하게 예외 처리합니다.
-        		var fallbackPath:String = 'freeplay/' + songName + '-normal';
-        		if ((Paths.fileExists((('images/' + fallbackPath) + '.png'), IMAGE))) {
-            		songImage.loadGraphic(Paths.image(fallbackPath));
-        		} 
+			var diffName:String = Paths.formatToSongPath(baseDiff);
+			var imgPath:String = 'freeplay/' + songName + '-' + diffName;
+			if ((Paths.fileExists((('images/' + imgPath) + '.png'), IMAGE))) {
+				songImage.loadGraphic(Paths.image(imgPath));
+			}
+			else {
+				var fallbackPath:String = 'freeplay/' + songName + '-normal';
+				if ((Paths.fileExists((('images/' + fallbackPath) + '.png'), IMAGE))) {
+					songImage.loadGraphic(Paths.image(fallbackPath));
+				} 
 				else {
-            		songImage.makeGraphic(1, 1, 0x00000000);
-        		}
-    		}
-    		songImage.setGraphicSize(0, 120);
-    		songImage.updateHitbox();
-    		songImage.antialiasing = ClientPrefs.data.antialiasing;
-    		songImage.ID = i;
-    		songImage.visible = songImage.active = false;
-    		grpSongs.add(songImage);
+					songImage.makeGraphic(1, 1, 0x00000000);
+				}
+			}
+			songImage.setGraphicSize(0, 120);
+			songImage.updateHitbox();
+			songImage.antialiasing = ClientPrefs.data.antialiasing;
+			songImage.ID = i;
+			songImage.visible = songImage.active = false;
+			grpSongs.add(songImage);
 		}
 
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(0, 240, 0, "", 24);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
 		scoreText = new FlxText(0, 60, 0, "", 24);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
-// 검은색(FlxColor.BLACK)으로 두께 5짜리 외곽선(OUTLINE)을 입힙니다.
 		scoreText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 5);
+		
 		diffText = new FlxText(FlxG.width * 0.7, 5, 0, "", 24);
 		diffText.screenCenter(X);
 		diffText.font = scoreText.font;
 		add(diffText);
 
-		// scoreText 아래에 추가
 		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 		
 		add(scoreText);
-
-
 		missingTextBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		missingTextBG.alpha = 0.6;
 		missingTextBG.visible = false;
@@ -190,11 +171,10 @@ class FreeplayState extends MusicBeatState
 		lerpSelected = curSelected;
 
 		curDifficulty = Math.round(Math.max(0, Difficulty.defaultList.indexOf(lastDifficultyName)));
-
 		bottomBG = new FlxSprite(0, FlxG.height - 26).makeGraphic(FlxG.width, 26, 0xFF000000);
 		bottomBG.alpha = 0.6;
 		add(bottomBG);
-
+		
 		var leText:String = Language.getPhrase("freeplay_tip", "스페이스 / 엔터를 눌러 곡 플레이! 위, 아래로 내려서 곡 선택 가능! 재밌게 플레이해보자! 기록을 갱신해보자!");
 		bottomString = leText;
 		var size:Int = 16;
@@ -239,7 +219,6 @@ class FreeplayState extends MusicBeatState
 	{
 		if(WeekData.weeksList.length < 1)
 			return;
-
 		if (FlxG.sound.music.volume < 0.7)
 			FlxG.sound.music.volume += 0.5 * elapsed;
 
@@ -252,12 +231,11 @@ class FreeplayState extends MusicBeatState
 			lerpRating = intendedRating;
 
 		var ratingSplit:Array<String> = Std.string(CoolUtil.floorDecimal(lerpRating * 100, 2)).split('.');
-		if(ratingSplit.length < 2) //No decimals, add an empty space
+		if(ratingSplit.length < 2)
 			ratingSplit.push('');
 		
-		while(ratingSplit[1].length < 2) //Less than 2 decimals in it, add decimals then
+		while(ratingSplit[1].length < 2)
 			ratingSplit[1] += '0';
-
 		var shiftMult:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
@@ -278,7 +256,7 @@ class FreeplayState extends MusicBeatState
 				{
 					curSelected = songs.length - 1;
 					changeSelection();
-					holdTime = 0;	
+					holdTime = 0;
 				}
 				if (controls.UI_LEFT_P)
 				{
@@ -292,8 +270,8 @@ class FreeplayState extends MusicBeatState
 				}
 				if (FlxG.keys.justPressed.TAB)
 				{
-    				FlxG.sound.play(Paths.sound('scrollMenu'));
-    				MusicBeatState.switchState(new CharacterSelectState());
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					MusicBeatState.switchState(new CharacterSelectState());
 				}
 
 				if(controls.UI_LEFT || controls.UI_RIGHT)
@@ -393,10 +371,8 @@ class FreeplayState extends MusicBeatState
 					opponentVocals = new FlxSound();
 					try
 					{
-						//trace('please work...');
 						var oppVocals:String = getVocalFromCharacter(PlayState.SONG.player2);
 						var loadedVocals = Paths.voices(PlayState.SONG.song, (oppVocals != null && oppVocals.length > 0) ? oppVocals : 'Opponent');
-						
 						if(loadedVocals != null && loadedVocals.length > 0)
 						{
 							opponentVocals.loadEmbedded(loadedVocals);
@@ -405,13 +381,11 @@ class FreeplayState extends MusicBeatState
 							opponentVocals.volume = 0.8;
 							opponentVocals.play();
 							opponentVocals.pause();
-							//trace('yaaay!!');
 						}
 						else opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
 					}
 					catch(e:Dynamic)
 					{
-						//trace('FUUUCK');
 						opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
 					}
 				}
@@ -447,9 +421,8 @@ class FreeplayState extends MusicBeatState
 			catch(e:haxe.Exception)
 			{
 				trace('ERROR! ${e.message}');
-
 				var errorStr:String = e.message;
-				if(errorStr.contains('There is no TEXT asset with an ID of')) errorStr = 'Missing file: ' + errorStr.substring(errorStr.indexOf(songLowercase), errorStr.length-1); //Missing chart
+				if(errorStr.contains('There is no TEXT asset with an ID of')) errorStr = 'Missing file: ' + errorStr.substring(errorStr.indexOf(songLowercase), errorStr.length-1);
 				else errorStr += '\n\n' + e.stack;
 
 				missingText.text = 'ERROR WHILE LOADING CHART:\n$errorStr';
@@ -471,7 +444,8 @@ class FreeplayState extends MusicBeatState
 			}
 			LoadingState.prepareToSong();
 			LoadingState.loadAndSwitchState(new PlayState());
-			#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop(); #end
+			#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop();
+			#end
 			stopMusicPlay = true;
 
 			destroyFreeplayVocals();
@@ -539,18 +513,13 @@ class FreeplayState extends MusicBeatState
 		{
 			var item = grpSongs.members[i];
 			if (item == null) continue;
-
-			// 각 인덱스(i)에 맞는 곡 폴더 경로 지정
 			Mods.currentModDirectory = songs[i].folder;
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
 			var imgPath:String = 'freeplay/' + songName + '-' + diffName;
-
-			// 변경된 난이도의 이미지가 존재하는지 확인
 			if (Paths.fileExists(('images/' + imgPath + '.png'), IMAGE)) {
 				item.loadGraphic(Paths.image(imgPath));
 			}
 			else {
-				// 해당 난이도 이미지가 없을 경우, 이 곡이 속한 주차(Week)의 첫 번째 기본 난이도로 예외 처리합니다.
 				var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
 				var baseDiff:String = 'normal';
 				if (leWeek != null && leWeek.difficulties != null && leWeek.difficulties.trim() != '') {
@@ -559,12 +528,10 @@ class FreeplayState extends MusicBeatState
 				
 				var baseDiffName:String = Paths.formatToSongPath(baseDiff);
 				var fallbackPath:String = 'freeplay/' + songName + '-' + baseDiffName;
-
 				if (Paths.fileExists(('images/' + fallbackPath + '.png'), IMAGE)) {
 					item.loadGraphic(Paths.image(fallbackPath));
 				} 
 				else {
-					// 기본 난이도 이미지마저 없다면 일반 -normal 이나 순수 곡 이름 이미지를 체크한 뒤 최종 투명 처리합니다.
 					var normalPath:String = 'freeplay/' + songName + '-normal';
 					if (Paths.fileExists(('images/' + normalPath + '.png'), IMAGE)) {
 						item.loadGraphic(Paths.image(normalPath));
@@ -578,14 +545,14 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 			item.setGraphicSize(0, 120);
-			// 모든 이미지의 높이를 120으로 유지
-			item.updateHitbox();         // 크기 변경에 따른 히트박스 재계산
+			item.updateHitbox();
 		}
 		
 		positionHighscore();
 		missingText.visible = false;
 		missingTextBG.visible = false;
 	}
+
 	function changeSelection(change:Int = 0, playSound:Bool = true)
 	{
 		if (player.playingMusic)
@@ -594,7 +561,6 @@ class FreeplayState extends MusicBeatState
 		curSelected = FlxMath.wrap(curSelected + change, 0, songs.length-1);
 		_updateSongLastDifficulty();
 		if(playSound) FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-
 		for (num => item in grpSongs.members)
 		{
 			item.alpha = 0.6;
@@ -653,9 +619,8 @@ class FreeplayState extends MusicBeatState
 		{
 			var item:FlxSprite = grpSongs.members[i];
 			item.visible = item.active = true;
-			// 가로 배치 - 선택된 곡 중앙, 나머지 좌우로
 			item.x = FlxG.width / 2 + (item.ID - lerpSelected) * (item.width + 30) - item.width / 2;
-			item.y = 20;  // 화면 상단
+			item.y = 20;
 			_lastVisibles.push(i);
 		}
 	}
@@ -678,7 +643,6 @@ class SongMetadata
 	public var color:Int = -7179779;
 	public var folder:String = "";
 	public var lastDifficulty:String = null;
-
 	public function new(song:String, week:Int, songCharacter:String, color:Int)
 	{
 		this.songName = song;
