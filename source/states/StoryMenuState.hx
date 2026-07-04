@@ -45,6 +45,11 @@ class StoryMenuState extends MusicBeatState
 	var weekInitialX:Array<Float> = [];
 	override function create()
 	{
+		if (FlxG.save.data.selectedSongGroup == null) {
+			FlxG.save.data.selectedSongGroup = "bf_songs";
+			FlxG.save.data.flush();
+		}
+		
 		var bottomUIY:Float = 560;
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
