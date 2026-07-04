@@ -109,16 +109,22 @@ class CharacterSelectState extends MusicBeatState
     
         var data:Array<String> = charData.get(name);
         if (data != null && data.length > 0) {
-        // 선택한 캐릭터의 주차 그룹명을 세이브 데이터에 직접 쓰고 물리 저장
-            FlxG.save.data.selectedSongGroup = data[0]; 
-            FlxG.save.data.flush();
+            // 1. 메모리에 값을 대입합니다.
+            FlxG.save.data.selectedSongGroup = data[0];
+            // 2. 물리 하드디스크에 강제로 즉시 완벽 저장합니다.
+            FlxG.save.flush();
         }
     
         FlxG.sound.play(Paths.sound('charSelect/' + name));
         charSprite.loadGraphic(Paths.image('charSelect/' + name + 'go'));
         charSprite.screenCenter();
 
+        // 3. 타이머가 돌기 전에 프리플레이의 이전 곡 데이터를 완전히 밀어버려 충돌을 방지합니다.
+        backend.WeekData.weeksList = [];
+        backend.WeekData.weeksLoaded.clear();
+
         new FlxTimer().start(1.5, function(tmr:FlxTimer) {
+            // 상태를 깨끗이 하고 안전하게 FreeplayState 진입
             MusicBeatState.switchState(new FreeplayState());
         });
     }
