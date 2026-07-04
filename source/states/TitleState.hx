@@ -121,7 +121,7 @@ class TitleState extends MusicBeatState
 	{
 		persistentUpdate = true;
 		if (!initialized && FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+			FlxG.sound.playMusic(Paths.music('nyankoIntro'), 0);
 
 		loadJsonData();
 		#if TITLE_SCREEN_EASTER_EGG easterEggData(); #end
@@ -391,9 +391,6 @@ class TitleState extends MusicBeatState
 
 				FlxG.camera.flash(ClientPrefs.data.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 4);
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
-
-				FlxG.sound.music.stop();
-				FlxG.sound.playMusic(Paths.music('nyankoMain'));
 				
 				transitioning = true;
 				// FlxG.sound.music.stop();
@@ -463,6 +460,8 @@ class TitleState extends MusicBeatState
 
 		if (initialized && pressedEnter && !skippedIntro)
 		{
+			FlxG.sound.music.stop();
+			FlxG.sound.playMusic(Paths.music('nyankoMain'));
 			skipIntro();
 		}
 
