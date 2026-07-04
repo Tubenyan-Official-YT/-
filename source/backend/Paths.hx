@@ -428,7 +428,7 @@ class Paths
 		#end
 	}
 
-	inline static function formatToSongPath(path:String):String {
+	inline static public function formatToSongPath(path:String):String {
     	if (path == null) return '';
     
     // 경로에 슬래시(/)가 있으면 폴더 구조를 유지하기 위해 슬래시 기준으로 쪼개서 각각 포맷팅합니다.
