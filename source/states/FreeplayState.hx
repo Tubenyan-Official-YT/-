@@ -142,7 +142,7 @@ class FreeplayState extends MusicBeatState
 
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(0, 60, 0, "", 24);
+		scoreText = new FlxText(0, 150, 0, "", 24);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
 		scoreText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 5);
 		
@@ -151,7 +151,7 @@ class FreeplayState extends MusicBeatState
 		diffText.font = scoreText.font;
 		add(diffText);
 
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
+		scoreBG = new FlxSprite(scoreText.x - 6, 150).makeGraphic(1, 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 		
@@ -268,7 +268,7 @@ class FreeplayState extends MusicBeatState
 					changeSelection(shiftMult);
 					holdTime = 0;
 				}
-				if(FlxG.keys.justPressed.TAB)
+				if(FlxG.keys.checkStatus(flixel.input.keyboard.FlxKey.TAB, JUST_PRESSED))
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'));
     				MusicBeatState.switchState(new CharacterSelectState());
@@ -595,11 +595,18 @@ class FreeplayState extends MusicBeatState
 	private function positionHighscore()
 	{
 		scoreText.screenCenter(X);
-		scoreBG.scale.x = 100;
-		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
+		scoreText.y = 20 + 120 + 10; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
+
+		scoreBG.scale.x = FlxG.width + 12;
+		scoreBG.x = -6;
+		scoreBG.y = scoreText.y - 4;
+		scoreBG.scale.y = scoreText.height + 8;
+		scoreBG.updateHitbox();
+
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
 		diffText.x -= 80;
+		diffText.y = scoreText.y;
 	}
 
 	var _drawDistance:Int = 4;
