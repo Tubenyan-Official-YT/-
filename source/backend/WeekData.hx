@@ -4,6 +4,11 @@ import lime.utils.Assets;
 import openfl.utils.Assets as OpenFlAssets;
 import haxe.Json;
 
+#if MODS_ALLOWED
+import sys.FileSystem;
+import sys.io.File;
+#end
+
 typedef WeekFile =
 {
 	// JSON variables
@@ -61,11 +66,9 @@ class WeekData {
 		return weekFile;
 	}
 
-	// HELP: Is there any way to convert a WeekFile to WeekData without having to put all variables there manually? I'm kind of a noob in haxe lmao
 	public function new(weekFile:WeekFile, fileName:String) {
-		// here ya go - MiguelItsOut
 		for (field in Reflect.fields(weekFile))
-			if(Reflect.fields(this).contains(field)) // Reflect.hasField() won't fucking work :/
+			if(Reflect.fields(this).contains(field))
 				Reflect.setProperty(this, field, Reflect.getProperty(weekFile, field));
 
 		this.fileName = fileName;
@@ -86,10 +89,17 @@ class WeekData {
 		var originalLength:Int = directories.length;
 		#end
 
-		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getSharedPath('weeks/weekList.txt'));
+		// [★ 세이브 데이터에서 현재 설정된 하위 폴더명 추출 ★]
+		var currentGroup:String = "bf_songs";
+		if (flixel.FlxG.save.data.selectedSongGroup != null) {
+			currentGroup = flixel.FlxG.save.data.selectedSongGroup;
+		}
+
+		// 기본 자원 경로(assets/) 내의 캐릭터 폴더 뒤지기
+		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getSharedPath('weeks/' + currentGroup + '/weekList.txt'));
 		for (i in 0...sexList.length) {
 			for (j in 0...directories.length) {
-				var fileToCheck:String = directories[j] + 'weeks/' + sexList[i] + '.json';
+				var fileToCheck:String = directories[j] + 'weeks/' + currentGroup + '/' + sexList[i] + '.json';
 				if(!weeksLoaded.exists(sexList[i])) {
 					var week:WeekFile = getWeekFile(fileToCheck);
 					if(week != null) {
@@ -112,7 +122,8 @@ class WeekData {
 
 		#if MODS_ALLOWED
 		for (i in 0...directories.length) {
-			var directory:String = directories[i] + 'weeks/';
+			// [★ 핵심 수정 ★] 주소 빌드 시 'weeks/' 뒤에 캐릭터 폴더명을 삽입하여 내부 폴더를 직접 스캔합니다.
+			var directory:String = directories[i] + 'weeks/' + currentGroup + '/';
 			if(FileSystem.exists(directory)) {
 				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
 				for (daWeek in listOfWeeks)
@@ -178,14 +189,10 @@ class WeekData {
 		return null;
 	}
 
-	//   FUNCTIONS YOU WILL PROBABLY NEVER NEED TO USE
-
-	//To use on PlayState.hx or Highscore stuff
 	public static function getWeekFileName():String {
 		return weeksList[PlayState.storyWeek];
 	}
 
-	//Used on LoadingState, nothing really too relevant
 	public static function getCurrentWeek():WeekData {
 		return weeksLoaded.get(weeksList[PlayState.storyWeek]);
 	}
