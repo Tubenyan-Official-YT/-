@@ -89,13 +89,13 @@ class WeekData {
 		var originalLength:Int = directories.length;
 		#end
 
-		// [★ 세이브 데이터에서 현재 설정된 하위 폴더명 추출 ★]
+		// [★ 세이브 데이터 그룹 폴더명 추출 ★]
 		var currentGroup:String = "bf_songs";
 		if (flixel.FlxG.save.data.selectedSongGroup != null) {
 			currentGroup = flixel.FlxG.save.data.selectedSongGroup;
 		}
 
-		// 기본 자원 경로(assets/) 내의 캐릭터 폴더 뒤지기
+		// 지정된 캐릭터 하위 폴더 경로 내의 weekList.txt 로드
 		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getSharedPath('weeks/' + currentGroup + '/weekList.txt'));
 		for (i in 0...sexList.length) {
 			for (j in 0...directories.length) {
@@ -122,7 +122,7 @@ class WeekData {
 
 		#if MODS_ALLOWED
 		for (i in 0...directories.length) {
-			// [★ 핵심 수정 ★] 주소 빌드 시 'weeks/' 뒤에 캐릭터 폴더명을 삽입하여 내부 폴더를 직접 스캔합니다.
+			// [★ 하위 폴더 직접 조준 ★]
 			var directory:String = directories[i] + 'weeks/' + currentGroup + '/';
 			if(FileSystem.exists(directory)) {
 				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
