@@ -244,7 +244,7 @@ class FreeplayState extends MusicBeatState
 			scoreText.text = '내 최고점수 : ' + lerpScore + '\n정확도: ' + ratingSplit.join('.') + '%'+'\n미스: '+misses;
 			positionHighscore();
 			
-			if(songs.length > 1)
+			if(songs.length > 0)
 			{
 				if(FlxG.keys.justPressed.HOME)
 				{
@@ -268,9 +268,9 @@ class FreeplayState extends MusicBeatState
 					changeSelection(shiftMult);
 					holdTime = 0;
 				}
-				if (FlxG.keys.checkStatus(flixel.input.keyboard.FlxKey.TAB, JUST_PRESSED))
+				if(FlxG.keys.justPressed.TAB)
 				{
-    				FlxG.sound.play(Paths.sound('scrollMenu'));
+					FlxG.sound.play(Paths.sound('scrollMenu'));
     				MusicBeatState.switchState(new CharacterSelectState());
 				}
 
