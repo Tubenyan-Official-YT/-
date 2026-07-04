@@ -383,6 +383,7 @@ class TitleState extends MusicBeatState
 			
 			if(pressedEnter)
 			{
+				
 				titleText.color = FlxColor.WHITE;
 				titleText.alpha = 1;
 				
@@ -391,6 +392,9 @@ class TitleState extends MusicBeatState
 				FlxG.camera.flash(ClientPrefs.data.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 4);
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
+				FlxG.sound.music.stop();
+				FlxG.sound.playMusic(Paths.music('nyankoMain'));
+				
 				transitioning = true;
 				// FlxG.sound.music.stop();
 
