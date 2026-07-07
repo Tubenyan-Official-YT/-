@@ -373,16 +373,20 @@ class Paths
 		return parentFrames;
 	}
 
-inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
+	inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
-		// image() 함수와 완벽히 동일하게 이미지를 로드
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
-
-		// 언어 파일에 적힌 경로를 그대로 가져와 .xml 매핑
 		var xmlPath:String = Language.getFileTranslation('images/$key') + '.xml';
 
-		// 무조건 mods 폴더 구조를 기준으로 파일 내용을 읽어옴
-		return FlxAtlasFrames.fromSparrow(imageLoaded, File.getContent(xmlPath));
+		var xmlContent:String = '';
+		if (FileSystem.exists(xmlPath)) {
+			xmlContent = File.getContent(xmlPath);
+		} 
+		else {
+			xmlContent = File.getContent(getPath(xmlPath, TEXT, parentFolder));
+		}
+
+		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
 	}
 
 	inline static public function getPackerAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
