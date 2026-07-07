@@ -256,7 +256,7 @@ class FreeplayState extends MusicBeatState
 			if (charSelectBtn.scale.x == 1) FlxG.sound.play(Paths.sound('scrollMenu'));
 			charSelectBtn.scale.set(1.1, 1.1);
 			if (charSelectBtn.animation.curAnim == null || charSelectBtn.animation.curAnim.name != 'char selected') {
-				charSelectBtn.animation.play('char selected');
+				charSelectBtn.animation.play('selected');
 			}
 			if (FlxG.mouse.justPressed)
     		{
@@ -264,7 +264,7 @@ class FreeplayState extends MusicBeatState
     		}
 		} else {
 			charSelectBtn.scale.set(1, 1);
-			charSelectBtn.animation.play('char idle');
+			charSelectBtn.animation.play('idle');
 		}
 
 		
