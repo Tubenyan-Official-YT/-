@@ -230,7 +230,7 @@ class Paths
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
 	static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
-		// Language.hx의 .lang 파일 번역 시스템을 그대로 사용 (font(), sound(), getSparrowAtlas() 등과 동일한 방식)
+		// Language.hx의 .lang 파일 번역 시스템을 그대로 사용 (font(), sound(), Atlas() 등과 동일한 방식)
 		// .lang 파일에 'images/key: "images/ko/key"' 형태로 적어두면 해당 경로로 자동 매핑됨
 		var finalKey:String = Language.getFileTranslation('images/$key') + '.png';
 
@@ -373,17 +373,26 @@ class Paths
 		return parentFrames;
 	}
 
-	inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
+inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
 		var xmlPath:String = Language.getFileTranslation('images/$key') + '.xml';
-
+		var currentModXml:String = 'mods/' + Paths.currentModDirectory + '/' + xmlPath;
 		var xmlContent:String = '';
+
 		if (FileSystem.exists(xmlPath)) {
 			xmlContent = File.getContent(xmlPath);
 		} 
+		else if (FileSystem.exists(currentModXml)) {
+			xmlContent = File.getContent(currentModXml);
+		} 
 		else {
-			xmlContent = File.getContent(getPath(xmlPath, TEXT, parentFolder));
+			var realXmlPath:String = getPath(xmlPath, TEXT, parentFolder);
+			if (FileSystem.exists(realXmlPath)) {
+				xmlContent = File.getContent(realXmlPath);
+			} else {
+				xmlContent = Assets.getText(realXmlPath);
+			}
 		}
 
 		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
