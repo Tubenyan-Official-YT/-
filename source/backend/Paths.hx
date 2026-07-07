@@ -373,23 +373,16 @@ class Paths
 		return parentFrames;
 	}
 
-	inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
+inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
-		if(key.contains('psychic')) trace(key, parentFolder, allowGPU);
+		// image() 함수와 완벽히 동일하게 이미지를 로드
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
-		#if MODS_ALLOWED
-		var xmlExists:Bool = false;
 
-		var translatedKey:String = Language.getFileTranslation('images/$key');
-		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+		// 언어 파일에 적힌 경로를 그대로 가져와 .xml 매핑
+		var xmlPath:String = Language.getFileTranslation('images/$key') + '.xml';
 
-		var xml:String = modsXml(translatedKey);
-		if(FileSystem.exists(xml)) xmlExists = true;
-
-		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder)));
-		#else
-		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder));
-		#end
+		// 무조건 mods 폴더 구조를 기준으로 파일 내용을 읽어옴
+		return FlxAtlasFrames.fromSparrow(imageLoaded, File.getContent(xmlPath));
 	}
 
 	inline static public function getPackerAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
