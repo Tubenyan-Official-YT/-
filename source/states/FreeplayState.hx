@@ -38,6 +38,8 @@ class FreeplayState extends MusicBeatState
 
 	private var iconArray:Array<HealthIcon> = [];
 
+	var charSelectBtn:FlxSprite;
+	
 	var bg:FlxSprite;
 	var missingTextBG:FlxSprite;
 	var missingText:FlxText;
@@ -142,7 +144,7 @@ class FreeplayState extends MusicBeatState
 
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(0, 250, 0, "", 24);
+		scoreText = new FlxText(0, 170, 0, "", 24);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
 		scoreText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 5);
 		
@@ -168,6 +170,13 @@ class FreeplayState extends MusicBeatState
 		missingText.visible = false;
 		add(missingText);
 
+		charSelectBtn = new FlxSprite(100, 200); // (x 좌표, y 좌표)
+    	charSelectBtn.frames = Paths.getSparrowAtlas('charSelectBtn'); // 확장자 제외한 파일명만 입력
+    	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
+    	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
+    	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
+    	add(charSelectBtn);
+		
 		if(curSelected >= songs.length) curSelected = 0;
 		lerpSelected = curSelected;
 
@@ -189,7 +198,9 @@ class FreeplayState extends MusicBeatState
 		
 		changeSelection();
 		updateTexts();
+		FlxG.mouse.visible = true;
 		super.create();
+
 	}
 
 	override function closeSubState()
@@ -240,6 +251,23 @@ class FreeplayState extends MusicBeatState
 		var shiftMult:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
+		
+		if (FlxG.mouse.overlaps(charSelectBtn)) { 
+			if (charSelectBtn.scale.x == 1) FlxG.sound.play(Paths.sound('scrollMenu'));
+			charSelectBtn.scale.set(1.1, 1.1);
+			if (charSelectBtn.animation.curAnim == null || charSelectBtn.animation.curAnim.name != 'char selected') {
+				charSelectBtn.animation.play('char selected');
+			}
+			if (FlxG.mouse.justPressed)
+    		{
+        		MusicBeatState.switchState(new CharacterSelectState());
+    		}
+		} else {
+			charSelectBtn.scale.set(1, 1);
+			charSelectBtn.animation.play('char idle');
+		}
+
+		
 		if (!player.playingMusic)
 		{
 			scoreText.text = '내 최고점수 : ' + lerpScore + '\n정확도: ' + ratingSplit.join('.') + '%'+'\n미스: '+misses;
@@ -596,7 +624,7 @@ class FreeplayState extends MusicBeatState
 	private function positionHighscore()
 	{
 		scoreText.screenCenter(X);
-		scoreText.y = 250; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
+		scoreText.y = 170; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
 
 		scoreBG.scale.x = FlxG.width + 12;
 		scoreBG.x = -6;
@@ -604,10 +632,8 @@ class FreeplayState extends MusicBeatState
 		scoreBG.scale.y = scoreText.height + 8;
 		scoreBG.updateHitbox();
 
-		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
-		diffText.x -= diffText.width / 2;
-		diffText.x -= 80;
-		diffText.y = scoreText.y;
+		diffText.screenCenter(X);
+		diffText.y = scoreText.y - 100;
 	}
 
 	var _drawDistance:Int = 4;
