@@ -170,8 +170,8 @@ class FreeplayState extends MusicBeatState
 		missingText.visible = false;
 		add(missingText);
 
-		charSelectBtn = new FlxSprite(100, 200); // (x 좌표, y 좌표)
-    	charSelectBtn.frames = Paths.getSparrowAtlas('charSelectBtn'); // 확장자 제외한 파일명만 입력
+		charSelectBtn = new FlxSprite(800, 560); // (x 좌표, y 좌표)
+    	charSelectBtn.frames = Paths.getSparrowAtlas('freeplayUI/charSelectBtn');
     	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
@@ -255,7 +255,7 @@ class FreeplayState extends MusicBeatState
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
 			if (charSelectBtn.scale.x == 1) FlxG.sound.play(Paths.sound('scrollMenu'));
 			charSelectBtn.scale.set(1.1, 1.1);
-			if (charSelectBtn.animation.curAnim == null || charSelectBtn.animation.curAnim.name != 'char selected') {
+			if (charSelectBtn.animation.curAnim.name != 'selected') {
 				charSelectBtn.animation.play('selected');
 			}
 			if (FlxG.mouse.justPressed)
