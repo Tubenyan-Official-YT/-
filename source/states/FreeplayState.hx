@@ -172,6 +172,7 @@ class FreeplayState extends MusicBeatState
 
 		charSelectBtn = new FlxSprite(800, 560); // (x 좌표, y 좌표)
     	charSelectBtn.frames = Paths.getSparrowAtlas('freeplayUI/charSelectBtn');
+		FlxG.log.add('frames: ' + charSelectBtn.frames);
     	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
