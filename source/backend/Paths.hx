@@ -375,37 +375,21 @@ class Paths
 
 	inline static public function getSparrowAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
 	{
-		// image() 함수와 완벽히 동일하게 이미지 로드
+		if(key.contains('psychic')) trace(key, parentFolder, allowGPU);
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
+		#if MODS_ALLOWED
+		var xmlExists:Bool = false;
 
-		// 언어 파일 번역 경로 확보 (없으면 'images/파일명' 반환)
-		var xmlPath:String = Language.getFileTranslation('images/$key') + '.xml';
+		var translatedKey:String = Language.getFileTranslation('images/$key');
+		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
 
-		// 현재 클래스 내부이므로 Paths.을 걷어내고 변수를 직접 참조합니다.
-		// 엔진 버전에 따라 currentModDirectory 또는 currentModFolder를 사용합니다.
-		var modFolder:String = currentModDirectory; 
-		var currentModXml:String = 'mods/' + modFolder + '/' + xmlPath;
-		var xmlContent:String = '';
+		var xml:String = modsXml(translatedKey);
+		if(FileSystem.exists(xml)) xmlExists = true;
 
-		// [검증 1] 언어 파일 경로 그대로 루트에 존재할 때
-		if (FileSystem.exists(xmlPath)) {
-			xmlContent = File.getContent(xmlPath);
-		} 
-		// [검증 2] 수동 조합한 모드 폴더 내부에 파일이 진짜 존재할 때
-		else if (FileSystem.exists(currentModXml)) {
-			xmlContent = File.getContent(currentModXml);
-		} 
-		// [검증 3] 둘 다 없으면 안전하게 getPath() 결과물 확인 (logoBumpin 등 순정 에셋 대응)
-		else {
-			var realXmlPath:String = getPath(xmlPath, TEXT, parentFolder);
-			if (FileSystem.exists(realXmlPath)) {
-				xmlContent = File.getContent(realXmlPath);
-			} else {
-				xmlContent = Assets.getText(realXmlPath);
-			}
-		}
-
-		return FlxAtlasFrames.fromSparrow(imageLoaded, xmlContent);
+		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder)));
+		#else
+		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder));
+		#end
 	}
 
 	inline static public function getPackerAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
