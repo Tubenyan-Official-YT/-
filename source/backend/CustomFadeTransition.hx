@@ -19,14 +19,16 @@ class CustomFadeTransition extends MusicBeatSubstate {
 	override function create()
 	{
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
-		var width:Int = Std.int(FlxG.width / Math.max(camera.zoom, 0.001));
-		var height:Int = Std.int(FlxG.height / Math.max(camera.zoom, 0.001));
-		transGradient = FlxGradient.createGradientFlxSprite(1, height, (isTransIn ? [0x0, FlxColor.BLACK] : [FlxColor.BLACK, 0x0]));
-		transGradient.scale.x = width;
-		transGradient.updateHitbox();
-		transGradient.scrollFactor.set();
-		transGradient.screenCenter(X);
-		add(transGradient);
+		var fullWidth:Int = Std.int(FlxG.width / Math.max(camera.zoom, 0.001));
+		var fullHeight:Int = Std.int(FlxG.height / Math.max(camera.zoom, 0.001));
+		var width:Int = Std.int(fullWidth / 2) + 4;
+		var height:Int = fullHeight;
+		leftDoor = loadGraphic('leftDoor');
+		leftDoor.scale.x = width;
+		leftDoor.updateHitbox();
+		leftDoor.scrollFactor.set();
+		leftDoor.screenCenter(X);
+		add(leftDoor);
 
 		transBlack = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		transBlack.scale.set(width, height + 400);
