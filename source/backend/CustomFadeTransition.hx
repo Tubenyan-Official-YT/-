@@ -34,7 +34,6 @@ class CustomFadeTransition extends MusicBeatSubstate {
 
     	leftDoor = new FlxSprite();
     	leftDoor.loadGraphic(Paths.image('fade/leftDoor'));
-    	leftDoor.scale.x = width;
     	leftDoor.updateHitbox();
     	leftDoor.scrollFactor.set();
     	leftDoor.y = (fullHeight / 2) - (leftDoor.height / 2);
@@ -42,7 +41,6 @@ class CustomFadeTransition extends MusicBeatSubstate {
 
     	rightDoor = new FlxSprite();
     	rightDoor.loadGraphic(Paths.image('fade/rightDoor'));
-    	rightDoor.scale.x = width;
     	rightDoor.updateHitbox();
     	rightDoor.scrollFactor.set();
     	rightDoor.y = (fullHeight / 2) - (rightDoor.height / 2);
