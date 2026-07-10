@@ -174,8 +174,6 @@ class FreeplayState extends MusicBeatState
     	charSelectBtn.frames = Paths.getSparrowAtlas('freeplayUI/charSelectBtn', 'battlecats');
     	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
-		charSelectBtn.setGraphicSize(55, 55);
-		charSelectBtn.updateHitbox();
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
     	add(charSelectBtn);
 		
@@ -255,8 +253,8 @@ class FreeplayState extends MusicBeatState
 
 		
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
-			if (charSelectBtn.scale.x == 1) FlxG.sound.play(Paths.sound('scrollMenu'));
-			charSelectBtn.scale.set(1.1, 1.1);
+			if (charSelectBtn.scale.x == 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
+			charSelectBtn.scale.set(0.6, 0.6);
 			if (charSelectBtn.animation.curAnim.name != 'selected') {
 				charSelectBtn.animation.play('selected');
 			}
@@ -265,7 +263,7 @@ class FreeplayState extends MusicBeatState
         		MusicBeatState.switchState(new CharacterSelectState());
     		}
 		} else {
-			charSelectBtn.scale.set(1, 1);
+			charSelectBtn.scale.set(0.5, 0.5);
 			charSelectBtn.animation.play('idle');
 		}
 
