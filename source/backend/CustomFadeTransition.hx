@@ -1,13 +1,22 @@
 package backend;
 
-import flixel.util.FlxGradient;
+// 필수 임포트 목록
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxCamera;
+import flixel.util.FlxColor;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import flixel.addons.transition.FlxTransitionableState; // 서브스테이트 처리를 위해 필요할 수 있음
+import backend.Paths; // 프나펑 에셋 경로 관리를 위해 필수
 
 class CustomFadeTransition extends MusicBeatSubstate {
 	public static var finishCallback:Void->Void;
 	var isTransIn:Bool = false;
 	var transBlack:FlxSprite;
-	var transGradient:FlxSprite;
-
+	var leftDoor:FlxSprite;
+	var rightDoor:FlxSprite;
+	
 	var duration:Float;
 	public function new(duration:Float, isTransIn:Bool)
 	{
@@ -18,52 +27,40 @@ class CustomFadeTransition extends MusicBeatSubstate {
 
 	override function create()
 	{
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
-		var fullWidth:Int = Std.int(FlxG.width / Math.max(camera.zoom, 0.001));
-		var fullHeight:Int = Std.int(FlxG.height / Math.max(camera.zoom, 0.001));
-		var width:Int = Std.int(fullWidth / 2) + 4;
-		var height:Int = fullHeight;
-		leftDoor = loadGraphic('leftDoor');
-		leftDoor.scale.x = width;
-		leftDoor.updateHitbox();
-		leftDoor.scrollFactor.set();
-		leftDoor.screenCenter(X);
-		add(leftDoor);
+    	cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
+    	var fullWidth:Int = Std.int(FlxG.width / Math.max(camera.zoom, 0.001));
+    	var fullHeight:Int = Std.int(FlxG.height / Math.max(camera.zoom, 0.001));
+    	var width:Int = Std.int(fullWidth / 2) + 4;
 
-		transBlack = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
-		transBlack.scale.set(width, height + 400);
-		transBlack.updateHitbox();
-		transBlack.scrollFactor.set();
-		transBlack.screenCenter(X);
-		add(transBlack);
+    	leftDoor = new FlxSprite();
+    	leftDoor.loadGraphic(Paths.image('fade/leftDoor'));
+    	leftDoor.scale.x = width;
+    	leftDoor.updateHitbox();
+    	leftDoor.scrollFactor.set();
+    	leftDoor.y = (fullHeight / 2) - (leftDoor.height / 2);
+    	add(leftDoor);
 
-		if(isTransIn)
-			transGradient.y = transBlack.y - transBlack.height;
-		else
-			transGradient.y = -transGradient.height;
+    	rightDoor = new FlxSprite();
+    	rightDoor.loadGraphic(Paths.image('fade/rightDoor'));
+    	rightDoor.scale.x = width;
+    	rightDoor.updateHitbox();
+    	rightDoor.scrollFactor.set();
+    	rightDoor.y = (fullHeight / 2) - (rightDoor.height / 2);
+    	add(rightDoor);
 
-		super.create();
-	}
-
-	override function update(elapsed:Float) {
-		super.update(elapsed);
-
-		final height:Float = FlxG.height * Math.max(camera.zoom, 0.001);
-		final targetPos:Float = transGradient.height + 50 * Math.max(camera.zoom, 0.001);
-		if(duration > 0)
-			transGradient.y += (height + targetPos) * elapsed / duration;
-		else
-			transGradient.y = (targetPos) * elapsed;
-
-		if(isTransIn)
-			transBlack.y = transGradient.y + transGradient.height;
-		else
-			transBlack.y = transGradient.y - transBlack.height;
-
-		if(transGradient.y >= targetPos)
-		{
-			close();
-		}
+    	if (isTransIn) {
+        	leftDoor.x = fullWidth / 2 - leftDoor.width;
+        	rightDoor.x = fullWidth / 2;
+        	FlxTween.tween(leftDoor, {x: -leftDoor.width}, duration, {ease: FlxEase.quadInOut});
+        	FlxTween.tween(rightDoor, {x: fullWidth}, duration, {ease: FlxEase.quadInOut, onComplete: function(_) close()});
+    	}
+    	else {
+        	leftDoor.x = -leftDoor.width;
+        	rightDoor.x = fullWidth;
+        	FlxTween.tween(leftDoor, {x: fullWidth / 2 - leftDoor.width}, duration, {ease: FlxEase.quadInOut});
+        	FlxTween.tween(rightDoor, {x: fullWidth / 2}, duration, {ease: FlxEase.quadInOut, onComplete: function(_) close()});
+    	}
+    	super.create();
 	}
 
 	// Don't delete this
