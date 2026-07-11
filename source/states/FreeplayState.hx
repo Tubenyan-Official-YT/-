@@ -171,14 +171,14 @@ class FreeplayState extends MusicBeatState
 		missingText.visible = false;
 		add(missingText);
 
-		charSelectBtn = new FlxSprite(800, 500); // (x 좌표, y 좌표)
+		charSelectBtn = new FlxSprite(625, 500); // (x 좌표, y 좌표)
     	charSelectBtn.frames = Paths.getSparrowAtlas('freeplayUI/charSelectBtn', 'battlecats');
     	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
     	add(charSelectBtn);
 
-		startButton = new FlxSprite(900, 500); // (x 좌표, y 좌표)
+		startButton = new FlxSprite(700, 500); // (x 좌표, y 좌표)
     	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart', 'battlecats');
     	startButton.animation.addByPrefix('idle', 'start idle', 24, true);
     	startButton.animation.addByPrefix('selected', 'start selected', 24, true);
@@ -261,8 +261,8 @@ class FreeplayState extends MusicBeatState
 
 		
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
-			if (charSelectBtn.scale.x == 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
-			charSelectBtn.scale.set(0.6, 0.6);
+			if (charSelectBtn.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
+			charSelectBtn.scale.set(0.7, 0.7);
 			if (charSelectBtn.animation.curAnim.name != 'selected') {
 				charSelectBtn.animation.play('selected');
 			}
@@ -271,7 +271,7 @@ class FreeplayState extends MusicBeatState
         		MusicBeatState.switchState(new CharacterSelectState());
     		}
 		} else {
-			charSelectBtn.scale.set(0.5, 0.5);
+			charSelectBtn.scale.set(0.6, 0.6);
 			charSelectBtn.animation.play('idle');
 		}
 		
@@ -279,8 +279,8 @@ class FreeplayState extends MusicBeatState
 		
 		
 		if (FlxG.mouse.overlaps(startButton)) { 
-			if (startButton.scale.x == 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
-			startButton.scale.set(0.6, 0.6);
+			if (startButton.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
+			startButton.scale.set(0.7, 0.7);
 			if (startButton.animation.curAnim.name != 'selected') {
 				startButton.animation.play('selected');
 			}
@@ -333,7 +333,7 @@ class FreeplayState extends MusicBeatState
 			}
 			
 		} else {
-			startButton.scale.set(0.5, 0.5);
+			startButton.scale.set(0.6, 0.6);
 			startButton.animation.play('idle');
 		}
 
