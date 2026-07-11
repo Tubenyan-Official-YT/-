@@ -351,7 +351,12 @@ class FreeplayState extends MusicBeatState
 					startButton.animation.play('idle');
 				}
 			}
-		}	
+		} else {
+			startButton.scale.set(0.5, 0.5);
+			startButton.animation.play('idle');
+		}
+
+
 
 
 
