@@ -77,16 +77,16 @@ class PlayState extends MusicBeatState
 	public static var STRUM_X_MIDDLESCROLL = -278;
 
 	public static var ratingStuff:Array<Dynamic> = [
-		['너 지금 딴겜하지?', 0.2], //From 0% to 19%
-		['뭐하냐?', 0.4], //From 20% to 39%
-		['겁내 못하네', 0.5], //From 40% to 49%
-		['못하네', 0.6], //From 50% to 59%
-		['별로야', 0.69], //From 60% to 68%
-		['조금만 더', 0.7], //69%
-		['좀만 더 잘해봐~', 0.8], //From 70% to 79%
-		['아쉽누?', 0.9], //From 80% to 89%
-		['되게 잘하네~!', 1], //From 90% to 99%
-		['정말 최고야!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
+		['Are you playing other games?', 0.2], //From 0% to 19%
+		['what are you doing? lol', 0.4], //From 20% to 39%
+		['very bad', 0.5], //From 40% to 49%
+		['Bad', 0.6], //From 50% to 59%
+		['not good', 0.69], //From 60% to 68%
+		['just bit more', 0.7], //69%
+		['you can this better.', 0.8], //From 70% to 79%
+		['not bad', 0.9], //From 80% to 89%
+		['Good!!', 1], //From 90% to 99%
+		['CHEATER!!!!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 
 	//event variables
