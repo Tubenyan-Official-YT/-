@@ -39,6 +39,7 @@ class FreeplayState extends MusicBeatState
 	private var iconArray:Array<HealthIcon> = [];
 
 	var charSelectBtn:FlxSprite;
+	var startButton:FlxSprite;
 	
 	var bg:FlxSprite;
 	var missingTextBG:FlxSprite;
