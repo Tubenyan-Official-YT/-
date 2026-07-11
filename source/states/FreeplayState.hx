@@ -176,6 +176,13 @@ class FreeplayState extends MusicBeatState
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
     	add(charSelectBtn);
+
+		startButton = new FlxSprite(900, 500); // (x 좌표, y 좌표)
+    	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart', 'battlecats');
+    	startButton.animation.addByPrefix('idle', 'start idle', 24, true);
+    	startButton.animation.addByPrefix('selected', 'start selected', 24, true);
+    	startButton.antialiasing = ClientPrefs.data.antialiasing;
+    	add(startButton);
 		
 		if(curSelected >= songs.length) curSelected = 0;
 		lerpSelected = curSelected;
@@ -266,6 +273,86 @@ class FreeplayState extends MusicBeatState
 			charSelectBtn.scale.set(0.5, 0.5);
 			charSelectBtn.animation.play('idle');
 		}
+		
+		// 👌👈👌👈👌👈👌👈 내가 하고싶은거 승주는 맨날 여친이랑 하는거. I want to do this, and my friend kim seung ju do this every day with his girlfriend.
+		
+		
+		if (FlxG.mouse.overlaps(startButton)) { 
+			if (startButton.scale.x == 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
+			startButton.scale.set(0.6, 0.6);
+			if (startButton.animation.curAnim.name != 'selected') {
+				startButton.animation.play('selected');
+			}
+			if (FlxG.mouse.justPressed)
+    		{
+        		if(instPlaying != curSelected && !player.playingMusic) {
+					destroyFreeplayVocals();
+					FlxG.sound.music.volume = 0;
+
+					Mods.currentModDirectory = songs[curSelected].folder;
+					var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+					Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+					if (PlayState.SONG.needsVoices)
+					{
+						vocals = new FlxSound();
+						try {
+							var playerVocals:String = getVocalFromCharacter(PlayState.SONG.player1);
+							var loadedVocals = Paths.voices(PlayState.SONG.song, (playerVocals != null && playerVocals.length > 0) ? playerVocals : 'Player');
+							if(loadedVocals == null) loadedVocals = Paths.voices(PlayState.SONG.song);
+						
+							if(loadedVocals != null && loadedVocals.length > 0) {
+								vocals.loadEmbedded(loadedVocals);
+								FlxG.sound.list.add(vocals);
+								vocals.persist = vocals.looped = true;
+								vocals.volume = 0.8;
+								vocals.play();
+								vocals.pause();
+							}
+							else vocals = FlxDestroyUtil.destroy(vocals);
+						}
+						catch(e:Dynamic){
+							vocals = FlxDestroyUtil.destroy(vocals);
+						}
+					
+						opponentVocals = new FlxSound();
+						try {
+							var oppVocals:String = getVocalFromCharacter(PlayState.SONG.player2);
+							var loadedVocals = Paths.voices(PlayState.SONG.song, (oppVocals != null && oppVocals.length > 0) ? oppVocals : 'Opponent');
+							if(loadedVocals != null && loadedVocals.length > 0) {
+								opponentVocals.loadEmbedded(loadedVocals);
+								FlxG.sound.list.add(opponentVocals);
+								opponentVocals.persist = opponentVocals.looped = true;
+								opponentVocals.volume = 0.8;
+								opponentVocals.play();
+								opponentVocals.pause();
+							}
+							else opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
+						}
+						catch(e:Dynamic) {
+							opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
+						}
+					}
+
+					FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.8);
+					FlxG.sound.music.pause();
+					instPlaying = curSelected;
+
+					player.playingMusic = true;
+					player.curTime = 0;
+					player.switchPlayMusic();
+					player.pauseOrResume(true);
+				}
+				else if (instPlaying == curSelected && player.playingMusic){
+					player.pauseOrResume(!player.playing);
+				}
+			    else {
+					startButton.scale.set(0.5, 0.5);
+					startButton.animation.play('idle');
+				}
+			}
+		}	
+
+
 
 		
 		if (!player.playingMusic)
