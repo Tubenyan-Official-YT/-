@@ -203,7 +203,7 @@ class FreeplayState extends MusicBeatState
     	freeplayUIGroup.add(charSelectBtn);
 
 		refreshDiffButtons();
-		freeplayUIGroup.add(diffButtons)
+		freeplayUIGroup.add(diffButtons);
 		
 		startButton = new FlxSprite(700, 500); // (x 좌표, y 좌표)
     	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart', 'battlecats');
