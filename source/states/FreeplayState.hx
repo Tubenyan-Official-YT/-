@@ -284,73 +284,54 @@ class FreeplayState extends MusicBeatState
 			if (startButton.animation.curAnim.name != 'selected') {
 				startButton.animation.play('selected');
 			}
-			if (FlxG.mouse.justPressed)
-    		{
-        		if(instPlaying != curSelected && !player.playingMusic) {
-					destroyFreeplayVocals();
-					FlxG.sound.music.volume = 0;
+			if (FlxG.mouse.justPressed) {
+				persistentUpdate = false;
+				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
-					Mods.currentModDirectory = songs[curSelected].folder;
-					var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-					Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
-					if (PlayState.SONG.needsVoices)
-					{
-						vocals = new FlxSound();
-						try {
-							var playerVocals:String = getVocalFromCharacter(PlayState.SONG.player1);
-							var loadedVocals = Paths.voices(PlayState.SONG.song, (playerVocals != null && playerVocals.length > 0) ? playerVocals : 'Player');
-							if(loadedVocals == null) loadedVocals = Paths.voices(PlayState.SONG.song);
-						
-							if(loadedVocals != null && loadedVocals.length > 0) {
-								vocals.loadEmbedded(loadedVocals);
-								FlxG.sound.list.add(vocals);
-								vocals.persist = vocals.looped = true;
-								vocals.volume = 0.8;
-								vocals.play();
-								vocals.pause();
-							}
-							else vocals = FlxDestroyUtil.destroy(vocals);
-						}
-						catch(e:Dynamic){
-							vocals = FlxDestroyUtil.destroy(vocals);
-						}
-					
-						opponentVocals = new FlxSound();
-						try {
-							var oppVocals:String = getVocalFromCharacter(PlayState.SONG.player2);
-							var loadedVocals = Paths.voices(PlayState.SONG.song, (oppVocals != null && oppVocals.length > 0) ? oppVocals : 'Opponent');
-							if(loadedVocals != null && loadedVocals.length > 0) {
-								opponentVocals.loadEmbedded(loadedVocals);
-								FlxG.sound.list.add(opponentVocals);
-								opponentVocals.persist = opponentVocals.looped = true;
-								opponentVocals.volume = 0.8;
-								opponentVocals.play();
-								opponentVocals.pause();
-							}
-							else opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
-						}
-						catch(e:Dynamic) {
-							opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
-						}
-					}
+				try {
+					Song.loadFromJson(poop, songLowercase);
+					PlayState.isStoryMode = false;
+					PlayState.storyDifficulty = curDifficulty;
 
-					FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.8);
-					FlxG.sound.music.pause();
-					instPlaying = curSelected;
+					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				}
+				catch(e:haxe.Exception)
+				{
+					trace('ERROR! ${e.message}');
+					var errorStr:String = e.message;
+					if(errorStr.contains('There is no TEXT asset with an ID of')) errorStr = 'Missing file: ' + errorStr.substring(errorStr.indexOf(songLowercase), errorStr.length-1);
+					else errorStr += '\n\n' + e.stack;
 
-					player.playingMusic = true;
-					player.curTime = 0;
-					player.switchPlayMusic();
-					player.pauseOrResume(true);
+					missingText.text = 'ERROR WHILE LOADING CHART:\n$errorStr';
+					missingText.screenCenter(Y);
+					missingText.visible = true;
+					missingTextBG.visible = true;
+					FlxG.sound.play(Paths.sound('cancelMenu'));
+
+					updateTexts(elapsed);
+					super.update(elapsed);
+					return;
 				}
-				else if (instPlaying == curSelected && player.playingMusic){
-					player.pauseOrResume(!player.playing);
+
+				@:privateAccess
+				if(PlayState._lastLoadedModDirectory != Mods.currentModDirectory)
+				{
+					trace('CHANGED MOD DIRECTORY, RELOADING STUFF');
+					Paths.freeGraphicsFromMemory();
 				}
-			    else {
-					startButton.scale.set(0.5, 0.5);
-					startButton.animation.play('idle');
-				}
+				LoadingState.prepareToSong();
+				LoadingState.loadAndSwitchState(new PlayState());
+				#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop();
+				#end
+				stopMusicPlay = true;
+
+				destroyFreeplayVocals();
+				#if (MODS_ALLOWED && DISCORD_ALLOWED)
+				DiscordClient.loadModRPC();
+				#end
 			}
+			
 		} else {
 			startButton.scale.set(0.5, 0.5);
 			startButton.animation.play('idle');
