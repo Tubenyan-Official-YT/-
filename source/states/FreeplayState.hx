@@ -38,6 +38,8 @@ class FreeplayState extends MusicBeatState
 
 	private var iconArray:Array<HealthIcon> = [];
 
+
+	var diffButtons:Array<FlxSprite> = [];
 	var charSelectBtn:FlxSprite;
 	var startButton:FlxSprite;
 	
@@ -50,7 +52,25 @@ class FreeplayState extends MusicBeatState
 	var bottomBG:FlxSprite;
 
 	var player:MusicPlayer;
+	function refreshDiffButtons():Void
+	{
+    	for (btn in diffButtons) remove(btn);
+    	diffButtons = [];
+    	var startX:Float = 100;
+    	var btnY:Float = 600;
+    	var spacing:Float = 90;
 
+    	for (i in 0...Difficulty.list.length) {
+        	var diffName:String = Difficulty.list[i].toLowerCase();
+        	var isSelected:Bool = (i == curDifficulty);
+        	var btn:FlxSprite = new FlxSprite(startX + i * spacing, btnY);
+        	btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
+        	btn.scrollFactor.set();
+        	btn.ID = i;
+        	add(btn);
+        	diffButtons.push(btn);
+    	}
+	}
 	override function create()
 	{
 		if (FlxG.save.data.selectedSongGroup == null) {
@@ -178,6 +198,8 @@ class FreeplayState extends MusicBeatState
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
     	add(charSelectBtn);
 
+		refreshDiffButtons();
+		
 		startButton = new FlxSprite(700, 500); // (x 좌표, y 좌표)
     	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart', 'battlecats');
     	startButton.animation.addByPrefix('idle', 'start idle', 24, true);
@@ -237,6 +259,13 @@ class FreeplayState extends MusicBeatState
 	var stopMusicPlay:Bool = false;
 	override function update(elapsed:Float)
 	{
+		for (btn in diffButtons) {
+    		if (FlxG.mouse.overlaps(btn) && FlxG.mouse.justPressed) {
+        		changeDiff(btn.ID - curDifficulty);
+        		break;
+    		}
+		}
+		
 		if(WeekData.weeksList.length < 1)
 			return;
 		if (FlxG.sound.music.volume < 0.7)
@@ -654,6 +683,7 @@ class FreeplayState extends MusicBeatState
 		positionHighscore();
 		missingText.visible = false;
 		missingTextBG.visible = false;
+		refreshDiffButtons();
 	}
 
 	function changeSelection(change:Int = 0, playSound:Bool = true)
