@@ -53,30 +53,29 @@ class FreeplayState extends MusicBeatState
 
 	var player:MusicPlayer;
 
-	var freeplayUIGrp:FlxTypedGroup<FlxSprite>;
+	var freeplayUIGrp:FlxSpriteGroup;
 	
 	function refreshDiffButtons():Void
 	{
-    	for (btn in diffButtons) remove(btn);
-    	diffButtons = [];
-    	var startX:Float = 700;
-    	var btnY:Float = 600;
-    	var spacing:Float = 90;
+		for (btn in diffButtons) freeplayUIGrp.remove(btn);
+		diffButtons = [];
+		var btnY:Float = -100; // freeplayUIGrp.y 기준 상대좌표
+		var spacing:Float = 70;
 
-    	for (i in 0...Difficulty.list.length) {
-        	var diffName:String = Difficulty.list[i].toLowerCase();
-        	var isSelected:Bool = (i == curDifficulty);
-        	var btn:FlxSprite = new FlxSprite(startX + i * spacing, btnY);
-        	btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
-        	btn.scrollFactor.set();
-        	btn.ID = i;
-        	add(btn);
-        	diffButtons.push(btn);
-    	}
+		for (i in 0...Difficulty.list.length) {
+			var diffName:String = Paths.formatToSongPath(Difficulty.list[i]);
+			var isSelected:Bool = (i == curDifficulty);
+			var btn:FlxSprite = new FlxSprite(i * spacing, btnY);
+			btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
+			btn.scrollFactor.set();
+			btn.ID = i;
+			freeplayUIGrp.add(btn);
+			diffButtons.push(btn);
+		}
 	}
 	override function create()
 	{
-		freeplayUIGrp = new FlxTypedGroup<FlxSprite>();
+		freeplayUIGrp = new FlxSpriteGroup(700, 500);
 		
 		if (FlxG.save.data.selectedSongGroup == null) {
 			FlxG.save.data.selectedSongGroup = "bf_songs";
@@ -195,25 +194,25 @@ class FreeplayState extends MusicBeatState
 		missingText.visible = false;
 		add(missingText);
 
-		charSelectBtn = new FlxSprite(625, 500); // (x 좌표, y 좌표)
-    	charSelectBtn.frames = Paths.getSparrowAtlas('freeplayUI/charSelectBtn', 'battlecats');
+		charSelectBtn = new FlxSprite(0, 0); // freeplayUIGrp 기준 상대좌표
+    	charSelectBtn.frames = Paths.getSparrowAtlas('freeplayUI/charSelectBtn');
     	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
+		charSelectBtn.animation.play('idle');
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
-    	freeplayUIGroup.add(charSelectBtn);
+    	freeplayUIGrp.add(charSelectBtn);
 
-		refreshDiffButtons();
-		freeplayUIGroup.add(diffButtons);
-		
-		startButton = new FlxSprite(700, 500); // (x 좌표, y 좌표)
-    	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart', 'battlecats');
+		refreshDiffButtons(); // diffButtons는 내부에서 freeplayUIGrp에 추가됨
+
+		startButton = new FlxSprite(100, 0); // freeplayUIGrp 기준 상대좌표
+    	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart');
     	startButton.animation.addByPrefix('idle', 'start idle', 24, true);
     	startButton.animation.addByPrefix('selected', 'start selected', 24, true);
+		startButton.animation.play('idle');
     	startButton.antialiasing = ClientPrefs.data.antialiasing;
-    	freeplayUIGroup.add(startButton);
+    	freeplayUIGrp.add(startButton);
 
 		add(freeplayUIGrp);
-		freeplayUIGrp.x = 700;
 		
 		if(curSelected >= songs.length) curSelected = 0;
 		lerpSelected = curSelected;
