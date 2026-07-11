@@ -52,11 +52,14 @@ class FreeplayState extends MusicBeatState
 	var bottomBG:FlxSprite;
 
 	var player:MusicPlayer;
+
+	var freeplayUIGrp:FlxTypedGroup<FlxSprite>;
+	
 	function refreshDiffButtons():Void
 	{
     	for (btn in diffButtons) remove(btn);
     	diffButtons = [];
-    	var startX:Float = 100;
+    	var startX:Float = 700;
     	var btnY:Float = 600;
     	var spacing:Float = 90;
 
@@ -73,6 +76,8 @@ class FreeplayState extends MusicBeatState
 	}
 	override function create()
 	{
+		freeplayUIGrp = new FlxTypedGroup<FlxSprite>();
+		
 		if (FlxG.save.data.selectedSongGroup == null) {
 			FlxG.save.data.selectedSongGroup = "bf_songs";
 			FlxG.save.data.flush();
@@ -172,7 +177,6 @@ class FreeplayState extends MusicBeatState
 		diffText = new FlxText(FlxG.width * 0.7, 5, 0, "", 24);
 		diffText.screenCenter(X);
 		diffText.font = scoreText.font;
-		add(diffText);
 
 		scoreBG = new FlxSprite(scoreText.x - 6, 150).makeGraphic(1, 66, 0xFF000000);
 		scoreBG.alpha = 0;
@@ -196,16 +200,20 @@ class FreeplayState extends MusicBeatState
     	charSelectBtn.animation.addByPrefix('idle', 'char idle', 24, true);
     	charSelectBtn.animation.addByPrefix('selected', 'char selected', 24, true);
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
-    	add(charSelectBtn);
+    	freeplayUIGroup.add(charSelectBtn);
 
 		refreshDiffButtons();
+		freeplayUIGroup.add(diffButtons)
 		
 		startButton = new FlxSprite(700, 500); // (x 좌표, y 좌표)
     	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart', 'battlecats');
     	startButton.animation.addByPrefix('idle', 'start idle', 24, true);
     	startButton.animation.addByPrefix('selected', 'start selected', 24, true);
     	startButton.antialiasing = ClientPrefs.data.antialiasing;
-    	add(startButton);
+    	freeplayUIGroup.add(startButton);
+
+		add(freeplayUIGrp);
+		freeplayUIGrp.x = 700;
 		
 		if(curSelected >= songs.length) curSelected = 0;
 		lerpSelected = curSelected;
@@ -292,6 +300,7 @@ class FreeplayState extends MusicBeatState
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
 			if (charSelectBtn.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
 			charSelectBtn.scale.set(0.7, 0.7);
+			charSelectBtn.updateHitbox();
 			if (charSelectBtn.animation.curAnim.name != 'selected') {
 				charSelectBtn.animation.play('selected');
 			}
@@ -301,6 +310,7 @@ class FreeplayState extends MusicBeatState
     		}
 		} else {
 			charSelectBtn.scale.set(0.6, 0.6);
+			charSelectBtn.updateHitbox();
 			charSelectBtn.animation.play('idle');
 		}
 		
@@ -310,6 +320,7 @@ class FreeplayState extends MusicBeatState
 		if (FlxG.mouse.overlaps(startButton)) { 
 			if (startButton.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
 			startButton.scale.set(0.7, 0.7);
+			startButton.updateHitbox();
 			if (startButton.animation.curAnim.name != 'selected') {
 				startButton.animation.play('selected');
 			}
@@ -363,6 +374,7 @@ class FreeplayState extends MusicBeatState
 			
 		} else {
 			startButton.scale.set(0.6, 0.6);
+			startButton.updateHitbox();
 			startButton.animation.play('idle');
 		}
 
