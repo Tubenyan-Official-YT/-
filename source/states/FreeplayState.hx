@@ -67,6 +67,7 @@ class FreeplayState extends MusicBeatState
 			var isSelected:Bool = (i == curDifficulty);
 			var btn:FlxSprite = new FlxSprite(i * spacing, btnY);
 			btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
+			btn.antialiasing = ClientPrefs.data.antialiasing;
 			btn.scrollFactor.set();
 			btn.ID = i;
 			freeplayUIGrp.add(btn);
