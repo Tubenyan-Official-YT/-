@@ -270,12 +270,12 @@ class MainMenuState extends MusicBeatState
 		if (langEnBtn != null) selectedAndIdle(langEnBtn, function() {
     		ClientPrefs.data.language = 'en';
     		ClientPrefs.savePrefs();
-    		Language.reloadLanguage();
+    		Language.reloadPhrases();
 		});
 		if (langKoBtn != null) selectedAndIdle(langKoBtn, function() {
     		ClientPrefs.data.language = 'ko-KR';
     		ClientPrefs.savePrefs();
-    		Language.reloadLanguage();
+    		Language.reloadPhrases();
 		});
 
 		if (FlxG.sound.music.volume < 0.8)
