@@ -59,7 +59,7 @@ class FreeplayState extends MusicBeatState
 	{
 		for (btn in diffButtons) freeplayUIGrp.remove(btn);
 		diffButtons = [];
-		var btnY:Float = 75; // freeplayUIGrp.y 기준 상대좌표
+		var btnY:Float = 110; // freeplayUIGrp.y 기준 상대좌표
 		var spacing:Float = 70;
 
 		for (i in 0...Difficulty.list.length) {
