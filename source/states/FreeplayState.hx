@@ -59,7 +59,7 @@ class FreeplayState extends MusicBeatState
 	{
 		for (btn in diffButtons) freeplayUIGrp.remove(btn);
 		diffButtons = [];
-		var btnY:Float = -100; // freeplayUIGrp.y 기준 상대좌표
+		var btnY:Float = 200; // freeplayUIGrp.y 기준 상대좌표
 		var spacing:Float = 70;
 
 		for (i in 0...Difficulty.list.length) {
@@ -75,7 +75,7 @@ class FreeplayState extends MusicBeatState
 	}
 	override function create()
 	{
-		freeplayUIGrp = new FlxSpriteGroup(700, 500);
+		freeplayUIGrp = new FlxSpriteGroup(800, 500);
 		
 		if (FlxG.save.data.selectedSongGroup == null) {
 			FlxG.save.data.selectedSongGroup = "bf_songs";
