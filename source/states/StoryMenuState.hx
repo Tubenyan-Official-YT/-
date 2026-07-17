@@ -99,7 +99,6 @@ class StoryMenuState extends MusicBeatState
 		add(grpWeekText);
 
 		var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BROWN);
-		add(blackBarThingie);
 
 		grpWeekCharacters = new FlxTypedGroup<MenuCharacter>();
 
@@ -180,8 +179,7 @@ class StoryMenuState extends MusicBeatState
 		rightArrow.animation.play('idle');
 		difficultySelectors.add(rightArrow);
 		
-		var diffWidth:Float = rightArrow.x + rightArrow.width - leftArrow.x;
-		difficultySelectors.x = (FlxG.width - diffWidth) / 2;
+		difficultySelectors.screenCenter(X);
 		
 		add(bgSprite);
 		add(grpWeekCharacters);
@@ -231,28 +229,14 @@ class StoryMenuState extends MusicBeatState
 			var changeDiff = false;
 			if (controls.UI_LEFT_P)
 			{
-				if (SelectMode == 'week') {
-					changeWeek(-1);
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-					changeDiff = true;
-				}
-				else if (SelectMode == "diff") {
-					changeDifficulty(-1);
-					leftArrow.animation.play('press');
-				}
+				changeDifficulty(-1);
+				leftArrow.animation.play('press');
 			}
 
 			if (controls.UI_RIGHT_P)
 			{
-				if (SelectMode == 'week') {
-					changeWeek(1);
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-					changeDiff = true;
-				}
-				else if (SelectMode == "diff") {
-					changeDifficulty(1);
-					rightArrow.animation.play('press');
-				}
+				changeDifficulty(1);
+				rightArrow.animation.play('press');
 			}
 
 			if(FlxG.mouse.wheel != 0)
@@ -262,33 +246,28 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty();
 			}
 
-			if (controls.UI_UP_P || controls.UI_DOWN_P)
-			{
-				if (SelectMode == 'week') {
-					SelectMode = 'diff';
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-    				updateModeAlpha();
-				}
-				else if (SelectMode == 'diff') {
-					SelectMode = 'week';
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-    				updateModeAlpha();
-				}
+			if (controls.UI_UP_P) {
+				changeWeek(1);
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+				changeDiff = true;
 			}
-			if (SelectMode == "diff"){
-				if (controls.UI_RIGHT){
-					rightArrow.animation.play('press');
-				}
-				else if (controls.UI_LEFT){
-					leftArrow.animation.play('press');
-				}
+			if (controls.UI_DOWN_P) {
+				changeWeek(-1);
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+				changeDiff = true;
+			}
 			
-				else {
-   				 // 꾹 누르고 있는 게 아니라면 양쪽 화살표 모두 기본(idle) 상태로 되돌립니다.
-    				rightArrow.animation.play('idle');
-    				leftArrow.animation.play('idle');
-				}
+			if (controls.UI_RIGHT){
+				rightArrow.animation.play('press');
 			}
+			else if (controls.UI_LEFT){
+				leftArrow.animation.play('press');
+			}
+			else {
+    			rightArrow.animation.play('idle');
+    			leftArrow.animation.play('idle');
+			}
+			
 			if(FlxG.keys.justPressed.CONTROL)
 			{
 				persistentUpdate = false;
