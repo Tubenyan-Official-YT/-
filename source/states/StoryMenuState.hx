@@ -150,7 +150,7 @@ class StoryMenuState extends MusicBeatState
 			grpWeekCharacters.add(weekCharacterThing);
 		}
 
-		difficultySelectors = new FlxGroup();
+		difficultySelectors = new FlxSpriteGroup();
 		add(difficultySelectors);
 
 		leftArrow = new FlxSprite(850, bottomUIY);
