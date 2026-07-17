@@ -48,11 +48,8 @@ class StoryMenuSubState extends MusicBeatSubstate
 	var selectedWeek:Bool = false;
 	var stopspamming:Bool = false;
 
-	public function new()
-	{
-		super();
-
-		// 메인메뉴가 비쳐 보이도록 뒷배경을 반투명하게 설정
+	override function create() {
+		super.create();
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0.6;
 		add(bg);
@@ -148,6 +145,9 @@ class StoryMenuSubState extends MusicBeatSubstate
 		changeWeek();
 		changeDifficulty();
 	}
+
+		// 메인메뉴가 비쳐 보이도록 뒷배경을 반투명하게 설정
+		
 
 	override function update(elapsed:Float)
 	{
