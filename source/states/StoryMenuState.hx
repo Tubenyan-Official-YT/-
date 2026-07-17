@@ -120,15 +120,16 @@ class StoryMenuState extends MusicBeatState
 				var leftMidX:Float = FlxG.width / 4;
 				weekThing.x = leftMidX - weekThing.width / 2;
     			weekThing.ID = num;
-    			weekThing.targetX= 0;  // X는 고정
+				weekInitialX.push(leftMidX - weekThing.width / 2);
+    			weekThing.targetX = leftMidX - weekThing.width / 2;
     			weekThing.y = itemTargetY;  // Y로 배치
-				weekInitialX.push(itemTargetX);
     			itemTargetY += weekThing.height + 50;
 				grpWeekText.add(weekThing);
 				
 				if (isLocked)
 				{
 					var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
+					lock.y = weekThing.y; // 추가
 					lock.antialiasing = ClientPrefs.data.antialiasing;
 					lock.frames = ui_tex;
 					lock.animation.addByPrefix('lock', 'lock');
