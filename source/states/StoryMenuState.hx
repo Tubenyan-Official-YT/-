@@ -108,6 +108,7 @@ class StoryMenuState extends MusicBeatState
 		
 		var num:Int = 0;
 		var itemTargetX:Float = 0;  // Y → X로 변경
+		var itemTargetY:Float = 200; // 또는 FlxG.height / 4 등
 		for (i in 0...WeekData.weeksList.length) {
 			var weekFile:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var isLocked:Bool = weekIsLocked(WeekData.weeksList[i]);
@@ -116,12 +117,13 @@ class StoryMenuState extends MusicBeatState
 			if (!isLocked || !weekFile.hiddenUntilUnlocked)
 			{
     			var weekThing:MenuItem = new MenuItem(0, 0, WeekData.weeksList[i]);
-				weekThing.screenCenter(Y);
+				var leftMidX:Float = FlxG.width / 4;
+				weekThing.x = leftMidX - weekThing.width / 2;
     			weekThing.ID = num;
-    			weekThing.targetY = 0;  // Y는 고정
-    			weekThing.x = itemTargetX;  // X로 배치
+    			weekThing.targetX= 0;  // X는 고정
+    			weekThing.y = itemTargetY;  // Y로 배치
 				weekInitialX.push(itemTargetX);
-    			itemTargetX += weekThing.width + 200;
+    			itemTargetY += weekThing.height + 50;
 				grpWeekText.add(weekThing);
 				
 				if (isLocked)
@@ -176,6 +178,8 @@ class StoryMenuState extends MusicBeatState
 		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
 		rightArrow.animation.play('idle');
 		difficultySelectors.add(rightArrow);
+		
+		difficultySelectors.screenCenter(X);
 		
 		add(bgSprite);
 		add(grpWeekCharacters);
