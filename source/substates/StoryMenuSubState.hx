@@ -132,7 +132,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 		curDifficulty = Math.round(Math.max(0, Difficulty.defaultList.indexOf(lastDifficultyName)));
 		
 		sprDifficulty = new FlxSprite(0, leftArrow.y);
-		sprDifficulty.anialiasing = ClientPrefs.data.antialiasing;
+		sprDifficulty.antialiasing = ClientPrefs.data.antialiasing;
 		difficultySelectors.add(sprDifficulty);
 
 		rightArrow = new FlxSprite(leftArrow.x + 376, leftArrow.y);
@@ -213,8 +213,8 @@ class StoryMenuSubState extends MusicBeatSubstate
 				movedBack = true;
 	
 	// 커스텀 트랜지션을 건너뛰고 MainMenuState를 완전히 처음부터 새로 시작합니다.
-				MusicBeatState.skipNextTransIn = true;
-				MusicBeatState.skipNextTransOut = true;
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
 				MusicBeatState.switchState(new MainMenuState());
 			}
 
