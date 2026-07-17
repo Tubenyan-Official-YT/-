@@ -73,6 +73,8 @@ class StoryMenuSubState extends MusicBeatSubstate
 		
 		var num:Int = 0;
 		var itemTargetY:Float = 200;
+		var targetX:Float = FlxG.width / 4; // 왼쪽 구역의 중심점
+
 		for (i in 0...WeekData.weeksList.length) {
 			var weekFile:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var isLocked:Bool = weekIsLocked(WeekData.weeksList[i]);
@@ -81,28 +83,35 @@ class StoryMenuSubState extends MusicBeatSubstate
 			if (!isLocked || !weekFile.hiddenUntilUnlocked)
 			{
 				var weekThing:MenuItem = new MenuItem(0, 0, WeekData.weeksList[i]);
-				var leftMidX:Float = FlxG.width / 4;
-				weekThing.x = leftMidX - weekThing.width / 2;
 				weekThing.ID = num;
-				weekInitialX.push(leftMidX - weekThing.width / 2);
-				weekThing.y = itemTargetY - 50 * num;
+
+				// [교정] 아이템의 x(왼쪽 위 끝)를 기준으로 한 정확한 센터링 공식
+				weekThing.x = targetX - (weekThing.frameWidth / 2) + weekThing.offset.x;
+				
+				var desiredY:Float = itemTargetY + (50 * num);
+				weekThing.y = desiredY - (weekThing.frameHeight / 2) + weekThing.offset.y;
 				
 				grpWeekText.add(weekThing);
 				
 				if (isLocked)
 				{
-					var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
-					lock.y = weekThing.y;
-					lock.antialiasing = ClientPrefs.data.antialiasing;
+					var lock:FlxSprite = new FlxSprite();
 					lock.frames = ui_tex;
 					lock.animation.addByPrefix('lock', 'lock');
 					lock.animation.play('lock');
+					
+					// 자물쇠 위치도 교정된 위크 기준 우측 도킹
+					lock.x = weekThing.x + weekThing.frameWidth - weekThing.offset.x + 10;
+					lock.y = weekThing.y + (weekThing.frameHeight / 2) - weekThing.offset.y - (lock.height / 2);
+					
+					lock.antialiasing = ClientPrefs.data.antialiasing;
 					lock.ID = i;
 					grpLocks.add(lock);
 				}
 				num++;
 			}
 		}
+		
 
 		difficultySelectors = new FlxSpriteGroup();
 		add(difficultySelectors);
@@ -123,7 +132,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 		curDifficulty = Math.round(Math.max(0, Difficulty.defaultList.indexOf(lastDifficultyName)));
 		
 		sprDifficulty = new FlxSprite(0, leftArrow.y);
-		sprDifficulty.antialiasing = ClientPrefs.data.antialiasing;
+		sprDifficulty.anialiasing = ClientPrefs.data.antialiasing;
 		difficultySelectors.add(sprDifficulty);
 
 		rightArrow = new FlxSprite(leftArrow.x + 376, leftArrow.y);
@@ -197,24 +206,40 @@ class StoryMenuSubState extends MusicBeatSubstate
 			
 			if (controls.ACCEPT)
 				selectWeek();
-		}
-
-		if (controls.BACK && !movedBack && !selectedWeek)
-		{
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-			movedBack = true;
-			close(); // 메인메뉴 스테이트로 돌아가기 위해 섭스테이트를 닫음
-		}
+			}
+			if (controls.BACK && !movedBack && !selectedWeek)
+			{
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+				movedBack = true;
+	
+	// 커스텀 트랜지션을 건너뛰고 MainMenuState를 완전히 처음부터 새로 시작합니다.
+				MusicBeatState.skipNextTransIn = true;
+				MusicBeatState.skipNextTransOut = true;
+				MusicBeatState.switchState(new MainMenuState());
+			}
 
 		super.update(elapsed);
-		
-		var selectedInitialX:Float = weekInitialX[curWeek];
-		var targetOffX:Float = FlxG.width / 2 - selectedInitialX - grpWeekText.members[curWeek].width / 2;
+		// 왼쪽 구역의 중심점 X 좌표
+		var targetX:Float = FlxG.width / 4; 
+
 		for (num => item in grpWeekText.members)
-			item.x = FlxMath.lerp(weekInitialX[num] + targetOffX, item.x, Math.exp(-elapsed * 10.2));
+		{
+			var desiredY:Float = 200 + (50 * (num - curWeek));
+			
+			// [교정] 매 프레임 애니메이션 오프셋 변화를 반영하여 왼쪽 위 끝(x, y)을 정확히 강제 고정
+			item.x = targetX - (item.frameWidth / 2) + item.offset.x;
+			item.y = desiredY - (item.frameHeight / 2) + item.offset.y;
+		}
 
 		for (num => lock in grpLocks.members)
-			lock.y = grpWeekText.members[lock.ID].y + grpWeekText.members[lock.ID].height/2 - lock.height/2;
+		{
+			var parentItem = grpWeekText.members[lock.ID];
+			if (parentItem != null)
+			{
+				lock.x = parentItem.x + parentItem.frameWidth - parentItem.offset.x + 10;
+				lock.y = parentItem.y + (parentItem.frameHeight / 2) - parentItem.offset.y - (lock.height / 2);
+			}
+		}
 	}
 
 	function selectWeek()
