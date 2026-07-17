@@ -5,6 +5,7 @@ import flixel.effects.FlxFlicker;
 import lime.app.Application;
 import states.editors.MasterEditorMenu;
 import options.OptionsState;
+import substates.StoryMenuSubState;
 
 enum MainMenuColumn {
 	LEFT;
@@ -337,7 +338,7 @@ class MainMenuState extends MusicBeatState
 					switch (option)
 					{
 						case 'story_mode':
-							MusicBeatState.switchState(new StoryMenuState());
+							openSubState(new substates.StoryMenuSubState());
 						case 'freeplay':
 							MusicBeatState.switchState(new FreeplayState());
 
