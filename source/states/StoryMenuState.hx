@@ -121,7 +121,7 @@ class StoryMenuState extends MusicBeatState
 				weekThing.x = leftMidX - weekThing.width / 2;
     			weekThing.ID = num;
 				weekInitialX.push(leftMidX - weekThing.width / 2);
-    			weekThing.targetX = leftMidX - weekThing.width / 2;
+    			weekThing.targetY = itemTargetY;
     			weekThing.y = itemTargetY;  // Y로 배치
     			itemTargetY += weekThing.height + 50;
 				grpWeekText.add(weekThing);
@@ -180,7 +180,8 @@ class StoryMenuState extends MusicBeatState
 		rightArrow.animation.play('idle');
 		difficultySelectors.add(rightArrow);
 		
-		difficultySelectors.screenCenter(X);
+		var diffWidth:Float = rightArrow.x + rightArrow.width - leftArrow.x;
+		difficultySelectors.x = (FlxG.width - diffWidth) / 2;
 		
 		add(bgSprite);
 		add(grpWeekCharacters);
