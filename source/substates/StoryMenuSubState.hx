@@ -227,7 +227,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 
 		for (num => item in grpWeekText.members)
 		{
-			var desiredY:Float = 200 + (120 * (num - curWeek));
+			var desiredY:Float = 200 + (120 * num) - (50 * curWeek);
 			
 			// [교정] 매 프레임 애니메이션 오프셋 변화를 반영하여 왼쪽 위 끝(x, y)을 정확히 강제 고정
 			item.x = targetX - (item.frameWidth / 2) + item.offset.x;
