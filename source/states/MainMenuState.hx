@@ -150,7 +150,7 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-		FlxG.camera.follow(camFollow, null, 0.15);
+		// FlxG.camera.follow(camFollow, null, 0.15);
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
@@ -419,6 +419,6 @@ class MainMenuState extends MusicBeatState
 		}
 		selectedItem.animation.play('selected');
 		selectedItem.centerOffsets();
-		camFollow.y = selectedItem.getGraphicMidpoint().y;
+		// camFollow.y = selectedItem.getGraphicMidpoint().y;
 	}
 }
