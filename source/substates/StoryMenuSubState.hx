@@ -54,7 +54,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 		this.cameras = [FlxG.camera];
 		
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		bg.alpha = 0.6;
+		bg.alpha = 0.0;
 		add(bg);
 
 		var bottomUIY:Float = 560;
@@ -88,7 +88,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 				// [교정] 아이템의 x(왼쪽 위 끝)를 기준으로 한 정확한 센터링 공식
 				weekThing.x = targetX - (weekThing.frameWidth / 2) + weekThing.offset.x;
 				
-				var desiredY:Float = itemTargetY + (50 * num);
+				var desiredY:Float = itemTargetY + (120 * num);
 				weekThing.y = desiredY - (weekThing.frameHeight / 2) + weekThing.offset.y;
 				
 				grpWeekText.add(weekThing);
@@ -371,6 +371,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 		{
 			curDifficulty = newPos;
 		}
+		changeDifficulty(0);
 	}
 
 	function weekIsLocked(name:String):Bool {
