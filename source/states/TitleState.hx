@@ -229,7 +229,7 @@ class TitleState extends MusicBeatState
 
 	var gfPosition:FlxPoint = FlxPoint.get(512, 40);
 	var logoPosition:FlxPoint = FlxPoint.get(100, 150);
-	var enterPosition:FlxPoint = FlxPoint.get(100, 276);
+	var enterPosition:FlxPoint = FlxPoint.get(100, 20);
 	
 	var useIdle:Bool = false;
 	var musicBPM:Float = 102;
