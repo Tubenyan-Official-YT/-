@@ -73,14 +73,12 @@ class CreditsState extends MusicBeatState
 			["NyangBab",            "nb",               'Test',                                                     "https://discord.gg/uwbTRBDJsb",     'FFFFFF'],// 한 줄 띄우기
 			["RTX 6090",            "6090",             'Nothing. He do not play FNF.',                             "https://discord.gg/zdfQhkVYTD",     '89C5CB'],// 한 줄 띄우기 FF740A
 			["2dles",               "2dles",            'Nothing. He do not play FNF, too.',            "https://discord.com/channels/@me/1449048458060234874",     'FF740A'],
-			["GEMINI",              "gemini",           'Made haxe Source for Tubenyan',                            "https://gemini.google.com/app",     '4285F4'],
+			["Gemini",              "gemini",           'Made haxe Source for Tubenyan',                            "https://gemini.google.com/app",     '4285F4'],
+			["Claude",              "claude",           'Same with Gemini',                                         "https://claude.ai",     '4285F4'],
 			[''],
 			["Our DISCORD"],
-			["Join our Hangout Server!!", "discord", "", "https://discord.gg/xQCgzngkYW", "5165F6"], 
 			["Join SD Card Community!!", "discord", "", "https://discord.gg/4K49EHG8P3", "5165F6"],
 			[""],
-			["Psych Engine Team"], // 여기서부터는 기존 코드
-			["Shadow Mario", "shadowmario", "Main Programmer and Head of Psych Engine", "https://ko-fi.com/shadowmario", "444444"],
 		];
 		
 		for(i in defaultList)
@@ -94,6 +92,7 @@ class CreditsState extends MusicBeatState
 			optionText.targetY = i;
 			optionText.changeX = false;
 			optionText.snapToPosition();
+			optionText.screenCenter(X);
 			grpOptions.add(optionText);
 
 			if(isSelectable)
@@ -137,7 +136,7 @@ class CreditsState extends MusicBeatState
 		descBox.sprTracker = descText;
 		add(descText);
 
-		bg.color = CoolUtil.colorFromString(creditsStuff[curSelected][4]);
+		
 		intendedColor = bg.color;
 		changeSelection();
 		super.create();
@@ -229,12 +228,6 @@ class CreditsState extends MusicBeatState
 
 		var newColor:FlxColor = CoolUtil.colorFromString(creditsStuff[curSelected][4]);
 		//trace('The BG color is: $newColor');
-		if(newColor != intendedColor)
-		{
-			intendedColor = newColor;
-			FlxTween.cancelTweensOf(bg);
-			FlxTween.color(bg, 1, bg.color, intendedColor);
-		}
 
 		for (num => item in grpOptions.members)
 		{
