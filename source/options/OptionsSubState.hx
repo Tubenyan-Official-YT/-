@@ -3,39 +3,38 @@ package options;
 import states.MainMenuState;
 import backend.StageData;
 
-class OptionsState extends MusicBeatState
+class OptionsSubState extends MusicBeatSubState
 {
 	var options:Array<String> = [
-		'Note Colors',
 		'Controls',
-		'Adjust Delay and Combo',
 		'Graphics',
-		'Visuals',
 		'Gameplay'
 		#if TRANSLATIONS_ALLOWED , 'Language' #end
 	];
-	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpOptions:FlxSpriteGroup;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 	public static var onPlayState:Bool = false;
 
+	private var optionCam:FlxCamera;
+
 	function openSelectedSubstate(label:String) {
-		switch(label)
-		{
-			case 'Note Colors':
-				openSubState(new options.NotesColorSubState());
+		var sub:MusicBeatSubState = null;
+		switch(label) {
 			case 'Controls':
-				openSubState(new options.ControlsSubState());
+				sub = new options.ControlsSubState();
 			case 'Graphics':
-				openSubState(new options.GraphicsSettingsSubState());
-			case 'Visuals':
-				openSubState(new options.VisualsSettingsSubState());
+				sub = new options.GraphicsSettingsSubState();
 			case 'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
-			case 'Adjust Delay and Combo':
-				MusicBeatState.switchState(new options.NoteOffsetState());
+				sub = new options.GameplaySettingsSubState();
 			case 'Language':
-				openSubState(new options.LanguageSubState());
+				sub = new options.LanguageSubState();
+		}
+		
+		if (sub != null)
+		{
+			sub.cameras = [optionCam];
+			openSubState(sub);
 		}
 	}
 
@@ -47,30 +46,55 @@ class OptionsState extends MusicBeatState
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Options Menu", null);
 		#end
-
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('optionBG'));
+		// ㅜ trash.
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDeset'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.updateHitbox();
-
 		bg.screenCenter();
-		add(bg);
 
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		var parentGrp = new FlxSpriteGroup();
+		add(parentGrp);
+		
+		var optionWindow:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('optionBG'));
+		optionWindow.antialiasing = ClientPrefs.data.antialiasing;
+		optionWindow.updateHitbox();
+		parentGrp.add(optionWindow);
+		
+		grpOptions = new FlxSpriteGroup();
+		parentGrp.add(grpOptions);
+
+		
+		
+		var startY:Float = 100;    // 첫 번째 버튼이 시작될 창 내부의 Y 좌표
+		var padding:Float = 50;     // 버튼과 버튼 사이의 순수 여백 (원하는 만큼 조절)
 
 		for (num => option in options)
 		{
-			var optionText:Alphabet = new Alphabet(0, 0, Language.getPhrase('options_$option', option), true);
-			optionText.screenCenter();
-			optionText.y += (92 * (num - (options.length / 2))) + 45;
-			grpOptions.add(optionText);
+    		var btn:FlxSprite = new FlxSprite(0, 0);
+    		btn.loadGraphic(Paths.image('options/' + option.toLowerCase()));
+			
+    		btn.y = startY + (num * (btn.height + padding));
+    
+    		btn.ID = num;
+			
+    		grpOptions.add(btn);
 		}
 
 		selectorLeft = new Alphabet(0, 0, '>', true);
-		add(selectorLeft);
 		selectorRight = new Alphabet(0, 0, '<', true);
-		add(selectorRight);
 
+		parentGrp.screenCenter();
+
+		// parentGrp.screenCenter(); 바로 아래에 삽입
+		var camX:Int = Std.int(optionWindow.x + 40);         // 창 내부 시작 X 좌표
+		var camY:Int = Std.int(optionWindow.y + 100);        // 창 내부 시작 Y 좌표
+		var camW:Int = Std.int(optionWindow.width - 80);     // 잘라낼 내부 너비
+		var camH:Int = Std.int(optionWindow.height - 140);   // 잘라낼 내부 높이
+
+		optionCam = new FlxCamera(camX, camY, camW, camH);
+		optionCam.bgColor = 0x00000000;                      // 윈도우 배경이 보이도록 투명화
+		FlxG.cameras.add(optionCam, false);
+		
 		changeSelection();
 		ClientPrefs.saveSettings();
 
@@ -82,7 +106,7 @@ class OptionsState extends MusicBeatState
 		super.closeSubState();
 		ClientPrefs.saveSettings();
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("Options Menu", null);
+		DiscordClient.changePresence("설정 메뉴", null);
 		#end
 	}
 
@@ -114,9 +138,8 @@ class OptionsState extends MusicBeatState
 
 		for (num => item in grpOptions.members)
 		{
-			item.targetY = num - curSelected;
 			item.alpha = 0.6;
-			if (item.targetY == 0)
+			if (num == curSelected)
 			{
 				item.alpha = 1;
 				selectorLeft.x = item.x - 63;
@@ -131,6 +154,10 @@ class OptionsState extends MusicBeatState
 	override function destroy()
 	{
 		ClientPrefs.loadPrefs();
+		if (optionCam != null)
+		{
+    		FlxG.cameras.remove(optionCam, true);
+		}
 		super.destroy();
 	}
 }
