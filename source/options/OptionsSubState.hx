@@ -13,7 +13,6 @@ class OptionsSubState extends MusicBeatSubState
 	];
 	private var grpOptions:FlxSpriteGroup;
 	private static var curSelected:Int = 0;
-	public static var menuBG:FlxSprite;
 	public static var onPlayState:Bool = false;
 
 	private var optionCam:FlxCamera;
@@ -86,8 +85,8 @@ class OptionsSubState extends MusicBeatSubState
 		parentGrp.screenCenter();
 
 		// parentGrp.screenCenter(); 바로 아래에 삽입
-		var camX:Int = Std.int(optionWindow.x + 40);         // 창 내부 시작 X 좌표
-		var camY:Int = Std.int(optionWindow.y + 100);        // 창 내부 시작 Y 좌표
+		var camX:Int = Std.int(parentGrp.x + 40);
+		var camY:Int = Std.int(parentGrp.y + 100);
 		var camW:Int = Std.int(optionWindow.width - 80);     // 잘라낼 내부 너비
 		var camH:Int = Std.int(optionWindow.height - 140);   // 잘라낼 내부 높이
 
@@ -127,7 +126,7 @@ class OptionsSubState extends MusicBeatSubState
 				LoadingState.loadAndSwitchState(new PlayState());
 				FlxG.sound.music.volume = 0;
 			}
-			else MusicBeatState.switchState(new MainMenuState());
+			else close();
 		}
 		else if (controls.ACCEPT) openSelectedSubstate(options[curSelected]);
 	}
