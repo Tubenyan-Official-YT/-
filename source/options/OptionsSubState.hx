@@ -4,7 +4,7 @@ import states.MainMenuState;
 import backend.StageData;
 
 class OptionsSubState extends MusicBeatSubState
-{
+{	
 	var options:Array<String> = [
 		'Controls',
 		'Graphics',
@@ -14,6 +14,7 @@ class OptionsSubState extends MusicBeatSubState
 	private var grpOptions:FlxSpriteGroup;
 	private static var curSelected:Int = 0;
 	public static var onPlayState:Bool = false;
+	
 
 	private var optionCam:FlxCamera;
 
