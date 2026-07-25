@@ -26,7 +26,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	public var bg:FlxSprite;
 	public function new()
 	{
 		super();
@@ -37,67 +36,74 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
-		
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFFea71fd;
-		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.data.antialiasing;
-		add(bg);
 
-		// avoids lagspikes while scrolling through menus!
+		// OptionsSubState에서 선언된 공용 카메라를 가져와서 사용
+		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
+
 		grpOptions = new FlxTypedGroup<Alphabet>();
+		if(targetCam != null) grpOptions.cameras = [targetCam];
 		add(grpOptions);
 
 		grpTexts = new FlxTypedGroup<AttachedText>();
+		if(targetCam != null) grpTexts.cameras = [targetCam];
 		add(grpTexts);
 
 		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
+		if(targetCam != null) checkboxGroup.cameras = [targetCam];
 		add(checkboxGroup);
 
 		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.alpha = 0.6;
+		if(targetCam != null) descBox.cameras = [targetCam];
 		add(descBox);
 
-		var titleText:Alphabet = new Alphabet(75, 45, title, true);
+		var titleText:Alphabet = new Alphabet(40, 25, title, true);
 		titleText.setScale(0.6);
-		titleText.alpha = 0.4;
+		titleText.alpha = 0.8;
+		if(targetCam != null) titleText.cameras = [targetCam];
 		add(titleText);
 
-		descText = new FlxText(50, 600, 1180, "", 32);
-		descText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText = new FlxText(40, 440, 720, "", 24);
+		descText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
-		descText.borderSize = 2.4;
+		descText.borderSize = 2.0;
+		if(targetCam != null) descText.cameras = [targetCam];
 		add(descText);
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(220, 260, optionsArray[i].name, false);
+			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, false);
 			optionText.isMenuItem = true;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
+			
+			// 1. 창 크기에 맞게 아이템 전체 크기 축소 (0.55배 등 원하는 크기로 조절)
+			optionText.setScale(0.55);
+			
+			// 2. 대각선 이동 방지 및 X축 고정 (오직 위아래로만 수직 이동)
+			// forceX를 고정하면 선택되거나 내려갈 때 옆으로 튀어나가지 않고 일직선으로 정렬됩니다.
+			optionText.forceX = 180; // 창 내부에서 고정될 X 좌표
+			optionText.yMult = 60;   // 좁은 창 높이에 맞춰 세로 줄간격 축소
+			
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
+				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 70, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.sprTracker = optionText;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				optionText.x -= 80;
-				optionText.startPosition.x -= 80;
-				//optionText.xAdd -= 80;
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 60);
+				optionText.x -= 40;
+				optionText.startPosition.x -= 40;
+				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 40);
 				valueText.sprTracker = optionText;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
-			//optionText.snapToPosition(); //Don't ignore me when i ask for not making a fucking pull request to uncomment this line ok
 			updateTextFrom(optionsArray[i]);
 		}
 
@@ -164,15 +170,18 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						bindingBlack.scale.set(FlxG.width, FlxG.height);
 						bindingBlack.updateHitbox();
 						bindingBlack.alpha = 0;
+						if(OptionsSubState.instance != null) bindingBlack.cameras = [OptionsSubState.instance.optionCam];
 						FlxTween.tween(bindingBlack, {alpha: 0.6}, 0.35, {ease: FlxEase.linear});
 						add(bindingBlack);
 	
-						bindingText = new Alphabet(FlxG.width / 2, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
+						bindingText = new Alphabet(400, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
 						bindingText.alignment = CENTERED;
+						if(OptionsSubState.instance != null) bindingText.cameras = [OptionsSubState.instance.optionCam];
 						add(bindingText);
 						
-						bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'), true);
+						bindingText2 = new Alphabet(400, 280, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete', []), true);
 						bindingText2.alignment = CENTERED;
+						if(OptionsSubState.instance != null) bindingText2.cameras = [OptionsSubState.instance.optionCam];
 						add(bindingText2);
 	
 						bindingKey = true;
@@ -212,7 +221,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 										}
 		
 									case STRING:
-										var num:Int = curOption.curOption; //lol
+										var num:Int = curOption.curOption;
 										if(controls.UI_LEFT_P) --num;
 										else num++;
 		
@@ -223,7 +232,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		
 										curOption.curOption = num;
 										curOption.setValue(curOption.options[num]);
-										//trace(curOption.options[num]);
 
 									default:
 								}
@@ -341,9 +349,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				var keyPressed:FlxGamepadInputID = NONE;
 				var keyReleased:FlxGamepadInputID = NONE;
 				if(FlxG.gamepads.anyJustPressed(LEFT_TRIGGER))
-					keyPressed = LEFT_TRIGGER; //it wasnt working for some reason
+					keyPressed = LEFT_TRIGGER;
 				else if(FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER))
-					keyPressed = RIGHT_TRIGGER; //it wasnt working for some reason
+					keyPressed = RIGHT_TRIGGER;
 				else
 				{
 					for (i in 0...FlxG.gamepads.numActiveGamepads)
@@ -416,6 +424,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.scaleX = Math.min(1, MAX_KEYBIND_WIDTH / attach.width);
 		attach.x = bind.x;
 		attach.y = bind.y;
+		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
 
 		option.child = attach;
 		grpTexts.insert(grpTexts.members.indexOf(bind), attach);
@@ -434,10 +443,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			switch(alpha.text)
 			{
-				case '[', ']': //Square and Triangle respectively
+				case '[', ']':
 					letter.image = 'alphabet_playstation';
 					letter.updateHitbox();
-					
 					letter.offset.x += 4;
 					letter.offset.y -= 5;
 			}
@@ -477,8 +485,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		curSelected = FlxMath.wrap(curSelected + change, 0, optionsArray.length - 1);
 
 		descText.text = optionsArray[curSelected].description;
-		descText.screenCenter(Y);
-		descText.y += 270;
 
 		for (num => item in grpOptions.members)
 		{
@@ -493,14 +499,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		descBox.setPosition(descText.x - 10, descText.y - 10);
-		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
+		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 15));
 		descBox.updateHitbox();
 
-		curOption = optionsArray[curSelected]; //shorter lol
+		curOption = optionsArray[curSelected];
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 
 	function reloadCheckboxes()
 		for (checkbox in checkboxGroup)
-			checkbox.daValue = Std.string(optionsArray[checkbox.ID].getValue()) == 'true'; //Do not take off the Std.string() from this, it will break a thing in Mod Settings Menu
+			checkbox.daValue = Std.string(optionsArray[checkbox.ID].getValue()) == 'true';
 }
