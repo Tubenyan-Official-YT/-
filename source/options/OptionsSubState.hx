@@ -20,7 +20,7 @@ class OptionsSubState extends MusicBeatSubstate
 	private var optionCam:FlxCamera;
 
 	function openSelectedSubstate(label:String) {
-		var sub:MusicBeatSubState = null;
+		var sub:MusicBeatSubstate = null;
 		switch(label) {
 			case 'Controls':
 				sub = new options.ControlsSubState();
