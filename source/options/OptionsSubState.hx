@@ -40,7 +40,7 @@ class OptionsSubState extends MusicBeatSubstate
 		
 		if (sub != null)
 		{
-			sub.cameras = [optionCam];
+			sub.s = [optionCam];
 			openSubState(sub);
 		}
 	}
@@ -95,7 +95,7 @@ class OptionsSubState extends MusicBeatSubstate
 
 		// parentGrp.screenCenter(); 바로 아래에 삽입
 		var camX:Int = Std.int(parentGrp.x + 40);
-		var camY:Int = Std.int(parentGrp.y + 100);
+		var camY:Int = Std.int(parentGrp.y + 120);
 		var camW:Int = Std.int(optionWindow.width - 80);     // 잘라낼 내부 너비
 		var camH:Int = Std.int(optionWindow.height - 140);   // 잘라낼 내부 높이
 
