@@ -71,12 +71,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
 			optionText.isMenuItem = false;
-			optionText.alignment = LEFT; // 왼쪽 정렬 강제
+			optionText.alignment = LEFT;
 			optionText.setScale(0.55); 
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			var checkboxX:Float = 30; 
+			var checkboxX:Float = 0;
 
 			if(optionsArray[i].type == BOOL)
 			{
@@ -93,7 +93,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
-				valueText.alignment = LEFT; // 왼쪽 정렬 강제
+				valueText.alignment = LEFT;
 				valueText.setScale(0.55);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
@@ -102,7 +102,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				optionsArray[i].child = valueText;
 			}
 			
-			optionText.x = 90; // 스케일이 감소된 체크박스 우측에 맞춰 90으로 고정
+			optionText.x = 110;
 			updateTextFrom(optionsArray[i]);
 		}
 
@@ -136,10 +136,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			item.alignment = LEFT; // 업데이트 루프에서도 왼쪽 정렬 유지 보장
+			item.alignment = LEFT;
 			item.setScale(0.55);
 			
-			var checkboxX:Float = 30; 
+			var checkboxX:Float = 0;
 
 			for (checkbox in checkboxGroup.members)
 			{
@@ -151,13 +151,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 			}
 
-			// 옵션 이름 텍스트 정렬 위치를 체크박스 바로 옆(90)으로 밀착시켜 고정
-			item.x = 90;
+			item.x = 110;
 			
 			var targetYPos:Float = 130 + (item.targetY * 70);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 
-			// 수치/문자열 등의 값 텍스트는 옵션 이름 글자 폭 뒤에 자연스럽게 이어지도록 배치
 			for (text in grpTexts.members)
 			{
 				if (text.ID == i)
