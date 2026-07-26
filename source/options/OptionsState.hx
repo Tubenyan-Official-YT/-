@@ -1,41 +1,19 @@
-package options;
+package states;
 
-import states.MainMenuState;
-import backend.StageData;
+import flixel.system.FlxSound;
 
 class OptionsState extends MusicBeatState
 {
-	// 외부 파일들이 전역 상태를 확인할 수 있도록 정적 변수 유지
+	// 진짜 순수하게 데이터만 공유하는 전역 변수들
 	public static var onPlayState:Bool = false;
+	public static var curSelected:Int = 0;
+	public static var menuMusic:FlxSound;
+	public static var sharedModData:Map<String, Dynamic> = new Map();
 
+	// 인스턴스로 작동하지 않도록 즉시 파괴 처리만 유지
 	override function create()
 	{
-		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("Options Menu", null);
-		#end
-
-		// 1. 투명한 배경을 가진 옵션 서브스테이트를 메인 위에 즉시 오픈
-		var optionsSub:options.OptionsSubState = new options.OptionsSubState();
-		
-		// 주입용 변수가 있다면 동기화 (PlayState 상태 공유)
-		options.OptionsSubState.onPlayState = onPlayState; 
-		
-		openSubState(optionsSub);
-
-		// 2. 만약 서브스테이트가 닫히면(close) 실행할 수명 주기 정의
-		optionsSub.closeCallback = function() {
-			if(onPlayState)
-			{
-				StageData.loadDirectory(PlayState.SONG);
-				LoadingState.loadAndSwitchState(new PlayState());
-				FlxG.sound.music.volume = 0;
-			}
-			else 
-			{
-				MusicBeatState.switchState(new MainMenuState());
-			}
-		};
-
+		destroy();
 		super.create();
 	}
 }
