@@ -23,6 +23,9 @@ class OptionsSubState extends MusicBeatSubstate
 
 	function openSelectedSubstate(label:String) {
 		var sub:MusicBeatSubstate = null;
+		for (memb in grpOptions) {
+			FlxTween.tween(memb, {x: -900}, 1, {ease: FlxEase.quadOut});
+		}
 		switch(label) {
 			case 'Controls':
 				sub = new options.ControlsSubState();
@@ -111,6 +114,7 @@ class OptionsSubState extends MusicBeatSubstate
 	override function closeSubState()
 	{
 		super.closeSubState();
+		grpOptions.x = optionWindow.x + (optionWindow.width - grpOptions.width) / 2;
 		ClientPrefs.saveSettings();
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("설정 메뉴", null);
