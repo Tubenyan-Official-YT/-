@@ -76,7 +76,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			grpOptions.add(optionText);
 
 			var checkboxX:Float = 30; 
-			var checkboxWidth:Float = 75; // 체크 여부에 영향을 받지 않도록 고정값 설정
+			var checkboxWidth:Float = 75; 
 
 			if(optionsArray[i].type == BOOL)
 			{
@@ -86,6 +86,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
+				
+				// 초기 생성 시 오프셋 보정 적용
+				checkbox.x = checkboxX + checkbox.offset.x;
+				checkbox.y = optionText.y - 10 + checkbox.offset.y;
 			}
 			else
 			{
@@ -135,15 +139,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.scale.set(0.55, 0.55);
 			
 			var checkboxX:Float = 30; 
-			var checkboxWidth:Float = 75; // update에서도 고정값 유지하여 정렬 유지
+			var checkboxWidth:Float = 75; 
 
 			for (checkbox in checkboxGroup.members)
 			{
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.55, 0.55);
-					checkbox.x = checkboxX;
-					checkbox.y = item.y - 10;
+					// 애니메이션 오프셋 변화량을 더해 시각적 위치 고정
+					checkbox.x = checkboxX + checkbox.offset.x;
+					checkbox.y = item.y - 10 + checkbox.offset.y;
 				}
 			}
 
