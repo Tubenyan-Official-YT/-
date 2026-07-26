@@ -1,14 +1,17 @@
 package options;
 
 import openfl.utils.Assets;
+import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
 
 class LanguageSubState extends MusicBeatSubstate
 {
 	#if TRANSLATIONS_ALLOWED
-	var grpLanguages:FlxTypedGroup<Alphabet> = new FlxTypedGroup<Alphabet>();
+	var grpLanguages:FlxSpriteGroup = new FlxSpriteGroup();
 	var languages:Array<String> = [];
 	var displayLanguages:Map<String, String> = [];
 	var curSelected:Int = 0;
+	
 	public function new()
 	{
 		super();
@@ -64,11 +67,9 @@ class LanguageSubState extends MusicBeatSubstate
 			return 0;
 		});
 
-		//trace(ClientPrefs.data.language);
 		curSelected = languages.indexOf(ClientPrefs.data.language);
 		if(curSelected < 0)
 		{
-			//trace('Language not found: ' + ClientPrefs.data.language);
 			ClientPrefs.data.language = ClientPrefs.defaultData.language;
 			curSelected = Std.int(Math.max(0, languages.indexOf(ClientPrefs.data.language)));
 		}
@@ -78,10 +79,8 @@ class LanguageSubState extends MusicBeatSubstate
 			var name:String = displayLanguages.get(lang);
 			if(name == null) name = lang;
 
-			var text:Alphabet = new Alphabet(0, 300, name, true);
-			text.isMenuItem = false; // 기본 엔진의 거대 스크롤 비활성화
+			var text:FlxSprite = new FlxSprite().loadGraphic(Paths.image(name));
 			text.scale.set(0.55, 0.55); // 글자 크기 축소
-			text.targetY = num;
 			grpLanguages.add(text);
 		}
 		changeSelected();
@@ -93,14 +92,17 @@ class LanguageSubState extends MusicBeatSubstate
 		super.update(elapsed);
 		
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
-    	for (item in grpLanguages.members)
-    	{
-        	item.scale.set(0.55, 0.55);
-        	item.x = 150; // 좌측 시작점 고정 (가운데 정렬을 원하면 창 너비 기준으로 계산)
-        
-	        var targetYPos:Float = 140 + (item.targetY * 70); // 작은 창 규격에 맞춘 간격
-        	item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
-    	}
+		for (num => item in grpLanguages.members)
+		{
+			if (item == null) continue;
+			item.scale.set(0.55, 0.55);
+			item.x = 150; // 좌측 시작점 고정
+			
+			// 개별 스프라이트에 변수를 저장하지 않고, 현재 순번(num)과 선택된 값의 차이로 targetY를 계산합니다.
+			var itemTargetY:Float = num - curSelected;
+			var targetYPos:Float = 140 + (itemTargetY * 70); // 작은 창 규격에 맞춘 간격
+			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
+		}
 		
 		var mult:Int = (FlxG.keys.pressed.SHIFT) ? 4 : 1;
 		if(controls.UI_UP_P)
@@ -126,7 +128,6 @@ class LanguageSubState extends MusicBeatSubstate
 		{
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
 			ClientPrefs.data.language = languages[curSelected];
-			//trace(ClientPrefs.data.language);
 			ClientPrefs.saveSettings();
 			Language.reloadPhrases();
 			changedLanguage = true;
@@ -136,10 +137,9 @@ class LanguageSubState extends MusicBeatSubstate
 	function changeSelected(change:Int = 0)
 	{
 		curSelected = FlxMath.wrap(curSelected + change, 0, languages.length-1);
-		for (num => lang in grpLanguages.members) // <- .members 추가
+		for (num => lang in grpLanguages.members)
 		{
-			if (lang == null) continue; // 안전장치 추가
-			lang.targetY = num - curSelected;
+			if (lang == null) continue;
 			lang.alpha = 0.6;
 			if(num == curSelected) lang.alpha = 1;
 		}
