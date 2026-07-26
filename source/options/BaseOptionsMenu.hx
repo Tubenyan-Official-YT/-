@@ -75,8 +75,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			var checkboxX:Float = 30; // 체크박스를 왼쪽 벽에 더 붙임
-			var checkboxWidth:Float = 82.5; 
+			var checkboxX:Float = 30; 
+			var checkboxWidth:Float = 75; // 체크 여부에 영향을 받지 않도록 고정값 설정
 
 			if(optionsArray[i].type == BOOL)
 			{
@@ -86,8 +86,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
-				
-				checkboxWidth = checkbox.width;
 			}
 			else
 			{
@@ -100,7 +98,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				optionsArray[i].child = valueText;
 			}
 			
-			// 간격을 15로 좁혀 좌측으로 당김
 			optionText.x = checkboxX + checkboxWidth + 15;
 			updateTextFrom(optionsArray[i]);
 		}
@@ -137,8 +134,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var item = grpOptions.members[i];
 			item.scale.set(0.55, 0.55);
 			
-			var checkboxX:Float = 30; // 고정 좌측 위치
-			var checkboxWidth:Float = 82.5; 
+			var checkboxX:Float = 30; 
+			var checkboxWidth:Float = 75; // update에서도 고정값 유지하여 정렬 유지
 
 			for (checkbox in checkboxGroup.members)
 			{
@@ -147,11 +144,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 					checkbox.scale.set(0.55, 0.55);
 					checkbox.x = checkboxX;
 					checkbox.y = item.y - 10;
-					checkboxWidth = checkbox.width;
 				}
 			}
 
-			// 체크박스 우측 끝 + 15픽셀로 텍스트 정렬 위치 조정
 			item.x = checkboxX + checkboxWidth + 15;
 			
 			var targetYPos:Float = 130 + (item.targetY * 70);
