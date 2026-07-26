@@ -1,10 +1,10 @@
 package options;
-import backend.MusicBeatSubState;
+import backend.MusicBeatSubstate;
 import states.MainMenuState;
 import backend.StageData;
 import flixel.group.FlxSpriteGroup;
 
-class OptionsSubState extends MusicBeatSubState
+class OptionsSubState extends MusicBeatSubstate
 {	
 	var options:Array<String> = [
 		'Controls',
