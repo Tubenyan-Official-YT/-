@@ -12,12 +12,13 @@ class LanguageSubState extends MusicBeatSubstate
 	public function new()
 	{
 		super();
-
+		
+		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
+		if(targetCam != null) grpLanguages.cameras = [targetCam];
+		
 		var bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFFea71fd;
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.screenCenter();
-		add(bg);
 		add(grpLanguages);
 
 		languages.push(ClientPrefs.defaultData.language); //English (US)
@@ -78,17 +79,9 @@ class LanguageSubState extends MusicBeatSubstate
 			if(name == null) name = lang;
 
 			var text:Alphabet = new Alphabet(0, 300, name, true);
-			text.isMenuItem = true;
+			text.isMenuItem = false; // 기본 엔진의 거대 스크롤 비활성화
+			text.scale.set(0.55, 0.55); // 글자 크기 축소
 			text.targetY = num;
-			text.changeX = false;
-			text.distancePerItem.y = 100;
-			if(languages.length < 7)
-			{
-				text.changeY = false;
-				text.screenCenter(Y);
-				text.y += (100 * (num - (languages.length / 2))) + 45;
-			}
-			text.screenCenter(X);
 			grpLanguages.add(text);
 		}
 		changeSelected();
@@ -98,7 +91,17 @@ class LanguageSubState extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
+		
+		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
+    	for (item in grpLanguages.members)
+    	{
+        	item.scale.set(0.55, 0.55);
+        	item.x = 150; // 좌측 시작점 고정 (가운데 정렬을 원하면 창 너비 기준으로 계산)
+        
+	        var targetYPos:Float = 140 + (item.targetY * 70); // 작은 창 규격에 맞춘 간격
+        	item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
+    	}
+		
 		var mult:Int = (FlxG.keys.pressed.SHIFT) ? 4 : 1;
 		if(controls.UI_UP_P)
 			changeSelected(-1 * mult);
@@ -133,8 +136,9 @@ class LanguageSubState extends MusicBeatSubstate
 	function changeSelected(change:Int = 0)
 	{
 		curSelected = FlxMath.wrap(curSelected + change, 0, languages.length-1);
-		for (num => lang in grpLanguages)
+		for (num => lang in grpLanguages.members) // <- .members 추가
 		{
+			if (lang == null) continue; // 안전장치 추가
 			lang.targetY = num - curSelected;
 			lang.alpha = 0.6;
 			if(num == curSelected) lang.alpha = 1;
