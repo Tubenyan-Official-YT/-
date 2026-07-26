@@ -22,12 +22,11 @@ class OptionsSubState extends MusicBeatSubstate
 	private var parentGrp:FlxSpriteGroup;
 	private var optionWindow:FlxSprite;
 	public var optionCam:FlxCamera;
-
+	var blockInput:Bool = true; // 입력 차단 플래그 추가
+	
 	function openSelectedSubstate(label:String) {
 		var sub:MusicBeatSubstate = null;
-		for (memb in grpOptions) {
-			FlxTween.tween(memb, {x: -900}, 1, {ease: FlxEase.quadOut});
-		}
+		FlxTween.tween(grpOptions, {x: -900}, 1, {ease: FlxEase.quadOut});
 		switch(label) {
 			case 'Controls':
 				sub = new options.ControlsSubState();
@@ -107,6 +106,11 @@ class OptionsSubState extends MusicBeatSubstate
 		changeSelection();
 		ClientPrefs.saveSettings();
 		grpOptions.x = optionWindow.x + (optionWindow.width - grpOptions.width) / 2;
+
+		blockInput = true;
+    	new flixel.util.FlxTimer().start(0.1, function(tmr:flixel.util.FlxTimer) {
+        	blockInput = false;
+    	});
 		
 		super.create();
 	}
@@ -123,7 +127,8 @@ class OptionsSubState extends MusicBeatSubstate
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-
+		if (blockInput) return;
+		
 		if (controls.UI_UP_P)
 			changeSelection(-1);
 		if (controls.UI_DOWN_P)
