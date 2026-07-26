@@ -15,9 +15,9 @@ enum MainMenuColumn {
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '1.0.4'; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = '1.0'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
-	public static var gamever:String = 'ALPHA 1.0';
+	public static var gamever:String = 'ALPHA 6';
 	public static var curColumn:MainMenuColumn = LEFT;
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
@@ -117,15 +117,15 @@ class MainMenuState extends MusicBeatState
 			rightItem = createMenuItem(rightOption, 300, 520);
 		}
 
-		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPharse('Legend Engine Version: ', 'psychVer') + psychEngineVersion, 12);
+		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('Legend Engine Version: ', 'psychVer') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(psychVer);
-		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, Language.getPharse('FNF Version: ', 'fnfVer') + Application.current.meta.get('version'), 12);
+		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, Language.getPhrase('FNF Version: ', 'fnfVer') + Application.current.meta.get('version'), 12);
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
-		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, Language.getPharse("Mod's Ver: ", 'gameVer') + gamever, 12);
+		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, Language.getPhrase("Mod's Ver: ", 'gameVer') + gamever, 12);
 		gameVer.scrollFactor.set();
 		gameVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(gameVer);
@@ -355,7 +355,7 @@ class MainMenuState extends MusicBeatState
 						case 'credits':
 							MusicBeatState.switchState(new CreditsState());
 						case 'options':
-    						states.OptionsState.onPlayState = false;
+    						options.OptionsState.onPlayState = false;
     						openSubState(new options.OptionsSubState());
     						if (PlayState.SONG != null)
     						{
