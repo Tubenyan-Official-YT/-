@@ -73,14 +73,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (i in 0...optionsArray.length)
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, false);
-			optionText.isMenuItem = true;
-			
-			// 1. 창 크기에 맞게 아이템 전체 크기 축소 (0.55배 등 원하는 크기로 조절)
+			optionText.isMenuItem = false;
 			optionText.setScale(0.55);
-			
-			// 2. 대각선 이동 방지 및 X축 고정 (오직 위아래로만 수직 이동)
-			optionText.x = 180; // 창 내부에서 고정될 X 좌표
-			optionText.yMult = 60;   // 좁은 창 높이에 맞춰 세로 줄간격 축소
 			
 			optionText.targetY = i;
 			grpOptions.add(optionText);
