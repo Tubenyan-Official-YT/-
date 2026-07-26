@@ -48,16 +48,18 @@ class OptionsSubState extends MusicBeatSubstate
 		instance = this;
 		
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("Options Menu", null);
+		DiscordClient.changePresence("옵션 메뉴", null);
 		#end
-		// ㅜ trash.
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDeset'));
-		bg.antialiasing = ClientPrefs.data.antialiasing;
-		bg.updateHitbox();
+			
+		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.screenCenter();
+		bg.alpha = 0.5;
+		add(bg);
 
 		var parentGrp = new FlxSpriteGroup();
 		add(parentGrp);
+
+
 		
 		var optionWindow:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('optionBG'));
 		optionWindow.antialiasing = ClientPrefs.data.antialiasing;
@@ -69,7 +71,7 @@ class OptionsSubState extends MusicBeatSubstate
 
 		
 		
-		var startY:Float = 100;    // 첫 번째 버튼이 시작될 창 내부의 Y 좌표
+		var startY:Float = 150;    // 첫 번째 버튼이 시작될 창 내부의 Y 좌표
 		var padding:Float = 50;     // 버튼과 버튼 사이의 순수 여백 (원하는 만큼 조절)
 
 		for (num => option in options)
@@ -101,7 +103,8 @@ class OptionsSubState extends MusicBeatSubstate
 		
 		changeSelection();
 		ClientPrefs.saveSettings();
-
+		grpOptions.x = optionWindow.x + (optionWindow.width - grpOptions.width) / 2;
+		
 		super.create();
 	}
 
@@ -163,6 +166,9 @@ class OptionsSubState extends MusicBeatSubstate
 		{
     		FlxG.cameras.remove(optionCam, true);
 		}
+		FlxTransitionableState.skipNextTransIn = true;
+		FlxTransitionableState.skipNextTransOut = true;
+		MusicBeatState.switchState(new states.MainMenuState());
 		super.destroy();
 	}
 }
