@@ -75,8 +75,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			var checkboxX:Float = 50; // 체크박스 기준 좌측 위치
-			var checkboxWidth:Float = 82.5; // 0.55 스케일 기준 기본 체크박스 폭 (체크박스가 없는 항목 정렬용)
+			var checkboxX:Float = 30; // 체크박스를 왼쪽 벽에 더 붙임
+			var checkboxWidth:Float = 82.5; 
 
 			if(optionsArray[i].type == BOOL)
 			{
@@ -100,8 +100,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				optionsArray[i].child = valueText;
 			}
 			
-			// 초기 생성 시점 텍스트 위치 설정: 체크박스 오른쪽 끝 + 40
-			optionText.x = checkboxX + checkboxWidth + 40;
+			// 간격을 15로 좁혀 좌측으로 당김
+			optionText.x = checkboxX + checkboxWidth + 15;
 			updateTextFrom(optionsArray[i]);
 		}
 
@@ -137,8 +137,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var item = grpOptions.members[i];
 			item.scale.set(0.55, 0.55);
 			
-			var checkboxX:Float = 50; // 좌측 체크박스 고정 위치
-			var checkboxWidth:Float = 82.5; // 0.55 스케일 기준 기본 체크박스 폭
+			var checkboxX:Float = 30; // 고정 좌측 위치
+			var checkboxWidth:Float = 82.5; 
 
 			for (checkbox in checkboxGroup.members)
 			{
@@ -151,8 +151,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 			}
 
-			// 텍스트 시작시점을 체크박스의 오른쪽 끝(checkboxX + checkboxWidth) + 40으로 설정
-			item.x = checkboxX + checkboxWidth + 40;
+			// 체크박스 우측 끝 + 15픽셀로 텍스트 정렬 위치 조정
+			item.x = checkboxX + checkboxWidth + 15;
 			
 			var targetYPos:Float = 130 + (item.targetY * 70);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
