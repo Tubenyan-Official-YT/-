@@ -19,7 +19,7 @@ class OptionsSubState extends MusicBeatSubstate
 	public static var onPlayState:Bool = false;
 	
 	private var grpOptions:FlxSpriteGroup;
-	private var parentGrp:FlxSprite;
+	private var parentGrp:FlxSpriteGroup;
 	private var optionWindow:FlxSprite;
 	public var optionCam:FlxCamera;
 
