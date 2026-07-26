@@ -19,7 +19,7 @@ class OptionsSubState extends MusicBeatSubstate
 	public static var onPlayState:Bool = false;
 	
 
-	private var optionCam:FlxCamera;
+	public var optionCam:FlxCamera;
 
 	function openSelectedSubstate(label:String) {
 		var sub:MusicBeatSubstate = null;
