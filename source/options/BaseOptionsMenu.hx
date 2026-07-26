@@ -128,12 +128,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 
-    // 2. 그 직후 grpOptions의 모든 아이템 X 좌표를 강제로 고정합니다.
     	for (item in grpOptions.members)
     	{
         	item.x = 180;
-			item.y = 360 + (item.targetY * 60);
+			var targetYPos:Float = 360 + (item.targetY * 60);
+			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
     	}
 
     	if(bindingKey)
