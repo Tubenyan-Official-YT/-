@@ -133,6 +133,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
     	for (item in grpOptions.members)
     	{
         	item.x = 180;
+			item.y = 360 + (item.targetY * 60);
     	}
 
     	if(bindingKey)
