@@ -40,7 +40,7 @@ class OptionsSubState extends MusicBeatSubstate
 		
 		if (sub != null)
 		{
-			sub.s = [optionCam];
+			sub.cameras = [optionCam];
 			openSubState(sub);
 		}
 	}
