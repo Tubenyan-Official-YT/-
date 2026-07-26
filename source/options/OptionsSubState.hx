@@ -14,11 +14,13 @@ class OptionsSubState extends MusicBeatSubstate
 	];
 
 	public static var instance:OptionsSubState;
-	private var grpOptions:FlxSpriteGroup;
+	
 	private static var curSelected:Int = 0;
 	public static var onPlayState:Bool = false;
 	
-
+	private var grpOptions:FlxSpriteGroup;
+	private var parentGrp:FlxSprite;
+	private var optionWindow:FlxSprite;
 	public var optionCam:FlxCamera;
 
 	function openSelectedSubstate(label:String) {
@@ -59,12 +61,10 @@ class OptionsSubState extends MusicBeatSubstate
 		bg.alpha = 0.5;
 		add(bg);
 
-		var parentGrp = new FlxSpriteGroup();
+		parentGrp = new FlxSpriteGroup();
 		add(parentGrp);
-
-
 		
-		var optionWindow:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('optionBG'));
+		optionWindow = new FlxSprite(0,0).loadGraphic(Paths.image('optionBG'));
 		optionWindow.antialiasing = ClientPrefs.data.antialiasing;
 		optionWindow.updateHitbox();
 		parentGrp.add(optionWindow);
