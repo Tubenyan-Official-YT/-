@@ -3552,14 +3552,15 @@ class PlayState extends MusicBeatState
 				//trace((totalNotesHit / totalPlayed) + ', Total: ' + totalPlayed + ', notes hit: ' + totalNotesHit);
 
 				// Rating Name
-				ratingName = ratingStuff[ratingStuff.length-1][0]; //Uses last string
+				ratingName = ratingStuff[ratingStuff.length-1][0];
 				if(ratingPercent < 1)
-					for (i in 0...ratingStuff.length-1)
-						if(ratingPercent < ratingStuff[i][1])
-						{
-							ratingName = ratingStuff[i][0];
-							break;
-						}
+    				for (i in 0...ratingStuff.length-1)
+        				if(ratingPercent < ratingStuff[i][1])
+        				{
+            				ratingName = ratingStuff[i][0];
+            				break;
+        				}
+				ratingName = Language.getPhrase(ratingName);
 			}
 			fullComboFunction();
 		}
