@@ -12,6 +12,8 @@ class OptionsSubState extends MusicBeatSubstate
 		'Gameplay'
 		#if TRANSLATIONS_ALLOWED , 'Language' #end
 	];
+
+	public static var instance:OptionsSubState;
 	private var grpOptions:FlxSpriteGroup;
 	private static var curSelected:Int = 0;
 	public static var onPlayState:Bool = false;
@@ -42,8 +44,9 @@ class OptionsSubState extends MusicBeatSubstate
 	var selectorLeft:Alphabet;
 	var selectorRight:Alphabet;
 
-	override function create()
-	{
+	override function create() {
+		instance = this;
+		
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Options Menu", null);
 		#end
@@ -154,6 +157,7 @@ class OptionsSubState extends MusicBeatSubstate
 
 	override function destroy()
 	{
+		instance = null;
 		ClientPrefs.loadPrefs();
 		if (optionCam != null)
 		{
