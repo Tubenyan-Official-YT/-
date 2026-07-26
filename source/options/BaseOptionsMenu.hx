@@ -37,7 +37,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
 
-		// OptionsSubState에서 선언된 공용 카메라를 가져와서 사용
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -58,38 +57,39 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		add(descBox);
 
 		var titleText:Alphabet = new Alphabet(20, 12.5, title, true);
-		titleText.setScale(0.6);
+		titleText.setScale(0.55);
 		titleText.alpha = 0.8;
 		if(targetCam != null) titleText.cameras = [targetCam];
 
-		descText = new FlxText(40, 440, 720, "", 24);
-		descText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText = new FlxText(40, 440, 720, "", 22);
+		descText.setFormat(Paths.font("vcr.ttf"), 22, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, false);
+			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
 			optionText.isMenuItem = false;
-			optionText.setScale(0.55);
-			
-			optionText.targetY = i + 30;
+			optionText.scale.set(0.55, 0.55); 
+			optionText.x = 150;
+			optionText.targetY = i;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 100, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.sprTracker = optionText;
+				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 95, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
+				checkbox.scale.set(0.55, 0.55); 
+				checkbox.updateHitbox();
+				checkbox.sprTracker = null; // 자체 트래킹을 끄고 update에서 직접 제어
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				optionText.x -= 100;
-				optionText.startPosition.x -= 40;
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 40);
-				valueText.sprTracker = optionText;
+				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
+				valueText.scale.set(0.55, 0.55);
+				valueText.sprTracker = null; // 자체 트래킹을 끄고 update에서 직접 제어
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
@@ -117,24 +117,52 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	var bindingBlack:FlxSprite;
 	var bindingText:Alphabet;
 	var bindingText2:Alphabet;
+	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
+		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-    	for (item in grpOptions.members)
-    	{
-        	item.x = 180;
-			var targetYPos:Float = 160 + (item.targetY * 60);
+		for (i in 0...grpOptions.members.length)
+		{
+			var item = grpOptions.members[i];
+			item.scale.set(0.55, 0.55);
+			item.x = 150; // 모든 옵션 글자 시작점 고정
+			
+			// 작은 창 뷰포트에 맞춘 좁은 스크롤 간격 연산
+			var targetYPos:Float = 130 + (item.targetY * 70);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
-    	}
 
-    	if(bindingKey)
-    	{
-        	bindingKeyUpdate(elapsed);
-        	return;
-    	}
+			// 체크박스 위치 강제 동기화 (오버랩 방지)
+			for (checkbox in checkboxGroup.members)
+			{
+				if (checkbox.ID == i)
+				{
+					checkbox.scale.set(0.55, 0.55);
+					checkbox.x = item.x - 95;
+					checkbox.y = item.y - 10;
+				}
+			}
+
+			// 수치/문자열 데이터 위치 강제 동기화 (오른쪽 나란히 정렬)
+			for (text in grpTexts.members)
+			{
+				if (text.ID == i)
+				{
+					text.scale.set(0.55, 0.55);
+					text.x = item.x + item.width + 25;
+					text.y = item.y;
+				}
+			}
+		}
+
+		if(bindingKey)
+		{
+			bindingKeyUpdate(elapsed);
+			return;
+		}
 		
 		if (controls.UI_UP_P)
 		{
@@ -170,18 +198,18 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						bindingBlack.scale.set(FlxG.width, FlxG.height);
 						bindingBlack.updateHitbox();
 						bindingBlack.alpha = 0;
-						if(OptionsSubState.instance != null) bindingBlack.cameras = [OptionsSubState.instance.optionCam];
+						if(targetCam != null) bindingBlack.cameras = [targetCam];
 						FlxTween.tween(bindingBlack, {alpha: 0.6}, 0.35, {ease: FlxEase.linear});
 						add(bindingBlack);
 	
 						bindingText = new Alphabet(400, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
 						bindingText.alignment = CENTERED;
-						if(OptionsSubState.instance != null) bindingText.cameras = [OptionsSubState.instance.optionCam];
+						if(targetCam != null) bindingText.cameras = [targetCam];
 						add(bindingText);
 						
 						bindingText2 = new Alphabet(400, 280, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete', []), true);
 						bindingText2.alignment = CENTERED;
-						if(OptionsSubState.instance != null) bindingText2.cameras = [OptionsSubState.instance.optionCam];
+						if(targetCam != null) bindingText2.cameras = [targetCam];
 						add(bindingText2);
 	
 						bindingKey = true;
@@ -416,12 +444,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		var bind:AttachedText = cast option.child;
-		var attach:AttachedText = new AttachedText(text, bind.offsetX);
-		attach.sprTracker = bind.sprTracker;
+		var attach:AttachedText = new AttachedText(text, 0); 
+		attach.sprTracker = null;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		playstationCheck(attach);
-		attach.scaleX = Math.min(1, MAX_KEYBIND_WIDTH / attach.width);
+		attach.scale.set(0.55, 0.55);
 		attach.x = bind.x;
 		attach.y = bind.y;
 		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
@@ -478,6 +506,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(option.type == PERCENT) val *= 100;
 		var def:Dynamic = option.defaultValue;
 		option.text = text.replace('%v', val).replace('%d', def);
+
+		if(option.child != null)
+		{
+			option.child.text = '' + val;
+		}
 	}
 	
 	function changeSelection(change:Int = 0)
@@ -485,6 +518,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		curSelected = FlxMath.wrap(curSelected + change, 0, optionsArray.length - 1);
 
 		descText.text = optionsArray[curSelected].description;
+
+		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
+		if (targetCam != null) {
+			descText.y = targetCam.height - 65;
+			descText.fieldWidth = targetCam.width - 80;
+			descText.x = 40;
+		}
 
 		for (num => item in grpOptions.members)
 		{
@@ -498,8 +538,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(text.ID == curSelected) text.alpha = 1;
 		}
 
-		descBox.setPosition(descText.x - 10, descText.y - 10);
-		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 15));
+		descBox.setPosition(descText.x - 10, descText.y - 5);
+		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 10));
 		descBox.updateHitbox();
 
 		curOption = optionsArray[curSelected];
