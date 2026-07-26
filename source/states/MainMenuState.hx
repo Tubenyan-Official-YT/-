@@ -117,15 +117,15 @@ class MainMenuState extends MusicBeatState
 			rightItem = createMenuItem(rightOption, 300, 520);
 		}
 
-		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('Legend Engine Version: ', 'psychVer') + psychEngineVersion, 12);
+		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('psychVer','Legend Engine Version: ') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(psychVer);
-		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, Language.getPhrase('FNF Version: ', 'fnfVer') + Application.current.meta.get('version'), 12);
+		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, Language.getPhrase( 'fnfVer','FNF Version: ') + Application.current.meta.get('version'), 12);
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
-		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, Language.getPhrase("Mod's Ver: ", 'gameVer') + gamever, 12);
+		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, Language.getPhrase('gameVer', "Mod's Ver: ") + gamever, 12);
 		gameVer.scrollFactor.set();
 		gameVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(gameVer);
@@ -314,10 +314,11 @@ class MainMenuState extends MusicBeatState
 				FlxG.mouse.visible = false;
 
 				if (ClientPrefs.data.flashing)
-					FlxFlicker.flicker(magenta, 1.1, 0.15, false);
-
+					magenta.visible = true;
+					
 				var item:FlxSprite;
 				var option:String;
+					
 				switch(curColumn)
 				{
 					case CENTER:
@@ -332,54 +333,51 @@ class MainMenuState extends MusicBeatState
 						option = rightOption;
 						item = rightItem;
 				}
-
-				FlxFlicker.flicker(item, 1, 0.06, false, false, function(flick:FlxFlicker)
+						
+				switch (option)
 				{
-					switch (option)
-					{
-						case 'story_mode':
-							openSubState(new substates.StoryMenuSubState());
-						case 'freeplay':
-							MusicBeatState.switchState(new FreeplayState());
+					case 'story_mode':
+						openSubState(new substates.StoryMenuSubState());
+					case 'freeplay':
+						MusicBeatState.switchState(new FreeplayState());
 
-						#if MODS_ALLOWED
-						case 'mods':
-							MusicBeatState.switchState(new CharacterSelectState());
-						#end
+					#if MODS_ALLOWED
+					case 'mods':
+						MusicBeatState.switchState(new CharacterSelectState());
+					#end
 
-						#if ACHIEVEMENTS_ALLOWED
-						case 'achievements':
-							MusicBeatState.switchState(new AchievementsMenuState());
-						#end
+					#if ACHIEVEMENTS_ALLOWED
+					case 'achievements':
+						MusicBeatState.switchState(new AchievementsMenuState());
+					#end
 
-						case 'credits':
-							MusicBeatState.switchState(new CreditsState());
-						case 'options':
-    						options.OptionsState.onPlayState = false;
-    						openSubState(new options.OptionsSubState());
-    						if (PlayState.SONG != null)
-    						{
-        						PlayState.SONG.arrowSkin = null;
-        						PlayState.SONG.splashSkin = null;
-        						PlayState.stageUI = 'normal';
-    						}
-						case 'donate':
-							CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
-							selectedSomethin = false;
-							item.visible = true;
-						default:
-							trace('Menu Item ${option} doesn\'t do anything');
-							selectedSomethin = false;
-							item.visible = true;
-					}
-				});
+					case 'credits':
+						MusicBeatState.switchState(new CreditsState());
+					case 'options':
+    					options.OptionsState.onPlayState = false;
+    					openSubState(new options.OptionsSubState());
+    					if (PlayState.SONG != null)
+    					{
+        					PlayState.SONG.arrowSkin = null;
+        					PlayState.SONG.splashSkin = null;
+        					PlayState.stageUI = 'normal';
+    					}
+					case 'donate':
+						CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
+						selectedSomethin = false;
+						item.visible = true;
+					default:
+						trace('Menu Item ${option} doesn\'t do anything');
+						selectedSomethin = false;
+						item.visible = true;
+				}
 				
 				for (memb in menuItems)
 				{
 					if(memb == item)
 						continue;
 
-					FlxTween.tween(memb, {alpha: 0}, 0.4, {ease: FlxEase.quadOut});
+					FlxTween.tween(memb, {x: -1000}, 0.5, {ease: FlxEase.quadOut});
 				}
 			}
 			#if desktop
