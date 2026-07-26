@@ -79,8 +79,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.setScale(0.55);
 			
 			// 2. 대각선 이동 방지 및 X축 고정 (오직 위아래로만 수직 이동)
-			// forceX를 고정하면 선택되거나 내려갈 때 옆으로 튀어나가지 않고 일직선으로 정렬됩니다.
-			optionText.forceX = 180; // 창 내부에서 고정될 X 좌표
+			optionText.x = 180; // 창 내부에서 고정될 X 좌표
 			optionText.yMult = 60;   // 좁은 창 높이에 맞춰 세로 줄간격 축소
 			
 			optionText.targetY = i;
@@ -130,12 +129,18 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	{
 		super.update(elapsed);
 
-		if(bindingKey)
-		{
-			bindingKeyUpdate(elapsed);
-			return;
-		}
+    // 2. 그 직후 grpOptions의 모든 아이템 X 좌표를 강제로 고정합니다.
+    	for (item in grpOptions.members)
+    	{
+        	item.x = 180;
+    	}
 
+    	if(bindingKey)
+    	{
+        	bindingKeyUpdate(elapsed);
+        	return;
+    	}
+		
 		if (controls.UI_UP_P)
 		{
 			changeSelection(-1);
