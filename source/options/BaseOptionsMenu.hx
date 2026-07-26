@@ -71,7 +71,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
 			optionText.isMenuItem = false;
-			optionText.scale.set(0.55, 0.55); 
+			optionText.setScale(0.55); 
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
@@ -87,14 +87,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				// 초기 생성 시 오프셋 보정 적용
 				checkbox.x = checkboxX + checkbox.offset.x;
 				checkbox.y = optionText.y - 10 + checkbox.offset.y;
 			}
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
-				valueText.scale.set(0.55, 0.55);
+				valueText.setScale(0.55);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -136,7 +135,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			item.scale.set(0.55, 0.55);
+			item.setScale(0.55);
 			
 			var checkboxX:Float = 30; 
 			var checkboxWidth:Float = 75; 
@@ -146,23 +145,24 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.55, 0.55);
-					// 애니메이션 오프셋 변화량을 더해 시각적 위치 고정
 					checkbox.x = checkboxX + checkbox.offset.x;
 					checkbox.y = item.y - 10 + checkbox.offset.y;
 				}
 			}
 
+			// 옵션 이름 텍스트 위치를 체크박스 바로 우측에 곧게 정렬
 			item.x = checkboxX + checkboxWidth + 15;
 			
 			var targetYPos:Float = 130 + (item.targetY * 70);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 
+			// 수치/문자열 등의 설정값 텍스트를 옵션 이름 바로 뒤에 자연스럽게 정렬 (550 제거)
 			for (text in grpTexts.members)
 			{
 				if (text.ID == i)
 				{
-					text.scale.set(0.55, 0.55);
-					text.x = item.x + item.width + 25;
+					text.setScale(0.55);
+					text.x = item.x + item.width + 20; 
 					text.y = item.y;
 				}
 			}
@@ -459,7 +459,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		playstationCheck(attach);
-		attach.scale.set(0.55, 0.55);
+		attach.setScale(0.55);
 		attach.x = bind.x;
 		attach.y = bind.y;
 		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
