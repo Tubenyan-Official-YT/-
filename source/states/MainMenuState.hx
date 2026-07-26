@@ -117,15 +117,15 @@ class MainMenuState extends MusicBeatState
 			rightItem = createMenuItem(rightOption, 300, 520);
 		}
 
-		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, "싸이크엔진 버전: " + psychEngineVersion, 12);
+		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPharse('Legend Engine Version: ', 'psychVer') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(psychVer);
-		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, "프나펑 버전: " + Application.current.meta.get('version'), 12);
+		var fnfVer:FlxText = new FlxText(12, FlxG.height - 45, 0, Language.getPharse('FNF Version: ', 'fnfVer') + Application.current.meta.get('version'), 12);
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
-		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "냥코대전쟁 - 전설의 시작 모드 버전: " + gamever, 12);
+		var gameVer:FlxText = new FlxText(12, FlxG.height - 24, 0, Language.getPharse("Mod's Ver: ", 'gameVer') + gamever, 12);
 		gameVer.scrollFactor.set();
 		gameVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(gameVer);
@@ -355,14 +355,14 @@ class MainMenuState extends MusicBeatState
 						case 'credits':
 							MusicBeatState.switchState(new CreditsState());
 						case 'options':
-							MusicBeatState.switchState(new OptionsState());
-							OptionsState.onPlayState = false;
-							if (PlayState.SONG != null)
-							{
-								PlayState.SONG.arrowSkin = null;
-								PlayState.SONG.splashSkin = null;
-								PlayState.stageUI = 'normal';
-							}
+    						states.OptionsState.onPlayState = false;
+    						openSubState(new options.OptionsSubState());
+    						if (PlayState.SONG != null)
+    						{
+        						PlayState.SONG.arrowSkin = null;
+        						PlayState.SONG.splashSkin = null;
+        						PlayState.stageUI = 'normal';
+    						}
 						case 'donate':
 							CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
 							selectedSomethin = false;
