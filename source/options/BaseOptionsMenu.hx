@@ -72,29 +72,36 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
 			optionText.isMenuItem = false;
 			optionText.scale.set(0.55, 0.55); 
-			optionText.x = 150;
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
+			var checkboxX:Float = 50; // 체크박스 기준 좌측 위치
+			var checkboxWidth:Float = 82.5; // 0.55 스케일 기준 기본 체크박스 폭 (체크박스가 없는 항목 정렬용)
+
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 95, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
+				var checkbox:CheckboxThingie = new CheckboxThingie(checkboxX, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.scale.set(0.55, 0.55); 
 				checkbox.updateHitbox();
-				checkbox.sprTracker = null; // 자체 트래킹을 끄고 update에서 직접 제어
+				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
+				
+				checkboxWidth = checkbox.width;
 			}
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.scale.set(0.55, 0.55);
-				valueText.sprTracker = null; // 자체 트래킹을 끄고 update에서 직접 제어
+				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
+			
+			// 초기 생성 시점 텍스트 위치 설정: 체크박스 오른쪽 끝 + 40
+			optionText.x = checkboxX + checkboxWidth + 40;
 			updateTextFrom(optionsArray[i]);
 		}
 
@@ -129,24 +136,27 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			var item = grpOptions.members[i];
 			item.scale.set(0.55, 0.55);
-			item.x = 150; // 모든 옵션 글자 시작점 고정
 			
-			// 작은 창 뷰포트에 맞춘 좁은 스크롤 간격 연산
-			var targetYPos:Float = 130 + (item.targetY * 70);
-			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
+			var checkboxX:Float = 50; // 좌측 체크박스 고정 위치
+			var checkboxWidth:Float = 82.5; // 0.55 스케일 기준 기본 체크박스 폭
 
-			// 체크박스 위치 강제 동기화 (오버랩 방지)
 			for (checkbox in checkboxGroup.members)
 			{
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.55, 0.55);
-					checkbox.x = item.x - 95;
+					checkbox.x = checkboxX;
 					checkbox.y = item.y - 10;
+					checkboxWidth = checkbox.width;
 				}
 			}
 
-			// 수치/문자열 데이터 위치 강제 동기화 (오른쪽 나란히 정렬)
+			// 텍스트 시작시점을 체크박스의 오른쪽 끝(checkboxX + checkboxWidth) + 40으로 설정
+			item.x = checkboxX + checkboxWidth + 40;
+			
+			var targetYPos:Float = 130 + (item.targetY * 70);
+			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
+
 			for (text in grpTexts.members)
 			{
 				if (text.ID == i)
