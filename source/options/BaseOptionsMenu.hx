@@ -57,18 +57,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(targetCam != null) descBox.cameras = [targetCam];
 		add(descBox);
 
-		var titleText:Alphabet = new Alphabet(40, 25, title, true);
+		var titleText:Alphabet = new Alphabet(20, 12.5, title, true);
 		titleText.setScale(0.6);
 		titleText.alpha = 0.8;
 		if(targetCam != null) titleText.cameras = [targetCam];
-		add(titleText);
 
 		descText = new FlxText(40, 440, 720, "", 24);
 		descText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
-		add(descText);
 
 		for (i in 0...optionsArray.length)
 		{
@@ -76,19 +74,19 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.isMenuItem = false;
 			optionText.setScale(0.55);
 			
-			optionText.targetY = i;
+			optionText.targetY = i + 30;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 70, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
+				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 100, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.sprTracker = optionText;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				optionText.x -= 40;
+				optionText.x -= 100;
 				optionText.startPosition.x -= 40;
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 40);
 				valueText.sprTracker = optionText;
@@ -122,12 +120,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 
     	for (item in grpOptions.members)
     	{
         	item.x = 180;
-			var targetYPos:Float = 360 + (item.targetY * 60);
+			var targetYPos:Float = 160 + (item.targetY * 60);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
     	}
 
