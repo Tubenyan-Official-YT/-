@@ -243,11 +243,12 @@ class ControlsSubState extends MusicBeatSubstate
 			return;
 		}
 
+		// [수정] 좌측으로 이동한 현재 UI 배치 상황에 맞춰 기준점 가상 설정 (기본값 50)
 		var optionWindow = OptionsSubState.optionWindow;
-		var boxX:Float = (optionWindow != null) ? optionWindow.x : 400;
-		var boxY:Float = (optionWindow != null) ? optionWindow.y : 150;
-		var boxWidth:Float = (optionWindow != null) ? optionWindow.width : 500;
-		var boxHeight:Float = (optionWindow != null) ? optionWindow.height : 500;
+		var boxX:Float = (optionWindow != null) ? optionWindow.x : 50;
+		var boxY:Float = (optionWindow != null) ? optionWindow.y : 140;
+		var boxWidth:Float = (optionWindow != null) ? optionWindow.width : 680;
+		var boxHeight:Float = (optionWindow != null) ? optionWindow.height : 540;
 		var centerY:Float = boxY + (boxHeight / 2);
 
 		if(!binding)
@@ -446,13 +447,13 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// [수정] 상단 카테고리 헤더 텍스트 실시간 정렬
+		// [수정] 상단 카테고리 헤더 글자가 창의 가로 정중앙에 위치하도록 식 변경
 		grpDisplay.forEachAlive(function(item:Alphabet) {
-			item.screenCenter(X);
+			item.x = boxX + (boxWidth / 2) - (item.width / 2);
 			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
 		});
 
-		// [수정] 옵션 리스트 이름 실시간 좌표 정렬 및 초기 스택 방지
+		// [수정] 옵션 목록 이름 수동 정렬 X축 수정 (boxX에 맞춰 정상 노출 처리)
 		grpOptions.forEachAlive(function(item:Alphabet) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
 			if (displayIdx != -1) {
@@ -461,14 +462,17 @@ class ControlsSubState extends MusicBeatSubstate
 				
 				item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
 				
-				if (options[curOptions[displayIdx]][1] == defaultKey) item.screenCenter(X);
-				else item.x = boxX + 40;
+				// [수정] 초기화 버튼 역시 화면 전체가 아닌 회색 창의 중앙에 맞춤
+				if (options[curOptions[displayIdx]][1] == defaultKey) 
+					item.x = boxX + (boxWidth / 2) - (item.width / 2);
+				else 
+					item.x = boxX + 40;
 				
 				item.alpha = (delta == 0) ? 1 : 0.6;
 			}
 		});
 
-		// [수정] 고유 ID 탐색을 통해 뭉침 현상을 완벽히 수정한 키바인딩 & 검은색 상자 배치 연산
+		// [수정] 키바인딩 검은색 상자 및 내부 글자 X축 간격 수치 좌측 창 기준 맞춤
 		grpBinds.forEachAlive(function(item:Alphabet) {
 			var actualIdx:Int = grpBinds.members.indexOf(item);
 			var parent:Alphabet = null;
@@ -488,7 +492,8 @@ class ControlsSubState extends MusicBeatSubstate
 				var n:Int = optBindsIndices.indexOf(actualIdx);
 				if (n == -1) n = 0;
 
-				var boxStartX:Float = boxX + 260 + (n * 240);
+				// [수정] 글자가 밀려나지 않도록 가로 간격을 210단위로 재조정
+				var boxStartX:Float = boxX + 220 + (n * 210);
 				
 				var black:AttachedSprite = grpBlacks.members[actualIdx];
 				if(black != null) {
