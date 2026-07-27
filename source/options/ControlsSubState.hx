@@ -130,7 +130,6 @@ class ControlsSubState extends MusicBeatSubstate
 					if(isDefaultKey) str = Language.getPhrase(str);
 					var text:Alphabet = new Alphabet(0, 0, !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str), !isDisplayKey);
 					
-					// 엔진 자체 정렬 기능을 끄고 수동 정렬을 위해 false 처리합니다.
 					text.isMenuItem = false;
 					text.changeX = false;
 					text.changeY = false;
@@ -233,8 +232,8 @@ class ControlsSubState extends MusicBeatSubstate
 
 	var binding:Bool = false;
 	var holdingEsc:Float = 0;
-
 	var timeForMoving:Float = 0.1;
+
 	override function update(elapsed:Float)
 	{
 		if(timeForMoving > 0)
@@ -244,7 +243,6 @@ class ControlsSubState extends MusicBeatSubstate
 			return;
 		}
 
-		// 기준이 되는 옵션 윈도우 좌표 획득
 		var optionWindow = OptionsSubState.optionWindow;
 		var boxX:Float = (optionWindow != null) ? optionWindow.x : 400;
 		var boxY:Float = (optionWindow != null) ? optionWindow.y : 150;
@@ -277,8 +275,16 @@ class ControlsSubState extends MusicBeatSubstate
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 
 					var altNum:Int = curAlt ? 1 : 0;
-					var bindIndex:Int = Math.floor(curSelected * 2) + altNum;
-					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = false;
+					var bindIndex:Int = -1;
+					var findCount:Int = 0;
+					for (i in 0...grpBinds.members.length) {
+						var b = grpBinds.members[i];
+						if (b != null && b.ID == curOptionsValid[curSelected]) {
+							if (findCount == altNum) { bindIndex = i; break; }
+							findCount++;
+						}
+					}
+					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = false;
 				}
 				else
 				{
@@ -295,15 +301,24 @@ class ControlsSubState extends MusicBeatSubstate
 		else
 		{
 			var altNum:Int = curAlt ? 1 : 0;
-			var bindIndex:Int = Math.floor(curSelected * 2) + altNum;
 			var curOption:Array<Dynamic> = options[curOptions[curSelected]];
+			
+			var bindIndex:Int = -1;
+			var findCount:Int = 0;
+			for (i in 0...grpBinds.members.length) {
+				var b = grpBinds.members[i];
+				if (b != null && b.ID == curOptionsValid[curSelected]) {
+					if (findCount == altNum) { bindIndex = i; break; }
+					findCount++;
+				}
+			}
 			
 			if(FlxG.keys.pressed.ESCAPE || FlxG.gamepads.anyPressed(B))
 			{
 				holdingEsc += elapsed;
 				if(holdingEsc > 0.5)
 				{
-					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
+					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 					binding = false;
 					ClientPrefs.reloadVolumeKeys();
@@ -320,7 +335,7 @@ class ControlsSubState extends MusicBeatSubstate
 						ClientPrefs.gamepadBinds.get(curOption[2])[altNum] = NONE;
 					ClientPrefs.clearInvalidKeys(curOption[2]);
 					updateBind(bindIndex, onKeyboardMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
-					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
+					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 					binding = false;
 					ClientPrefs.reloadVolumeKeys();
@@ -401,6 +416,13 @@ class ControlsSubState extends MusicBeatSubstate
 
 					var option:String = options[curOptions[curSelected]][2];
 					ClientPrefs.clearInvalidKeys(option);
+					
+					var optBindsIndices:Array<Int> = [];
+					for (i in 0...grpBinds.members.length) {
+						var b = grpBinds.members[i];
+						if (b != null && b.ID == curOptionsValid[curSelected]) optBindsIndices.push(i);
+					}
+
 					for (n in 0...2)
 					{
 						var key:String = null;
@@ -414,9 +436,9 @@ class ControlsSubState extends MusicBeatSubstate
 							var savKey:Array<Null<FlxGamepadInputID>> = ClientPrefs.gamepadBinds.get(option);
 							key = InputFormatter.getGamepadName(savKey[n] != null ? savKey[n] : NONE);
 						}
-						updateBind(Math.floor(curSelected * 2) + n, key);
+						if(optBindsIndices.length > n) updateBind(optBindsIndices[n], key);
 					}
-					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
+					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					binding = false;
 					ClientPrefs.reloadVolumeKeys();
@@ -424,43 +446,61 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// [수정] 모든 레이아웃 요소의 실시간 Y축 부드러운 스크롤 배치 연산
+		// [수정] 상단 카테고리 헤더 텍스트 실시간 정렬
 		grpDisplay.forEachAlive(function(item:Alphabet) {
 			item.screenCenter(X);
 			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
 		});
 
+		// [수정] 옵션 리스트 이름 실시간 좌표 정렬 및 초기 스택 방지
 		grpOptions.forEachAlive(function(item:Alphabet) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
-			var delta:Int = displayIdx - curSelected;
-			var itemTargetY:Float = centerY + (delta * 85) - (item.height / 2);
-			
-			item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
-			item.x = boxX + 40; // 이름을 창 왼쪽에 고정 배치
-			item.alpha = (delta == 0) ? 1 : 0.6;
+			if (displayIdx != -1) {
+				var delta:Int = displayIdx - curSelected;
+				var itemTargetY:Float = centerY + (delta * 85) - (item.height / 2);
+				
+				item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
+				
+				if (options[curOptions[displayIdx]][1] == defaultKey) item.screenCenter(X);
+				else item.x = boxX + 40;
+				
+				item.alpha = (delta == 0) ? 1 : 0.6;
+			}
 		});
 
-		var idx:Int = 0;
+		// [수정] 고유 ID 탐색을 통해 뭉침 현상을 완벽히 수정한 키바인딩 & 검은색 상자 배치 연산
 		grpBinds.forEachAlive(function(item:Alphabet) {
-			var parent:Alphabet = grpOptions.members[item.ID];
-			if(parent != null) {
-				var n:Int = idx % 2;
-				// 이름의 오른쪽에 반투명 상자들을 나란히 배치
-				var boxStartX:Float = boxX + 240 + (n * 240);
+			var actualIdx:Int = grpBinds.members.indexOf(item);
+			var parent:Alphabet = null;
+			for (opt in grpOptions.members) {
+				if (opt != null && opt.ID == item.ID) {
+					parent = opt;
+					break;
+				}
+			}
+			
+			if(parent != null && actualIdx != -1) {
+				var optBindsIndices:Array<Int> = [];
+				for (i in 0...grpBinds.members.length) {
+					var b = grpBinds.members[i];
+					if (b != null && b.ID == item.ID) optBindsIndices.push(i);
+				}
+				var n:Int = optBindsIndices.indexOf(actualIdx);
+				if (n == -1) n = 0;
+
+				var boxStartX:Float = boxX + 260 + (n * 240);
 				
-				var black:AttachedSprite = grpBlacks.members[idx];
+				var black:AttachedSprite = grpBlacks.members[actualIdx];
 				if(black != null) {
 					black.x = boxStartX;
 					black.y = parent.y + (parent.height / 2) - (black.height / 2);
 					black.alpha = parent.alpha * 0.4;
 				}
 				
-				// 바인딩 글자가 220 너비 상자의 정확한 가로/세로 정중앙에 위치하도록 계산
 				item.x = boxStartX + (220 / 2) - (item.width / 2);
 				item.y = parent.y + (parent.height / 2) - (item.height / 2);
 				item.alpha = parent.alpha;
 			}
-			idx++;
 		});
 
 		super.update(elapsed);
@@ -496,7 +536,22 @@ class ControlsSubState extends MusicBeatSubstate
 			curAlt = !curAlt;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
-		var targetBlack = grpBlacks.members[Math.floor(curSelected * 2) + (curAlt ? 1 : 0)];
+		
+		var altNum:Int = curAlt ? 1 : 0;
+		var targetBlack:AttachedSprite = null;
+		var findCount:Int = 0;
+		
+		for (i in 0...grpBinds.members.length) {
+			var b = grpBinds.members[i];
+			if (b != null && b.ID == curOptionsValid[curSelected]) {
+				if (findCount == altNum) {
+					targetBlack = grpBlacks.members[i];
+					break;
+				}
+				findCount++;
+			}
+		}
+		
 		selectSpr.sprTracker = targetBlack;
 		selectSpr.visible = (targetBlack != null);
 	}
