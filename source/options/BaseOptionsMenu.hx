@@ -98,7 +98,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.y += 10
+				valueText.y += 10;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
