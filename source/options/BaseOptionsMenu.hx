@@ -80,7 +80,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(checkboxX, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
+				var checkbox:CheckboxThingie = new CheckboxThingie(checkboxX, optionText.y - 50, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.scale.set(0.55, 0.55); 
 				checkbox.updateHitbox();
 				checkbox.sprTracker = null; 
@@ -94,15 +94,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.alignment = LEFT;
-				valueText.setScale(0.55);
+				valueText.setScale(0.7);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
+				valueText.y += 10
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
 			
-			optionText.x = 110;
+			optionText.x = 130;
 			updateTextFrom(optionsArray[i]);
 		}
 
@@ -215,12 +216,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						bindingText = new Alphabet(400, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
 						bindingText.alignment = CENTERED;
 						if(targetCam != null) bindingText.cameras = [targetCam];
-						add(bindingText);
 						
 						bindingText2 = new Alphabet(400, 280, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete', []), true);
 						bindingText2.alignment = CENTERED;
 						if(targetCam != null) bindingText2.cameras = [targetCam];
-						add(bindingText2);
 	
 						bindingKey = true;
 						holdingEsc = 0;
