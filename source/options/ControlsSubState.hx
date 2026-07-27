@@ -138,12 +138,19 @@ class ControlsSubState extends MusicBeatSubstate
 
 					if(!isDisplayKey)
 					{
-						text.alignment = LEFT;
+						// [수정] 초기화 버튼 항목 자체를 엔진 내부 CENTERED 정렬로 사전 정의합니다.
+						if(isDefaultKey) text.alignment = CENTERED;
+						else text.alignment = LEFT;
+
 						grpOptions.add(text);
 						curOptions.push(i);
 						curOptionsValid.push(myID);
 					}
-					else grpDisplay.add(text);
+					else 
+					{
+						text.alignment = CENTERED;
+						grpDisplay.add(text);
+					}
 
 					if(!isCentered) addKeyText(text, option, myID);
 				}
@@ -176,6 +183,8 @@ class ControlsSubState extends MusicBeatSubstate
 			attach.changeX = false;
 			attach.changeY = false;
 			attach.ID = text.ID;
+			// [수정] 바인딩 글자도 갱신 시 오차가 없도록 CENTERED 기본 할당합니다.
+			attach.alignment = CENTERED;
 			grpBinds.add(attach);
 
 			playstationCheck(attach);
@@ -220,6 +229,7 @@ class ControlsSubState extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.ID = parentID;
+		attach.alignment = CENTERED;
 		
 		playstationCheck(attach);
 		attach.scaleX = Math.min(1, 140 / attach.width);
@@ -243,7 +253,6 @@ class ControlsSubState extends MusicBeatSubstate
 			return;
 		}
 
-		// [수정] 좌측으로 이동한 현재 UI 배치 상황에 맞춰 기준점 가상 설정 (기본값 50)
 		var optionWindow = OptionsSubState.optionWindow;
 		var boxX:Float = (optionWindow != null) ? optionWindow.x : 50;
 		var boxY:Float = (optionWindow != null) ? optionWindow.y : 140;
@@ -447,13 +456,13 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// [수정] 상단 카테고리 헤더 글자가 창의 가로 정중앙에 위치하도록 식 변경
+		// [수정] 헤더 텍스트: width 참조 없이 CENTERED 속성 기준 절대 중앙 배치
 		grpDisplay.forEachAlive(function(item:Alphabet) {
-			item.x = boxX + (boxWidth / 2) - (item.width / 2);
+			item.x = boxX + (boxWidth / 2);
 			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
 		});
 
-		// [수정] 옵션 목록 이름 수동 정렬 X축 수정 (boxX에 맞춰 정상 노출 처리)
+		// [수정] 옵션 이름: 무조건 고정된 X 경로로만 유도하여 팽창/사라짐 현상 차단
 		grpOptions.forEachAlive(function(item:Alphabet) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
 			if (displayIdx != -1) {
@@ -462,9 +471,8 @@ class ControlsSubState extends MusicBeatSubstate
 				
 				item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
 				
-				// [수정] 초기화 버튼 역시 화면 전체가 아닌 회색 창의 중앙에 맞춤
 				if (options[curOptions[displayIdx]][1] == defaultKey) 
-					item.x = boxX + (boxWidth / 2) - (item.width / 2);
+					item.x = boxX + (boxWidth / 2);
 				else 
 					item.x = boxX + 40;
 				
@@ -472,7 +480,7 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		});
 
-		// [수정] 키바인딩 검은색 상자 및 내부 글자 X축 간격 수치 좌측 창 기준 맞춤
+		// [수정] 바인딩 및 박스: 유동적인 width 수식을 완전히 제거하고, 센터 값 고정 연산
 		grpBinds.forEachAlive(function(item:Alphabet) {
 			var actualIdx:Int = grpBinds.members.indexOf(item);
 			var parent:Alphabet = null;
@@ -492,8 +500,8 @@ class ControlsSubState extends MusicBeatSubstate
 				var n:Int = optBindsIndices.indexOf(actualIdx);
 				if (n == -1) n = 0;
 
-				// [수정] 글자가 밀려나지 않도록 가로 간격을 210단위로 재조정
-				var boxStartX:Float = boxX + 220 + (n * 210);
+				// 간격을 명확하게 230 단위로 벌려서 나란히 서도록 배치
+				var boxStartX:Float = boxX + 210 + (n * 230);
 				
 				var black:AttachedSprite = grpBlacks.members[actualIdx];
 				if(black != null) {
@@ -502,7 +510,8 @@ class ControlsSubState extends MusicBeatSubstate
 					black.alpha = parent.alpha * 0.4;
 				}
 				
-				item.x = boxStartX + (220 / 2) - (item.width / 2);
+				// CENTERED 정렬 상태이므로, 검은 박스의 완벽한 가로 정중앙(+110) 좌표만 넘겨줍니다.
+				item.x = boxStartX + 110;
 				item.y = parent.y + (parent.height / 2) - (item.height / 2);
 				item.alpha = parent.alpha;
 			}
