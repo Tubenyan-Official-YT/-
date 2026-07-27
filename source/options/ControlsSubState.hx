@@ -77,11 +77,16 @@ class ControlsSubState extends MusicBeatSubstate
 		add(grpOptions);
 		grpBlacks = new FlxTypedGroup<AttachedSprite>();
 		add(grpBlacks);
+		
 		selectSpr = new AttachedSprite();
-		selectSpr.makeGraphic(250, 78, FlxColor.WHITE);
+		// 줄어든 상자 크기에 맞추어 220, 70으로 수정
+		selectSpr.makeGraphic(220, 70, FlxColor.WHITE);
 		selectSpr.copyAlpha = false;
 		selectSpr.alpha = 0.75;
+		selectSpr.xAdd = 0;
+		selectSpr.yAdd = 0;
 		add(selectSpr);
+		
 		grpBinds = new FlxTypedGroup<Alphabet>();
 		add(grpBinds);
 
@@ -129,7 +134,6 @@ class ControlsSubState extends MusicBeatSubstate
 					if(isDefaultKey) str = Language.getPhrase(str);
 					var text:Alphabet = new Alphabet(475, 300, !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str), !isDisplayKey);
 					
-					// [수정] 대제목(isDisplayKey)은 메뉴 자동 Lerp 스크롤을 방지하기 위해 false로 지정합니다.
 					text.isMenuItem = !isDisplayKey;
 					text.changeX = false;
 					text.distancePerItem.y = 60;
@@ -139,7 +143,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 					if(!isDisplayKey)
 					{
-						text.alignment = RIGHT;
+						text.alignment = LEFT;
 						grpOptions.add(text);
 						curOptions.push(i);
 						curOptionsValid.push(myID);
@@ -165,6 +169,7 @@ class ControlsSubState extends MusicBeatSubstate
 		text.y -= 55;
 		text.startPosition.y -= 55;
 	}
+	
 	function addKeyText(text:Alphabet, option:Array<Dynamic>, id:Int)
 	{
 		var keys:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option[2]);
@@ -183,7 +188,7 @@ class ControlsSubState extends MusicBeatSubstate
 			else
 				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
 
-			var attach:Alphabet = new Alphabet(560 + n * 300, 248, key, false);
+			var attach:Alphabet = new Alphabet(0, 0, key, false);
 			attach.isMenuItem = true;
 			attach.changeX = false;
 			attach.distancePerItem.y = 60;
@@ -194,14 +199,13 @@ class ControlsSubState extends MusicBeatSubstate
 			grpBinds.add(attach);
 
 			playstationCheck(attach);
-			attach.scaleX = Math.min(1, 230 / attach.width);
+			attach.scaleX = Math.min(1, 180 / attach.width);
 
 			var black:AttachedSprite = new AttachedSprite();
-			black.makeGraphic(1000, 78, FlxColor.BLACK);
+			// 상자 크기를 줄였습니다 (너비 220, 높이 70)
+			black.makeGraphic(220, 70, FlxColor.BLACK);
 			black.alphaMult = 0.4;
-			black.sprTracker = attach;
-			black.yAdd = -6;
-			black.xAdd = -400;         
+			black.sprTracker = null; 
 			grpBlacks.add(black);
 		}
 	}
@@ -230,17 +234,18 @@ class ControlsSubState extends MusicBeatSubstate
 	function updateBind(num:Int, text:String)
 	{
 		var bind:Alphabet = grpBinds.members[num];
-		var attach:Alphabet = new Alphabet(350 + (num % 2) * 300, 248, text, false);
+		var parentID = bind.ID;
+		var targetY = bind.targetY;
+		
+		var attach:Alphabet = new Alphabet(0, 0, text, false);
 		attach.isMenuItem = true;
 		attach.changeX = false;
 		attach.distancePerItem.y = 60;
-		attach.targetY = bind.targetY;
-		attach.ID = bind.ID;
-		attach.x = bind.x;
-		attach.y = bind.y;
+		attach.targetY = targetY;
+		attach.ID = parentID;
 		
 		playstationCheck(attach);
-		attach.scaleX = Math.min(1, 230 / attach.width);
+		attach.scaleX = Math.min(1, 180 / attach.width);
 
 		bind.kill();
 		grpBinds.remove(bind);
@@ -250,9 +255,6 @@ class ControlsSubState extends MusicBeatSubstate
 
 	var binding:Bool = false;
 	var holdingEsc:Float = 0;
-	var bindingBlack:FlxSprite;
-	var bindingText:Alphabet;
-	var bindingText2:Alphabet;
 
 	var timeForMoving:Float = 0.1;
 	override function update(elapsed:Float)
@@ -283,25 +285,15 @@ class ControlsSubState extends MusicBeatSubstate
 			{
 				if(options[curOptions[curSelected]][1] != defaultKey)
 				{
-					bindingBlack = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
-					bindingBlack.scale.set(FlxG.width, FlxG.height);
-					bindingBlack.updateHitbox();
-					bindingBlack.alpha = 0;
-					FlxTween.tween(bindingBlack, {alpha: 0.6}, 0.35, {ease: FlxEase.linear});
-					add(bindingBlack);
-
-					bindingText = new Alphabet(FlxG.width / 2, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [options[curOptions[curSelected]][3]]), false);
-					bindingText.alignment = CENTERED;
-					add(bindingText);
-					
-					bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'), true);
-					bindingText2.alignment = CENTERED;
-					add(bindingText2);
-
 					binding = true;
 					holdingEsc = 0;
 					ClientPrefs.toggleVolumeKeys(false);
 					FlxG.sound.play(Paths.sound('scrollMenu'));
+
+					// 엔터 입력 시 글자만 숨김 처리
+					var altNum:Int = curAlt ? 1 : 0;
+					var bindIndex:Int = Math.floor(curSelected * 2) + altNum;
+					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = false;
 				}
 				else
 				{
@@ -318,14 +310,18 @@ class ControlsSubState extends MusicBeatSubstate
 		else
 		{
 			var altNum:Int = curAlt ? 1 : 0;
+			var bindIndex:Int = Math.floor(curSelected * 2) + altNum;
 			var curOption:Array<Dynamic> = options[curOptions[curSelected]];
+			
 			if(FlxG.keys.pressed.ESCAPE || FlxG.gamepads.anyPressed(B))
 			{
 				holdingEsc += elapsed;
 				if(holdingEsc > 0.5)
 				{
+					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('cancelMenu'));
-					closeBinding();
+					binding = false;
+					ClientPrefs.reloadVolumeKeys();
 				}
 			}
 			else if (FlxG.keys.pressed.BACKSPACE || FlxG.gamepads.anyPressed(BACK))
@@ -338,9 +334,11 @@ class ControlsSubState extends MusicBeatSubstate
 					else
 						ClientPrefs.gamepadBinds.get(curOption[2])[altNum] = NONE;
 					ClientPrefs.clearInvalidKeys(curOption[2]);
-					updateBind(Math.floor(curSelected * 2) + altNum, onKeyboardMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
+					updateBind(bindIndex, onKeyboardMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
+					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('cancelMenu'));
-					closeBinding();
+					binding = false;
+					ClientPrefs.reloadVolumeKeys();
 				}
 			}
 			else
@@ -433,26 +431,14 @@ class ControlsSubState extends MusicBeatSubstate
 						}
 						updateBind(Math.floor(curSelected * 2) + n, key);
 					}
+					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
-					closeBinding();
+					binding = false;
+					ClientPrefs.reloadVolumeKeys();
 				}
 			}
 		}
 		super.update(elapsed);
-	}
-
-	function closeBinding()
-	{
-		binding = false;
-		bindingBlack.destroy();
-		remove(bindingBlack);
-
-		bindingText.destroy();
-		remove(bindingText);
-
-		bindingText2.destroy();
-		remove(bindingText2);
-		ClientPrefs.reloadVolumeKeys();
 	}
 
 	function updateText(?change:Int = 0)
@@ -466,7 +452,6 @@ class ControlsSubState extends MusicBeatSubstate
 		if(num < 3) addNum = 3 - num;
 		else if(num > lastID - 4) addNum = (lastID - 4) - num;
 
-		// [수정] 현재 선택된 키(num)에 매칭되는 상위 카테고리 판별 로직
 		var activeCategoryID:Int = -1;
 		grpDisplay.forEachAlive(function(item:Alphabet) {
 			if (item.ID <= num && item.ID > activeCategoryID) {
@@ -474,23 +459,22 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		});
 
-		// [수정] 판별된 카테고리 텍스트만 optionWindow 상단 영역에 정밀하게 박아둡니다.
 		grpDisplay.forEachAlive(function(item:Alphabet) {
 			item.x = optionWindow.x + (optionWindow.width - item.width) / 2;
-			
 			if (item.ID == activeCategoryID) {
 				item.visible = true;
-				// 65픽셀은 Settings 타이틀 크기를 감안한 Y축 오프셋입니다. UI에 맞게 자유롭게 조절하세요.
 				item.y = optionWindow.y + 65; 
 			} else {
 				item.visible = false;
 			}
 		});
 
+		// 옵션 이름을 반투명 상자 바로 왼쪽에 오도록 X 좌표 정렬
 		grpOptions.forEachAlive(function(item:Alphabet)
 		{
 			item.targetY = item.ID - num - addNum;
 			item.alpha = (item.ID - num == 0) ? 1 : 0.6;
+			item.x = optionWindow.x + 150;
 		});
 
 		var i:Int = 0;
@@ -501,7 +485,19 @@ class ControlsSubState extends MusicBeatSubstate
 			item.alpha = parent.alpha;
 
 			var n:Int = i % 2;
-			item.x = parent.x + 90 + (n * 140);
+			
+			// 이름 오른쪽에 상자들이 자연스럽게 오도록 시작점 계산
+			var boxStartX:Float = optionWindow.x + 450 + (n * 260);
+			
+			var black:AttachedSprite = grpBlacks.members[i];
+			if(black != null) {
+				black.x = boxStartX;
+				black.y = item.y + (item.height / 2) - (black.height / 2);
+				black.alpha = item.alpha * 0.4;
+			}
+
+			// 바인딩 글자가 줄어든 반투명 상자(너비 220)의 정확한 정중앙에 위치하도록 배치
+			item.x = boxStartX + (220 / 2) - (item.width / 2);
 			i++;
 		});
 
@@ -511,7 +507,6 @@ class ControlsSubState extends MusicBeatSubstate
 
 	function swapMode()
 	{
-		// [수정] 부려진 bg 트윈 대신 퍼블릭 optionWindow의 색상을 트윈하도록 안전하게 가드 처리
 		var optionWindow = OptionsSubState.optionWindow;
 		if(optionWindow != null)
 		{
@@ -533,7 +528,8 @@ class ControlsSubState extends MusicBeatSubstate
 			curAlt = !curAlt;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
-		selectSpr.sprTracker = grpBlacks.members[Math.floor(curSelected * 2) + (curAlt ? 1 : 0)];
-		selectSpr.visible = (selectSpr.sprTracker != null);
+		var targetBlack = grpBlacks.members[Math.floor(curSelected * 2) + (curAlt ? 1 : 0)];
+		selectSpr.sprTracker = targetBlack;
+		selectSpr.visible = (targetBlack != null);
 	}
 }
