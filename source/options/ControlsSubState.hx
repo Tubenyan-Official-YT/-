@@ -70,6 +70,8 @@ class ControlsSubState extends MusicBeatSubstate
 		options.push([true]);
 		options.push([true, defaultKey]);
 
+		var optionWindow = OptionsSubState.optionWindow;
+
 		grpDisplay = new FlxTypedGroup<Alphabet>();
 		add(grpDisplay);
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -81,6 +83,10 @@ class ControlsSubState extends MusicBeatSubstate
 		selectSpr.makeGraphic(220, 70, FlxColor.WHITE);
 		selectSpr.copyAlpha = false;
 		selectSpr.alpha = 0.4;
+		if(optionWindow != null) {
+			selectSpr.cameras = optionWindow.cameras;
+			selectSpr.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+		}
 		add(selectSpr);
 		
 		grpBinds = new FlxTypedGroup<Alphabet>();
@@ -90,11 +96,20 @@ class ControlsSubState extends MusicBeatSubstate
 		controllerSpr.antialiasing = ClientPrefs.data.antialiasing;
 		controllerSpr.animation.add('keyboard', [0], 1, false);
 		controllerSpr.animation.add('gamepad', [1], 1, false);
+		if(optionWindow != null) {
+			controllerSpr.cameras = optionWindow.cameras;
+			controllerSpr.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+		}
 		add(controllerSpr);
 
-		var text:Alphabet = new Alphabet(60, 90, 'CTRL', false);
-		text.alignment = CENTERED;
+		var text:Alphabet = new Alphabet(90, 90, 'CTRL', false);
+		text.alignment = LEFT;
 		text.setScale(0.4);
+		text.updateHitbox();
+		if(optionWindow != null) {
+			text.cameras = optionWindow.cameras;
+			text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+		}
 		add(text);
 
 		createTexts();
@@ -114,7 +129,9 @@ class ControlsSubState extends MusicBeatSubstate
 		grpOptions.clear();
 		grpBinds.clear();
 
+		var optionWindow = OptionsSubState.optionWindow;
 		var myID:Int = 0;
+		
 		for (i => option in options)
 		{
 			if(onKeyboardMode || option[0])
@@ -133,24 +150,24 @@ class ControlsSubState extends MusicBeatSubstate
 					text.isMenuItem = false;
 					text.changeX = false;
 					text.changeY = false;
+					text.alignment = LEFT; // 내장 센터링 오작동 방지용 고정
+					text.setScale(0.6); // 거대화 방지 스케일
+					text.updateHitbox();
 					text.ID = myID;
 					lastID = myID;
 
+					if(optionWindow != null) {
+						text.cameras = optionWindow.cameras;
+						text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+					}
+
 					if(!isDisplayKey)
 					{
-						// [수정] 초기화 버튼 항목 자체를 엔진 내부 CENTERED 정렬로 사전 정의합니다.
-						if(isDefaultKey) text.alignment = CENTERED;
-						else text.alignment = LEFT;
-
 						grpOptions.add(text);
 						curOptions.push(i);
 						curOptionsValid.push(myID);
 					}
-					else 
-					{
-						text.alignment = CENTERED;
-						grpDisplay.add(text);
-					}
+					else grpDisplay.add(text);
 
 					if(!isCentered) addKeyText(text, option, myID);
 				}
@@ -162,6 +179,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 	function addKeyText(text:Alphabet, option:Array<Dynamic>, id:Int)
 	{
+		var optionWindow = OptionsSubState.optionWindow;
 		var keys:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option[2]);
 		if(keys == null && onKeyboardMode)
 			keys = ClientPrefs.defaultKeys.get(option[2]).copy();
@@ -183,17 +201,26 @@ class ControlsSubState extends MusicBeatSubstate
 			attach.changeX = false;
 			attach.changeY = false;
 			attach.ID = text.ID;
-			// [수정] 바인딩 글자도 갱신 시 오차가 없도록 CENTERED 기본 할당합니다.
-			attach.alignment = CENTERED;
+			attach.alignment = LEFT;
+			attach.setScale(0.5);
+			attach.updateHitbox();
+			
+			if(optionWindow != null) {
+				attach.cameras = optionWindow.cameras;
+				attach.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+			}
 			grpBinds.add(attach);
 
 			playstationCheck(attach);
-			attach.scaleX = Math.min(1, 140 / attach.width);
 
 			var black:AttachedSprite = new AttachedSprite();
 			black.makeGraphic(220, 70, FlxColor.BLACK);
 			black.alphaMult = 0.4;
 			black.sprTracker = null; 
+			if(optionWindow != null) {
+				black.cameras = optionWindow.cameras;
+				black.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+			}
 			grpBlacks.add(black);
 		}
 	}
@@ -221,6 +248,7 @@ class ControlsSubState extends MusicBeatSubstate
 
 	function updateBind(num:Int, text:String)
 	{
+		var optionWindow = OptionsSubState.optionWindow;
 		var bind:Alphabet = grpBinds.members[num];
 		var parentID = bind.ID;
 		
@@ -229,10 +257,16 @@ class ControlsSubState extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.ID = parentID;
-		attach.alignment = CENTERED;
+		attach.alignment = LEFT;
+		attach.setScale(0.5);
+		attach.updateHitbox();
+		
+		if(optionWindow != null) {
+			attach.cameras = optionWindow.cameras;
+			attach.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
+		}
 		
 		playstationCheck(attach);
-		attach.scaleX = Math.min(1, 140 / attach.width);
 
 		bind.kill();
 		grpBinds.remove(bind);
@@ -456,13 +490,13 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// [수정] 헤더 텍스트: width 참조 없이 CENTERED 속성 기준 절대 중앙 배치
+		// 카테고리 헤더: 회색 창 크기 기준 수동 중앙 정렬 연산
 		grpDisplay.forEachAlive(function(item:Alphabet) {
-			item.x = boxX + (boxWidth / 2);
+			item.x = boxX + (boxWidth / 2) - (item.width / 2);
 			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
 		});
 
-		// [수정] 옵션 이름: 무조건 고정된 X 경로로만 유도하여 팽창/사라짐 현상 차단
+		// 옵션명 리스트: 좌측 정렬 및 초기화 버튼 개별 중앙 정렬 처리
 		grpOptions.forEachAlive(function(item:Alphabet) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
 			if (displayIdx != -1) {
@@ -472,15 +506,15 @@ class ControlsSubState extends MusicBeatSubstate
 				item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
 				
 				if (options[curOptions[displayIdx]][1] == defaultKey) 
-					item.x = boxX + (boxWidth / 2);
+					item.x = boxX + (boxWidth / 2) - (item.width / 2);
 				else 
-					item.x = boxX + 40;
+					item.x = boxX + 50;
 				
 				item.alpha = (delta == 0) ? 1 : 0.6;
 			}
 		});
 
-		// [수정] 바인딩 및 박스: 유동적인 width 수식을 완전히 제거하고, 센터 값 고정 연산
+		// 박스 및 바인딩 키: 수동 여백 매칭 정렬 구조
 		grpBinds.forEachAlive(function(item:Alphabet) {
 			var actualIdx:Int = grpBinds.members.indexOf(item);
 			var parent:Alphabet = null;
@@ -500,7 +534,6 @@ class ControlsSubState extends MusicBeatSubstate
 				var n:Int = optBindsIndices.indexOf(actualIdx);
 				if (n == -1) n = 0;
 
-				// 간격을 명확하게 230 단위로 벌려서 나란히 서도록 배치
 				var boxStartX:Float = boxX + 210 + (n * 230);
 				
 				var black:AttachedSprite = grpBlacks.members[actualIdx];
@@ -510,8 +543,7 @@ class ControlsSubState extends MusicBeatSubstate
 					black.alpha = parent.alpha * 0.4;
 				}
 				
-				// CENTERED 정렬 상태이므로, 검은 박스의 완벽한 가로 정중앙(+110) 좌표만 넘겨줍니다.
-				item.x = boxStartX + 110;
+				item.x = boxStartX + (220 / 2) - (item.width / 2);
 				item.y = parent.y + (parent.height / 2) - (item.height / 2);
 				item.alpha = parent.alpha;
 			}
