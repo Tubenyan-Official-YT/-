@@ -20,7 +20,7 @@ class OptionsSubState extends MusicBeatSubstate
 	
 	private var grpOptions:FlxSpriteGroup;
 	private var parentGrp:FlxSpriteGroup;
-	private var optionWindow:FlxSprite;
+	public static var optionWindow:FlxSprite;
 	public var optionCam:FlxCamera;
 	var blockInput:Bool = true; // 입력 차단 플래그 추가
 	
