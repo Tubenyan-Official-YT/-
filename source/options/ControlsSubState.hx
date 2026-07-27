@@ -15,7 +15,6 @@ class ControlsSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 	var curAlt:Bool = false;
 
-	//Show on gamepad - Display name - Save file key - Rebind display name
 	var options:Array<Dynamic> = [
 		[true, 'NOTES'],
 		[true, 'Left', 'note_left', 'Note Left'],
@@ -79,12 +78,9 @@ class ControlsSubState extends MusicBeatSubstate
 		add(grpBlacks);
 		
 		selectSpr = new AttachedSprite();
-		// 줄어든 상자 크기에 맞추어 220, 70으로 수정
 		selectSpr.makeGraphic(220, 70, FlxColor.WHITE);
 		selectSpr.copyAlpha = false;
-		selectSpr.alpha = 0.75;
-		selectSpr.xAdd = 0;
-		selectSpr.yAdd = 0;
+		selectSpr.alpha = 0.4;
 		add(selectSpr);
 		
 		grpBinds = new FlxTypedGroup<Alphabet>();
@@ -132,12 +128,12 @@ class ControlsSubState extends MusicBeatSubstate
 					var str:String = option[1];
 					var keyStr:String = option[2];
 					if(isDefaultKey) str = Language.getPhrase(str);
-					var text:Alphabet = new Alphabet(475, 300, !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str), !isDisplayKey);
+					var text:Alphabet = new Alphabet(0, 0, !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str), !isDisplayKey);
 					
-					text.isMenuItem = !isDisplayKey;
+					// 엔진 자체 정렬 기능을 끄고 수동 정렬을 위해 false 처리합니다.
+					text.isMenuItem = false;
 					text.changeX = false;
-					text.distancePerItem.y = 60;
-					text.targetY = myID;
+					text.changeY = false;
 					text.ID = myID;
 					lastID = myID;
 
@@ -150,11 +146,7 @@ class ControlsSubState extends MusicBeatSubstate
 					}
 					else grpDisplay.add(text);
 
-					if(isCentered) addCenteredText(text, option, myID);
-					else addKeyText(text, option, myID);
-
-					text.snapToPosition();
-					text.y += FlxG.height * 2;
+					if(!isCentered) addKeyText(text, option, myID);
 				}
 				myID++;
 			}
@@ -162,14 +154,6 @@ class ControlsSubState extends MusicBeatSubstate
 		updateText();
 	}
 
-	function addCenteredText(text:Alphabet, option:Array<Dynamic>, id:Int)
-	{
-		text.alignment = LEFT;
-		text.screenCenter(X);
-		text.y -= 55;
-		text.startPosition.y -= 55;
-	}
-	
 	function addKeyText(text:Alphabet, option:Array<Dynamic>, id:Int)
 	{
 		var keys:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option[2]);
@@ -189,20 +173,16 @@ class ControlsSubState extends MusicBeatSubstate
 				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
 
 			var attach:Alphabet = new Alphabet(0, 0, key, false);
-			attach.isMenuItem = true;
+			attach.isMenuItem = false;
 			attach.changeX = false;
-			attach.distancePerItem.y = 60;
-			attach.targetY = text.targetY;
-			attach.ID = Math.floor(grpBinds.length / 2);
-			attach.snapToPosition();
-			attach.y += FlxG.height * 2;
+			attach.changeY = false;
+			attach.ID = text.ID;
 			grpBinds.add(attach);
 
 			playstationCheck(attach);
-			attach.scaleX = Math.min(1, 180 / attach.width);
+			attach.scaleX = Math.min(1, 140 / attach.width);
 
 			var black:AttachedSprite = new AttachedSprite();
-			// 상자 크기를 줄였습니다 (너비 220, 높이 70)
 			black.makeGraphic(220, 70, FlxColor.BLACK);
 			black.alphaMult = 0.4;
 			black.sprTracker = null; 
@@ -235,17 +215,15 @@ class ControlsSubState extends MusicBeatSubstate
 	{
 		var bind:Alphabet = grpBinds.members[num];
 		var parentID = bind.ID;
-		var targetY = bind.targetY;
 		
 		var attach:Alphabet = new Alphabet(0, 0, text, false);
-		attach.isMenuItem = true;
+		attach.isMenuItem = false;
 		attach.changeX = false;
-		attach.distancePerItem.y = 60;
-		attach.targetY = targetY;
+		attach.changeY = false;
 		attach.ID = parentID;
 		
 		playstationCheck(attach);
-		attach.scaleX = Math.min(1, 180 / attach.width);
+		attach.scaleX = Math.min(1, 140 / attach.width);
 
 		bind.kill();
 		grpBinds.remove(bind);
@@ -265,6 +243,14 @@ class ControlsSubState extends MusicBeatSubstate
 			super.update(elapsed);
 			return;
 		}
+
+		// 기준이 되는 옵션 윈도우 좌표 획득
+		var optionWindow = OptionsSubState.optionWindow;
+		var boxX:Float = (optionWindow != null) ? optionWindow.x : 400;
+		var boxY:Float = (optionWindow != null) ? optionWindow.y : 150;
+		var boxWidth:Float = (optionWindow != null) ? optionWindow.width : 500;
+		var boxHeight:Float = (optionWindow != null) ? optionWindow.height : 500;
+		var centerY:Float = boxY + (boxHeight / 2);
 
 		if(!binding)
 		{
@@ -290,7 +276,6 @@ class ControlsSubState extends MusicBeatSubstate
 					ClientPrefs.toggleVolumeKeys(false);
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 
-					// 엔터 입력 시 글자만 숨김 처리
 					var altNum:Int = curAlt ? 1 : 0;
 					var bindIndex:Int = Math.floor(curSelected * 2) + altNum;
 					if (grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = false;
@@ -438,69 +423,52 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 			}
 		}
+
+		// [수정] 모든 레이아웃 요소의 실시간 Y축 부드러운 스크롤 배치 연산
+		grpDisplay.forEachAlive(function(item:Alphabet) {
+			item.screenCenter(X);
+			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
+		});
+
+		grpOptions.forEachAlive(function(item:Alphabet) {
+			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
+			var delta:Int = displayIdx - curSelected;
+			var itemTargetY:Float = centerY + (delta * 85) - (item.height / 2);
+			
+			item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
+			item.x = boxX + 40; // 이름을 창 왼쪽에 고정 배치
+			item.alpha = (delta == 0) ? 1 : 0.6;
+		});
+
+		var idx:Int = 0;
+		grpBinds.forEachAlive(function(item:Alphabet) {
+			var parent:Alphabet = grpOptions.members[item.ID];
+			if(parent != null) {
+				var n:Int = idx % 2;
+				// 이름의 오른쪽에 반투명 상자들을 나란히 배치
+				var boxStartX:Float = boxX + 240 + (n * 240);
+				
+				var black:AttachedSprite = grpBlacks.members[idx];
+				if(black != null) {
+					black.x = boxStartX;
+					black.y = parent.y + (parent.height / 2) - (black.height / 2);
+					black.alpha = parent.alpha * 0.4;
+				}
+				
+				// 바인딩 글자가 220 너비 상자의 정확한 가로/세로 정중앙에 위치하도록 계산
+				item.x = boxStartX + (220 / 2) - (item.width / 2);
+				item.y = parent.y + (parent.height / 2) - (item.height / 2);
+				item.alpha = parent.alpha;
+			}
+			idx++;
+		});
+
 		super.update(elapsed);
 	}
 
 	function updateText(?change:Int = 0)
 	{
 		curSelected = FlxMath.wrap(curSelected + change, 0, curOptions.length - 1);
-
-		var optionWindow = OptionsSubState.optionWindow;
-		
-		var num:Int = curOptionsValid[curSelected];
-		var addNum:Int = 0;
-		if(num < 3) addNum = 3 - num;
-		else if(num > lastID - 4) addNum = (lastID - 4) - num;
-
-		var activeCategoryID:Int = -1;
-		grpDisplay.forEachAlive(function(item:Alphabet) {
-			if (item.ID <= num && item.ID > activeCategoryID) {
-				activeCategoryID = item.ID;
-			}
-		});
-
-		grpDisplay.forEachAlive(function(item:Alphabet) {
-			item.x = optionWindow.x + (optionWindow.width - item.width) / 2;
-			if (item.ID == activeCategoryID) {
-				item.visible = true;
-				item.y = optionWindow.y + 65; 
-			} else {
-				item.visible = false;
-			}
-		});
-
-		// 옵션 이름을 반투명 상자 바로 왼쪽에 오도록 X 좌표 정렬
-		grpOptions.forEachAlive(function(item:Alphabet)
-		{
-			item.targetY = item.ID - num - addNum;
-			item.alpha = (item.ID - num == 0) ? 1 : 0.6;
-			item.x = optionWindow.x + 150;
-		});
-
-		var i:Int = 0;
-		grpBinds.forEachAlive(function(item:Alphabet)
-		{
-			var parent:Alphabet = grpOptions.members[item.ID];
-			item.targetY = parent.targetY;
-			item.alpha = parent.alpha;
-
-			var n:Int = i % 2;
-			
-			// 이름 오른쪽에 상자들이 자연스럽게 오도록 시작점 계산
-			var boxStartX:Float = optionWindow.x + 450 + (n * 260);
-			
-			var black:AttachedSprite = grpBlacks.members[i];
-			if(black != null) {
-				black.x = boxStartX;
-				black.y = item.y + (item.height / 2) - (black.height / 2);
-				black.alpha = item.alpha * 0.4;
-			}
-
-			// 바인딩 글자가 줄어든 반투명 상자(너비 220)의 정확한 정중앙에 위치하도록 배치
-			item.x = boxStartX + (220 / 2) - (item.width / 2);
-			i++;
-		});
-
 		updateAlt();
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
