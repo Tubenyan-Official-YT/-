@@ -475,6 +475,8 @@ class ControlsSubState extends MusicBeatSubstate
 	{
 		curSelected = FlxMath.wrap(curSelected + change, 0, curOptions.length - 1);
 
+		var optionWindow = OptionsSubState.optionWindow;
+		
 		var num:Int = curOptionsValid[curSelected];
 		var addNum:Int = 0;
 		if(num < 3) addNum = 3 - num;
@@ -490,6 +492,7 @@ class ControlsSubState extends MusicBeatSubstate
 			item.targetY = item.ID - num - addNum;
 			item.alpha = (item.ID - num == 0) ? 1 : 0.6;
 		});
+		var i:Int = 0;
 		grpBinds.forEachAlive(function(item:Alphabet)
 		{
 			var parent:Alphabet = grpOptions.members[item.ID];
