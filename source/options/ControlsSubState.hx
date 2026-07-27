@@ -47,7 +47,6 @@ class ControlsSubState extends MusicBeatSubstate
 	var curOptionsValid:Array<Int>;
 	static var defaultKey:String = 'Reset to Default Keys';
 
-	var bg:FlxSprite;
 	var grpDisplay:FlxTypedGroup<Alphabet>;
 	var grpBlacks:FlxTypedGroup<AttachedSprite>;
 	var grpOptions:FlxTypedGroup<Alphabet>;
@@ -71,18 +70,6 @@ class ControlsSubState extends MusicBeatSubstate
 		options.push([true]);
 		options.push([true]);
 		options.push([true, defaultKey]);
-
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = keyboardColor;
-		bg.antialiasing = ClientPrefs.data.antialiasing;
-		bg.screenCenter();
-		add(bg);
-
-		var grid:FlxBackdrop = new FlxBackdrop(FlxGridOverlay.createGrid(80, 80, 160, 160, true, 0x33FFFFFF, 0x0));
-		grid.velocity.set(40, 40);
-		grid.alpha = 0;
-		FlxTween.tween(grid, {alpha: 1}, 0.5, {ease: FlxEase.quadOut});
-		add(grid);
 
 		grpDisplay = new FlxTypedGroup<Alphabet>();
 		add(grpDisplay);
@@ -141,7 +128,9 @@ class ControlsSubState extends MusicBeatSubstate
 					var keyStr:String = option[2];
 					if(isDefaultKey) str = Language.getPhrase(str);
 					var text:Alphabet = new Alphabet(475, 300, !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str), !isDisplayKey);
-					text.isMenuItem = true;
+					
+					// [수정] 대제목(isDisplayKey)은 메뉴 자동 Lerp 스크롤을 방지하기 위해 false로 지정합니다.
+					text.isMenuItem = !isDisplayKey;
 					text.changeX = false;
 					text.distancePerItem.y = 60;
 					text.targetY = myID;
@@ -206,16 +195,13 @@ class ControlsSubState extends MusicBeatSubstate
 
 			playstationCheck(attach);
 			attach.scaleX = Math.min(1, 230 / attach.width);
-			//attach.text = key;
 
-			// spawn black bars at the right of the key name
 			var black:AttachedSprite = new AttachedSprite();
 			black.makeGraphic(1000, 78, FlxColor.BLACK);
 			black.alphaMult = 0.4;
-			black.sprTracker = attach; // [중요] 추적 대상을 키 글자(attach)로 변경하여 Y좌표를 일치시킵니다.
+			black.sprTracker = attach;
 			black.yAdd = -6;
-			// 상자가 글자보다 살짝 왼쪽에서 시작하여 글자를 감싸도록 설정
-			black.xAdd = -400;          
+			black.xAdd = -400;         
 			grpBlacks.add(black);
 		}
 	}
@@ -231,7 +217,7 @@ class ControlsSubState extends MusicBeatSubstate
 		{
 			switch(alpha.text)
 			{
-				case '[', ']': //Square and Triangle respectively
+				case '[', ']':
 					letter.image = 'alphabet_playstation';
 					letter.updateHitbox();
 					
@@ -255,7 +241,6 @@ class ControlsSubState extends MusicBeatSubstate
 		
 		playstationCheck(attach);
 		attach.scaleX = Math.min(1, 230 / attach.width);
-		//attach.text = text;
 
 		bind.kill();
 		grpBinds.remove(bind);
@@ -272,7 +257,7 @@ class ControlsSubState extends MusicBeatSubstate
 	var timeForMoving:Float = 0.1;
 	override function update(elapsed:Float)
 	{
-		if(timeForMoving > 0) //Fix controller bug
+		if(timeForMoving > 0)
 		{
 			timeForMoving = Math.max(0, timeForMoving - elapsed);
 			super.update(elapsed);
@@ -298,7 +283,7 @@ class ControlsSubState extends MusicBeatSubstate
 			{
 				if(options[curOptions[curSelected]][1] != defaultKey)
 				{
-					bindingBlack = new FlxSprite().makeGraphic(1, 1, /*FlxColor.BLACK*/ FlxColor.WHITE);
+					bindingBlack = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
 					bindingBlack.scale.set(FlxG.width, FlxG.height);
 					bindingBlack.updateHitbox();
 					bindingBlack.alpha = 0;
@@ -320,7 +305,6 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 				else
 				{
-					// Reset to Default
 					ClientPrefs.resetKeys(!onKeyboardMode);
 					ClientPrefs.reloadVolumeKeys();
 					var lastSel:Int = curSelected;
@@ -388,8 +372,8 @@ class ControlsSubState extends MusicBeatSubstate
 				{
 					var keyPressed:Null<FlxGamepadInputID> = NONE;
 					var keyReleased:Null<FlxGamepadInputID> = NONE;
-					if(FlxG.gamepads.anyJustPressed(LEFT_TRIGGER)) keyPressed = LEFT_TRIGGER; //it wasnt working for some reason
-					else if(FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER)) keyPressed = RIGHT_TRIGGER; //it wasnt working for some reason
+					if(FlxG.gamepads.anyJustPressed(LEFT_TRIGGER)) keyPressed = LEFT_TRIGGER;
+					else if(FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER)) keyPressed = RIGHT_TRIGGER;
 					else
 					{
 						for (i in 0...FlxG.gamepads.numActiveGamepads)
@@ -482,9 +466,25 @@ class ControlsSubState extends MusicBeatSubstate
 		if(num < 3) addNum = 3 - num;
 		else if(num > lastID - 4) addNum = (lastID - 4) - num;
 
+		// [수정] 현재 선택된 키(num)에 매칭되는 상위 카테고리 판별 로직
+		var activeCategoryID:Int = -1;
 		grpDisplay.forEachAlive(function(item:Alphabet) {
-    		item.x = optionWindow.x + (optionWindow.width - item.width) / 2;
-    		item.targetY = item.ID;
+			if (item.ID <= num && item.ID > activeCategoryID) {
+				activeCategoryID = item.ID;
+			}
+		});
+
+		// [수정] 판별된 카테고리 텍스트만 optionWindow 상단 영역에 정밀하게 박아둡니다.
+		grpDisplay.forEachAlive(function(item:Alphabet) {
+			item.x = optionWindow.x + (optionWindow.width - item.width) / 2;
+			
+			if (item.ID == activeCategoryID) {
+				item.visible = true;
+				// 65픽셀은 Settings 타이틀 크기를 감안한 Y축 오프셋입니다. UI에 맞게 자유롭게 조절하세요.
+				item.y = optionWindow.y + 65; 
+			} else {
+				item.visible = false;
+			}
 		});
 
 		grpOptions.forEachAlive(function(item:Alphabet)
@@ -492,6 +492,7 @@ class ControlsSubState extends MusicBeatSubstate
 			item.targetY = item.ID - num - addNum;
 			item.alpha = (item.ID - num == 0) ? 1 : 0.6;
 		});
+
 		var i:Int = 0;
 		grpBinds.forEachAlive(function(item:Alphabet)
 		{
@@ -499,9 +500,9 @@ class ControlsSubState extends MusicBeatSubstate
 			item.targetY = parent.targetY;
 			item.alpha = parent.alpha;
 
-			var n:Int = i % 2; // 0이면 첫 번째 키, 1이면 두 번째 키
-    		item.x = parent.x + 90 + (n * 140); // 90(첫 번째 키 여백)과 140(두 키 사이 간격)은 상자 크기에 맞춰 조절하세요.
-    		i++;
+			var n:Int = i % 2;
+			item.x = parent.x + 90 + (n * 140);
+			i++;
 		});
 
 		updateAlt();
@@ -510,8 +511,13 @@ class ControlsSubState extends MusicBeatSubstate
 
 	function swapMode()
 	{
-		FlxTween.cancelTweensOf(bg);
-		FlxTween.color(bg, 0.5, bg.color, onKeyboardMode ? gamepadColor : keyboardColor, {ease: FlxEase.linear});
+		// [수정] 부려진 bg 트윈 대신 퍼블릭 optionWindow의 색상을 트윈하도록 안전하게 가드 처리
+		var optionWindow = OptionsSubState.optionWindow;
+		if(optionWindow != null)
+		{
+			FlxTween.cancelTweensOf(optionWindow);
+			FlxTween.color(optionWindow, 0.5, optionWindow.color, onKeyboardMode ? gamepadColor : keyboardColor, {ease: FlxEase.linear});
+		}
 		onKeyboardMode = !onKeyboardMode;
 
 		curSelected = 0;
