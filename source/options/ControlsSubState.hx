@@ -210,11 +210,12 @@ class ControlsSubState extends MusicBeatSubstate
 
 			// spawn black bars at the right of the key name
 			var black:AttachedSprite = new AttachedSprite();
-			black.makeGraphic(250, 78, FlxColor.BLACK);
+			black.makeGraphic(1000, 78, FlxColor.BLACK);
 			black.alphaMult = 0.4;
-			black.sprTracker = text;
+			black.sprTracker = attach; // [중요] 추적 대상을 키 글자(attach)로 변경하여 Y좌표를 일치시킵니다.
 			black.yAdd = -6;
-			black.xAdd = 75 + n * 300;
+			// 상자가 글자보다 살짝 왼쪽에서 시작하여 글자를 감싸도록 설정
+			black.xAdd = -400;          
 			grpBlacks.add(black);
 		}
 	}
@@ -480,7 +481,8 @@ class ControlsSubState extends MusicBeatSubstate
 		else if(num > lastID - 4) addNum = (lastID - 4) - num;
 
 		grpDisplay.forEachAlive(function(item:Alphabet) {
-			item.targetY = item.ID - num - addNum;
+    		item.x = optionWindow.x + (optionWindow.width - item.width) / 2;
+    		item.targetY = item.ID;
 		});
 
 		grpOptions.forEachAlive(function(item:Alphabet)
@@ -493,6 +495,10 @@ class ControlsSubState extends MusicBeatSubstate
 			var parent:Alphabet = grpOptions.members[item.ID];
 			item.targetY = parent.targetY;
 			item.alpha = parent.alpha;
+
+			var n:Int = i % 2; // 0이면 첫 번째 키, 1이면 두 번째 키
+    		item.x = parent.x + 90 + (n * 140); // 90(첫 번째 키 여백)과 140(두 키 사이 간격)은 상자 크기에 맞춰 조절하세요.
+    		i++;
 		});
 
 		updateAlt();
