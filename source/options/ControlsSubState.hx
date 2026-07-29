@@ -4,7 +4,7 @@ import backend.InputFormatter;
 import backend.MusicBeatSubstate;
 import objects.AttachedSprite;
 import objects.Alphabet;
-import flixel.text.FlxText; // FlxText 임포트 추가
+import flixel.text.FlxText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
 import flixel.math.FlxMath;
@@ -52,7 +52,6 @@ class ControlsSubState extends MusicBeatSubstate
 	var curOptionsValid:Array<Int>;
 	static var defaultKey:String = 'Reset to Default Keys';
 
-	// Alphabet 그룹에서 FlxText 그룹으로 타입 선언 변경
 	var grpDisplay:FlxTypedGroup<FlxText>;
 	var grpBlacks:FlxTypedGroup<AttachedSprite>;
 	var grpOptions:FlxTypedGroup<FlxText>;
@@ -107,19 +106,16 @@ class ControlsSubState extends MusicBeatSubstate
 			controllerSpr.cameras = optionWindow.cameras;
 			controllerSpr.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 		}
-		add(controllerSpr);
 
-		// 상단 고정 헤더 FlxText 형태로 교체 및 카메라 대입 유지
 		var text:FlxText = new FlxText(90, 90, 0, 'CTRL');
-		text.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		text.borderSize = 2;
-		text.scale.set(0.4, 0.4);
+		text.setFormat(Paths.font("vcr.ttf"), 36, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		text.borderSize = 2.5;
+		text.scale.set(0.5, 0.5);
 		text.updateHitbox();
 		if(optionWindow != null) {
 			text.cameras = optionWindow.cameras;
 			text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 		}
-		add(text);
 
 		createTexts();
 	}
@@ -157,11 +153,11 @@ class ControlsSubState extends MusicBeatSubstate
 					
 					var textStr:String = !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str);
 					
-					// Alphabet 대신 FlxText 생성 및 폰트 아웃라인 컴포넌트 할당
+					// 기본 폰트 크기를 42로 확장하여 가시성을 확보
 					var text:FlxText = new FlxText(0, 0, 0, textStr);
-					text.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-					text.borderSize = 2;
-					text.scale.set(0.6, 0.6);
+					text.setFormat(Paths.font("vcr.ttf"), 42, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+					text.borderSize = 2.5;
+					text.scale.set(0.75, 0.75);
 					text.updateHitbox();
 					text.ID = myID;
 					lastID = myID;
@@ -206,11 +202,11 @@ class ControlsSubState extends MusicBeatSubstate
 			else
 				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
 
-			// 바인딩 키 텍스트도 FlxText로 변경
+			// 바인딩 폰트 크기를 34로 상향 조정
 			var attach:FlxText = new FlxText(0, 0, 0, key);
-			attach.setFormat(Paths.font("vcr.ttf"), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			attach.setFormat(Paths.font("vcr.ttf"), 34, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			attach.borderSize = 2;
-			attach.scale.set(0.5, 0.5);
+			attach.scale.set(0.65, 0.65);
 			attach.updateHitbox();
 			attach.ID = text.ID;
 			
@@ -238,11 +234,10 @@ class ControlsSubState extends MusicBeatSubstate
 		var bind:FlxText = grpBinds.members[num];
 		var parentID = bind.ID;
 		
-		// 갱신용 바인드 인스턴스 FlxText 교체
 		var attach:FlxText = new FlxText(0, 0, 0, text);
-		attach.setFormat(Paths.font("vcr.ttf"), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		attach.setFormat(Paths.font("vcr.ttf"), 34, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		attach.borderSize = 2;
-		attach.scale.set(0.5, 0.5);
+		attach.scale.set(0.65, 0.65);
 		attach.updateHitbox();
 		attach.ID = parentID;
 		
@@ -473,26 +468,56 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// 반복문 내 캐스팅 타입 FlxText로 일괄 수정 및 절대 좌표 계산식 유지
 		grpDisplay.forEachAlive(function(item:FlxText) {
 			item.x = boxX + (boxWidth / 2) - (item.width / 2);
 			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
 		});
 
+		// 상단 헤더 차폐 및 하단 여백 감지 패딩 변수 선언
+		var paddingHeader:Float = 75;
+		var paddingBottom:Float = 35;
+		var spacing:Float = 90; // 늘어난 글자 크기에 맞춰 배치 간격 최적화
+
 		grpOptions.forEachAlive(function(item:FlxText) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
 			if (displayIdx != -1) {
 				var delta:Int = displayIdx - curSelected;
-				var itemTargetY:Float = centerY + (delta * 85) - (item.height / 2);
+				var itemTargetY:Float = centerY + (delta * spacing) - (item.height / 2);
 				
 				item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
 				
+				// 크기 변경 후 가로 충돌을 방지하기 위한 자동 스케일 다운 프로세스
+				item.scale.set(0.75, 0.75);
+				item.updateHitbox();
+
 				if (options[curOptions[displayIdx]][1] == defaultKey) 
+				{
 					item.x = boxX + (boxWidth / 2) - (item.width / 2);
+					var maxWidth:Float = boxWidth - 40;
+					if (item.width > maxWidth) {
+						var factor:Float = maxWidth / item.width;
+						item.scale.set(0.75 * factor, 0.75 * factor);
+						item.updateHitbox();
+						item.x = boxX + (boxWidth / 2) - (item.width / 2);
+					}
+				}
 				else 
-					item.x = boxX + 50;
+				{
+					item.x = boxX + 40;
+					// 첫 번째 바인드 박스 시작 전까지의 가로 한계폭 제한 (오버랩 방지)
+					var maxWidth:Float = 160; 
+					if (item.width > maxWidth) {
+						var factor:Float = maxWidth / item.width;
+						item.scale.set(0.75 * factor, 0.75 * factor);
+						item.updateHitbox();
+					}
+				}
 				
 				item.alpha = (delta == 0) ? 1 : 0.6;
+
+				// 세로 렌더링 범위 제한 조건 (박스 밖으로 탈출 시 비가시화)
+				var isInside:Bool = (item.y > boxY + paddingHeader && item.y + item.height < boxY + boxHeight - paddingBottom);
+				item.visible = isInside;
 			}
 		});
 
@@ -524,11 +549,53 @@ class ControlsSubState extends MusicBeatSubstate
 					black.alpha = parent.alpha * 0.4;
 				}
 				
+				// 긴 키 명칭(예: BACKSPACE 등)이 블랙 박스를 뚫고 나가지 않도록 오토 스케일
+				item.scale.set(0.65, 0.65);
+				item.updateHitbox();
+				
+				var maxBindWidth:Float = 200;
+				if (item.width > maxBindWidth) {
+					var factor:Float = maxBindWidth / item.width;
+					item.scale.set(0.65 * factor, 0.65 * factor);
+					item.updateHitbox();
+				}
+				
 				item.x = boxStartX + (220 / 2) - (item.width / 2);
 				item.y = parent.y + (parent.height / 2) - (item.height / 2);
 				item.alpha = parent.alpha;
+				
+				// 부모 텍스트의 스크롤 상태(가시성)에 링크하여 바인드 스프라이트 일괄 차단
+				if (!parent.visible) {
+					item.visible = false;
+					if (black != null) black.visible = false;
+				} else {
+					if (black != null) black.visible = true;
+					
+					// 키 바인딩 중인 단일 인스턴스에 대한 예외 컴포넌트 유지 처리
+					var altNum:Int = curAlt ? 1 : 0;
+					var findCount:Int = 0;
+					var isCurrentBinding:Bool = false;
+					if (binding && curOptionsValid[curSelected] == item.ID) {
+						for (i in 0...grpBinds.members.length) {
+							var b = grpBinds.members[i];
+							if (b != null && b.ID == item.ID) {
+								if (findCount == altNum && i == actualIdx) {
+									isCurrentBinding = true;
+									break;
+								}
+								findCount++;
+							}
+						}
+					}
+					item.visible = !isCurrentBinding;
+				}
 			}
 		});
+
+		// 선택 사각형(포커스 이펙트)도 트래킹 대상 스프라이트가 화면 밖으로 나가면 가시성을 즉시 동기화
+		if (selectSpr != null && selectSpr.sprTracker != null) {
+			selectSpr.visible = selectSpr.sprTracker.visible;
+		}
 
 		super.update(elapsed);
 	}
@@ -580,6 +647,6 @@ class ControlsSubState extends MusicBeatSubstate
 		}
 		
 		selectSpr.sprTracker = targetBlack;
-		selectSpr.visible = (targetBlack != null);
+		selectSpr.visible = (targetBlack != null && targetBlack.visible);
 	}
 }
