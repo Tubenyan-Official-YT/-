@@ -1,9 +1,15 @@
 package options;
 
 import backend.InputFormatter;
-import flixel.addons.display.FlxBackdrop;
-import flixel.addons.display.FlxGridOverlay;
+import backend.MusicBeatSubstate;
 import objects.AttachedSprite;
+import objects.Alphabet;
+import flixel.text.FlxText; // FlxText 임포트 추가
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.util.FlxColor;
+import flixel.math.FlxMath;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepad;
@@ -46,10 +52,11 @@ class ControlsSubState extends MusicBeatSubstate
 	var curOptionsValid:Array<Int>;
 	static var defaultKey:String = 'Reset to Default Keys';
 
-	var grpDisplay:FlxTypedGroup<Alphabet>;
+	// Alphabet 그룹에서 FlxText 그룹으로 타입 선언 변경
+	var grpDisplay:FlxTypedGroup<FlxText>;
 	var grpBlacks:FlxTypedGroup<AttachedSprite>;
-	var grpOptions:FlxTypedGroup<Alphabet>;
-	var grpBinds:FlxTypedGroup<Alphabet>;
+	var grpOptions:FlxTypedGroup<FlxText>;
+	var grpBinds:FlxTypedGroup<FlxText>;
 	var selectSpr:AttachedSprite;
 
 	var gamepadColor:FlxColor = 0xfffd7194;
@@ -72,9 +79,9 @@ class ControlsSubState extends MusicBeatSubstate
 
 		var optionWindow = OptionsSubState.optionWindow;
 
-		grpDisplay = new FlxTypedGroup<Alphabet>();
+		grpDisplay = new FlxTypedGroup<FlxText>();
 		add(grpDisplay);
-		grpOptions = new FlxTypedGroup<Alphabet>();
+		grpOptions = new FlxTypedGroup<FlxText>();
 		add(grpOptions);
 		grpBlacks = new FlxTypedGroup<AttachedSprite>();
 		add(grpBlacks);
@@ -89,7 +96,7 @@ class ControlsSubState extends MusicBeatSubstate
 		}
 		add(selectSpr);
 		
-		grpBinds = new FlxTypedGroup<Alphabet>();
+		grpBinds = new FlxTypedGroup<FlxText>();
 		add(grpBinds);
 
 		controllerSpr = new FlxSprite(50, 40).loadGraphic(Paths.image('controllertype'), true, 82, 60);
@@ -102,9 +109,11 @@ class ControlsSubState extends MusicBeatSubstate
 		}
 		add(controllerSpr);
 
-		var text:Alphabet = new Alphabet(90, 90, 'CTRL', false);
-		text.alignment = LEFT;
-		text.setScale(0.4);
+		// 상단 고정 헤더 FlxText 형태로 교체 및 카메라 대입 유지
+		var text:FlxText = new FlxText(90, 90, 0, 'CTRL');
+		text.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		text.borderSize = 2;
+		text.scale.set(0.4, 0.4);
 		text.updateHitbox();
 		if(optionWindow != null) {
 			text.cameras = optionWindow.cameras;
@@ -120,10 +129,10 @@ class ControlsSubState extends MusicBeatSubstate
 	{
 		curOptions = [];
 		curOptionsValid = [];
-		grpDisplay.forEachAlive(function(text:Alphabet) text.destroy());
+		grpDisplay.forEachAlive(function(text:FlxText) text.destroy());
 		grpBlacks.forEachAlive(function(black:AttachedSprite) black.destroy());
-		grpOptions.forEachAlive(function(text:Alphabet) text.destroy());
-		grpBinds.forEachAlive(function(text:Alphabet) text.destroy());
+		grpOptions.forEachAlive(function(text:FlxText) text.destroy());
+		grpBinds.forEachAlive(function(text:FlxText) text.destroy());
 		grpDisplay.clear();
 		grpBlacks.clear();
 		grpOptions.clear();
@@ -145,13 +154,14 @@ class ControlsSubState extends MusicBeatSubstate
 					var str:String = option[1];
 					var keyStr:String = option[2];
 					if(isDefaultKey) str = Language.getPhrase(str);
-					var text:Alphabet = new Alphabet(0, 0, !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str), !isDisplayKey);
 					
-					text.isMenuItem = false;
-					text.changeX = false;
-					text.changeY = false;
-					text.alignment = LEFT; // 내장 센터링 오작동 방지용 고정
-					text.setScale(0.6); // 거대화 방지 스케일
+					var textStr:String = !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str);
+					
+					// Alphabet 대신 FlxText 생성 및 폰트 아웃라인 컴포넌트 할당
+					var text:FlxText = new FlxText(0, 0, 0, textStr);
+					text.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+					text.borderSize = 2;
+					text.scale.set(0.6, 0.6);
 					text.updateHitbox();
 					text.ID = myID;
 					lastID = myID;
@@ -177,7 +187,7 @@ class ControlsSubState extends MusicBeatSubstate
 		updateText();
 	}
 
-	function addKeyText(text:Alphabet, option:Array<Dynamic>, id:Int)
+	function addKeyText(text:FlxText, option:Array<Dynamic>, id:Int)
 	{
 		var optionWindow = OptionsSubState.optionWindow;
 		var keys:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option[2]);
@@ -196,22 +206,19 @@ class ControlsSubState extends MusicBeatSubstate
 			else
 				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
 
-			var attach:Alphabet = new Alphabet(0, 0, key, false);
-			attach.isMenuItem = false;
-			attach.changeX = false;
-			attach.changeY = false;
-			attach.ID = text.ID;
-			attach.alignment = LEFT;
-			attach.setScale(0.5);
+			// 바인딩 키 텍스트도 FlxText로 변경
+			var attach:FlxText = new FlxText(0, 0, 0, key);
+			attach.setFormat(Paths.font("vcr.ttf"), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			attach.borderSize = 2;
+			attach.scale.set(0.5, 0.5);
 			attach.updateHitbox();
+			attach.ID = text.ID;
 			
 			if(optionWindow != null) {
 				attach.cameras = optionWindow.cameras;
 				attach.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 			}
 			grpBinds.add(attach);
-
-			playstationCheck(attach);
 
 			var black:AttachedSprite = new AttachedSprite();
 			black.makeGraphic(220, 70, FlxColor.BLACK);
@@ -225,48 +232,24 @@ class ControlsSubState extends MusicBeatSubstate
 		}
 	}
 
-	function playstationCheck(alpha:Alphabet)
-	{
-		if(onKeyboardMode) return;
-
-		var gamepad:FlxGamepad = FlxG.gamepads.firstActive;
-		var model:FlxGamepadModel = gamepad != null ? gamepad.detectedModel : UNKNOWN;
-		var letter = alpha.letters[0];
-		if(model == PS4)
-		{
-			switch(alpha.text)
-			{
-				case '[', ']':
-					letter.image = 'alphabet_playstation';
-					letter.updateHitbox();
-					
-					letter.offset.x += 4;
-					letter.offset.y -= 5;
-			}
-		}
-	}
-
 	function updateBind(num:Int, text:String)
 	{
 		var optionWindow = OptionsSubState.optionWindow;
-		var bind:Alphabet = grpBinds.members[num];
+		var bind:FlxText = grpBinds.members[num];
 		var parentID = bind.ID;
 		
-		var attach:Alphabet = new Alphabet(0, 0, text, false);
-		attach.isMenuItem = false;
-		attach.changeX = false;
-		attach.changeY = false;
-		attach.ID = parentID;
-		attach.alignment = LEFT;
-		attach.setScale(0.5);
+		// 갱신용 바인드 인스턴스 FlxText 교체
+		var attach:FlxText = new FlxText(0, 0, 0, text);
+		attach.setFormat(Paths.font("vcr.ttf"), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		attach.borderSize = 2;
+		attach.scale.set(0.5, 0.5);
 		attach.updateHitbox();
+		attach.ID = parentID;
 		
 		if(optionWindow != null) {
 			attach.cameras = optionWindow.cameras;
 			attach.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 		}
-		
-		playstationCheck(attach);
 
 		bind.kill();
 		grpBinds.remove(bind);
@@ -490,14 +473,13 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// 카테고리 헤더: 회색 창 크기 기준 수동 중앙 정렬 연산
-		grpDisplay.forEachAlive(function(item:Alphabet) {
+		// 반복문 내 캐스팅 타입 FlxText로 일괄 수정 및 절대 좌표 계산식 유지
+		grpDisplay.forEachAlive(function(item:FlxText) {
 			item.x = boxX + (boxWidth / 2) - (item.width / 2);
 			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
 		});
 
-		// 옵션명 리스트: 좌측 정렬 및 초기화 버튼 개별 중앙 정렬 처리
-		grpOptions.forEachAlive(function(item:Alphabet) {
+		grpOptions.forEachAlive(function(item:FlxText) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
 			if (displayIdx != -1) {
 				var delta:Int = displayIdx - curSelected;
@@ -514,10 +496,9 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		});
 
-		// 박스 및 바인딩 키: 수동 여백 매칭 정렬 구조
-		grpBinds.forEachAlive(function(item:Alphabet) {
+		grpBinds.forEachAlive(function(item:FlxText) {
 			var actualIdx:Int = grpBinds.members.indexOf(item);
-			var parent:Alphabet = null;
+			var parent:FlxText = null;
 			for (opt in grpOptions.members) {
 				if (opt != null && opt.ID == item.ID) {
 					parent = opt;
