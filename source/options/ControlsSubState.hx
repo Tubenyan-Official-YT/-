@@ -468,14 +468,24 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
+		// [카테고리 제목 실시간 동적 매칭 필터링] 
+		// 선택된 키 옵션 ID 이하의 ID 중에서 가장 큰 값을 가진 카테고리 헤더 1개만 활성화합니다.
+		var activeHeaderID:Int = -1;
+		grpDisplay.forEachAlive(function(item:FlxText) {
+			if (item.ID <= curOptionsValid[curSelected] && item.ID > activeHeaderID) {
+				activeHeaderID = item.ID;
+			}
+		});
+
 		grpDisplay.forEachAlive(function(item:FlxText) {
 			item.x = boxX + (boxWidth / 2) - (item.width / 2);
-			item.y = FlxMath.lerp(item.y, boxY + 45, FlxMath.bound(elapsed * 12, 0, 1)); // 헤더 텍스트 겹침 완화를 위해 Y축 타겟 하향 조정
+			item.y = FlxMath.lerp(item.y, boxY + 35, FlxMath.bound(elapsed * 12, 0, 1)); // 겹침을 방지하고자 Y축 값을 미세 보정했습니다.
+			item.visible = (item.ID == activeHeaderID); // 현재 소속 카테고리가 아닌 제목들은 전부 화면에서 숨김 처리합니다.
 		});
 
 		var paddingHeader:Float = 80;
 		var paddingBottom:Float = 40;
-		var spacing:Float = 70; // 세로 간격을 90에서 70으로 축소하여 카메라 뷰포트 내 수용량 극대화
+		var spacing:Float = 70; 
 
 		grpOptions.forEachAlive(function(item:FlxText) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
@@ -489,7 +499,6 @@ class ControlsSubState extends MusicBeatSubstate
 				item.scale.set(baseScale, baseScale);
 				item.updateHitbox();
 
-				// [동적 가로폭 계산 프로세스] 창이 아무리 좁아져도 우측 바인드 시작점 이내로 자동 압축
 				var rightPadding:Float = 20;
 				var bindGap:Float = 10;
 				var totalBindsWidth:Float = (boxWidth - 40) * 0.55; 
@@ -544,7 +553,6 @@ class ControlsSubState extends MusicBeatSubstate
 				var n:Int = optBindsIndices.indexOf(actualIdx);
 				if (n == -1) n = 0;
 
-				// 하드코딩된 X 좌표 제거 -> boxWidth를 기반으로 남은 우측 레이아웃 공간에 비율 계산 정렬
 				var rightPadding:Float = 20;
 				var bindGap:Float = 10;
 				var totalBindsWidth:Float = (boxWidth - 40) * 0.55;
@@ -553,7 +561,6 @@ class ControlsSubState extends MusicBeatSubstate
 				
 				var black:AttachedSprite = grpBlacks.members[actualIdx];
 				if(black != null) {
-					// 블랙 박스의 가로 크기를 줄어든 계산폭에 맞춰 비율 압축
 					black.scale.set(bindWidth / 220, 55 / 70);
 					black.updateHitbox();
 					black.x = boxStartX;
@@ -601,7 +608,6 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		});
 
-		// 선택 테두리 사각형 사양도 변경된 박스 스케일에 맞춰 싱크
 		if (selectSpr != null && selectSpr.sprTracker != null) {
 			selectSpr.visible = selectSpr.sprTracker.visible;
 			selectSpr.scale.set(selectSpr.sprTracker.width / 220, selectSpr.sprTracker.height / 70);
