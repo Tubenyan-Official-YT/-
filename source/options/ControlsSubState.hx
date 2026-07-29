@@ -106,6 +106,7 @@ class ControlsSubState extends MusicBeatSubstate
 			controllerSpr.cameras = optionWindow.cameras;
 			controllerSpr.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 		}
+		add(controllerSpr);
 
 		var text:FlxText = new FlxText(90, 90, 0, 'CTRL');
 		text.setFormat(Paths.font("vcr.ttf"), 36, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -116,6 +117,7 @@ class ControlsSubState extends MusicBeatSubstate
 			text.cameras = optionWindow.cameras;
 			text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 		}
+		add(text);
 
 		createTexts();
 	}
@@ -153,11 +155,10 @@ class ControlsSubState extends MusicBeatSubstate
 					
 					var textStr:String = !isDisplayKey ? Language.getPhrase('key_$keyStr', str) : Language.getPhrase('keygroup_$str', str);
 					
-					// 기본 폰트 크기를 42로 확장하여 가시성을 확보
 					var text:FlxText = new FlxText(0, 0, 0, textStr);
 					text.setFormat(Paths.font("vcr.ttf"), 42, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 					text.borderSize = 2.5;
-					text.scale.set(0.75, 0.75);
+					text.scale.set(0.65, 0.65);
 					text.updateHitbox();
 					text.ID = myID;
 					lastID = myID;
@@ -202,11 +203,10 @@ class ControlsSubState extends MusicBeatSubstate
 			else
 				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
 
-			// 바인딩 폰트 크기를 34로 상향 조정
 			var attach:FlxText = new FlxText(0, 0, 0, key);
 			attach.setFormat(Paths.font("vcr.ttf"), 34, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			attach.borderSize = 2;
-			attach.scale.set(0.65, 0.65);
+			attach.scale.set(0.55, 0.55);
 			attach.updateHitbox();
 			attach.ID = text.ID;
 			
@@ -237,7 +237,7 @@ class ControlsSubState extends MusicBeatSubstate
 		var attach:FlxText = new FlxText(0, 0, 0, text);
 		attach.setFormat(Paths.font("vcr.ttf"), 34, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		attach.borderSize = 2;
-		attach.scale.set(0.65, 0.65);
+		attach.scale.set(0.55, 0.55);
 		attach.updateHitbox();
 		attach.ID = parentID;
 		
@@ -470,13 +470,12 @@ class ControlsSubState extends MusicBeatSubstate
 
 		grpDisplay.forEachAlive(function(item:FlxText) {
 			item.x = boxX + (boxWidth / 2) - (item.width / 2);
-			item.y = FlxMath.lerp(item.y, boxY + 30, FlxMath.bound(elapsed * 12, 0, 1));
+			item.y = FlxMath.lerp(item.y, boxY + 45, FlxMath.bound(elapsed * 12, 0, 1)); // 헤더 텍스트 겹침 완화를 위해 Y축 타겟 하향 조정
 		});
 
-		// 상단 헤더 차폐 및 하단 여백 감지 패딩 변수 선언
-		var paddingHeader:Float = 75;
-		var paddingBottom:Float = 35;
-		var spacing:Float = 90; // 늘어난 글자 크기에 맞춰 배치 간격 최적화
+		var paddingHeader:Float = 80;
+		var paddingBottom:Float = 40;
+		var spacing:Float = 70; // 세로 간격을 90에서 70으로 축소하여 카메라 뷰포트 내 수용량 극대화
 
 		grpOptions.forEachAlive(function(item:FlxText) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
@@ -486,9 +485,16 @@ class ControlsSubState extends MusicBeatSubstate
 				
 				item.y = FlxMath.lerp(item.y, itemTargetY, FlxMath.bound(elapsed * 12, 0, 1));
 				
-				// 크기 변경 후 가로 충돌을 방지하기 위한 자동 스케일 다운 프로세스
-				item.scale.set(0.75, 0.75);
+				var baseScale:Float = 0.65;
+				item.scale.set(baseScale, baseScale);
 				item.updateHitbox();
+
+				// [동적 가로폭 계산 프로세스] 창이 아무리 좁아져도 우측 바인드 시작점 이내로 자동 압축
+				var rightPadding:Float = 20;
+				var bindGap:Float = 10;
+				var totalBindsWidth:Float = (boxWidth - 40) * 0.55; 
+				var bindWidth:Float = Math.min(220, (totalBindsWidth - bindGap) / 2);
+				var firstBindX:Float = boxX + boxWidth - rightPadding - (2 * bindWidth) - bindGap;
 
 				if (options[curOptions[displayIdx]][1] == defaultKey) 
 				{
@@ -496,26 +502,24 @@ class ControlsSubState extends MusicBeatSubstate
 					var maxWidth:Float = boxWidth - 40;
 					if (item.width > maxWidth) {
 						var factor:Float = maxWidth / item.width;
-						item.scale.set(0.75 * factor, 0.75 * factor);
+						item.scale.set(baseScale * factor, baseScale * factor);
 						item.updateHitbox();
 						item.x = boxX + (boxWidth / 2) - (item.width / 2);
 					}
 				}
 				else 
 				{
-					item.x = boxX + 40;
-					// 첫 번째 바인드 박스 시작 전까지의 가로 한계폭 제한 (오버랩 방지)
-					var maxWidth:Float = 160; 
+					item.x = boxX + 30;
+					var maxWidth:Float = (firstBindX - item.x) - 15; 
 					if (item.width > maxWidth) {
 						var factor:Float = maxWidth / item.width;
-						item.scale.set(0.75 * factor, 0.75 * factor);
+						item.scale.set(baseScale * factor, baseScale * factor);
 						item.updateHitbox();
 					}
 				}
 				
 				item.alpha = (delta == 0) ? 1 : 0.6;
 
-				// 세로 렌더링 범위 제한 조건 (박스 밖으로 탈출 시 비가시화)
 				var isInside:Bool = (item.y > boxY + paddingHeader && item.y + item.height < boxY + boxHeight - paddingBottom);
 				item.visible = isInside;
 			}
@@ -540,38 +544,43 @@ class ControlsSubState extends MusicBeatSubstate
 				var n:Int = optBindsIndices.indexOf(actualIdx);
 				if (n == -1) n = 0;
 
-				var boxStartX:Float = boxX + 210 + (n * 230);
+				// 하드코딩된 X 좌표 제거 -> boxWidth를 기반으로 남은 우측 레이아웃 공간에 비율 계산 정렬
+				var rightPadding:Float = 20;
+				var bindGap:Float = 10;
+				var totalBindsWidth:Float = (boxWidth - 40) * 0.55;
+				var bindWidth:Float = Math.min(220, (totalBindsWidth - bindGap) / 2);
+				var boxStartX:Float = boxX + boxWidth - rightPadding - ((2 - n) * bindWidth) - ((1 - n) * bindGap);
 				
 				var black:AttachedSprite = grpBlacks.members[actualIdx];
 				if(black != null) {
+					// 블랙 박스의 가로 크기를 줄어든 계산폭에 맞춰 비율 압축
+					black.scale.set(bindWidth / 220, 55 / 70);
+					black.updateHitbox();
 					black.x = boxStartX;
 					black.y = parent.y + (parent.height / 2) - (black.height / 2);
 					black.alpha = parent.alpha * 0.4;
 				}
 				
-				// 긴 키 명칭(예: BACKSPACE 등)이 블랙 박스를 뚫고 나가지 않도록 오토 스케일
-				item.scale.set(0.65, 0.65);
+				item.scale.set(0.55, 0.55);
 				item.updateHitbox();
 				
-				var maxBindWidth:Float = 200;
+				var maxBindWidth:Float = bindWidth - 10;
 				if (item.width > maxBindWidth) {
 					var factor:Float = maxBindWidth / item.width;
-					item.scale.set(0.65 * factor, 0.65 * factor);
+					item.scale.set(0.55 * factor, 0.55 * factor);
 					item.updateHitbox();
 				}
 				
-				item.x = boxStartX + (220 / 2) - (item.width / 2);
+				item.x = boxStartX + (bindWidth / 2) - (item.width / 2);
 				item.y = parent.y + (parent.height / 2) - (item.height / 2);
 				item.alpha = parent.alpha;
 				
-				// 부모 텍스트의 스크롤 상태(가시성)에 링크하여 바인드 스프라이트 일괄 차단
 				if (!parent.visible) {
 					item.visible = false;
 					if (black != null) black.visible = false;
 				} else {
 					if (black != null) black.visible = true;
 					
-					// 키 바인딩 중인 단일 인스턴스에 대한 예외 컴포넌트 유지 처리
 					var altNum:Int = curAlt ? 1 : 0;
 					var findCount:Int = 0;
 					var isCurrentBinding:Bool = false;
@@ -592,9 +601,11 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		});
 
-		// 선택 사각형(포커스 이펙트)도 트래킹 대상 스프라이트가 화면 밖으로 나가면 가시성을 즉시 동기화
+		// 선택 테두리 사각형 사양도 변경된 박스 스케일에 맞춰 싱크
 		if (selectSpr != null && selectSpr.sprTracker != null) {
 			selectSpr.visible = selectSpr.sprTracker.visible;
+			selectSpr.scale.set(selectSpr.sprTracker.width / 220, selectSpr.sprTracker.height / 70);
+			selectSpr.updateHitbox();
 		}
 
 		super.update(elapsed);
@@ -648,5 +659,9 @@ class ControlsSubState extends MusicBeatSubstate
 		
 		selectSpr.sprTracker = targetBlack;
 		selectSpr.visible = (targetBlack != null && targetBlack.visible);
+		if (targetBlack != null) {
+			selectSpr.scale.set(targetBlack.width / 220, targetBlack.height / 70);
+			selectSpr.updateHitbox();
+		}
 	}
 }
