@@ -373,6 +373,10 @@ class ControlsSubState extends MusicBeatSubstate
 		var paddingBottom:Float = 40;
 		var spacing:Float = 70; 
 
+		// 조절용 변수: 값을 수정하여 간격을 더 좁히거나 넓힐 수 있습니다.
+		var customRightPadding:Float = 90; // 기존 20에서 90으로 변경 (박스들을 왼쪽으로 당김)
+		var customTextLeftOffset:Float = 90; // 기존 30에서 90으로 변경 (글자들을 오른쪽으로 밂)
+
 		grpOptions.forEachAlive(function(item:FlxText) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
 			if (displayIdx != -1) {
@@ -385,11 +389,10 @@ class ControlsSubState extends MusicBeatSubstate
 				item.scale.set(baseScale, baseScale);
 				item.updateHitbox();
 
-				var rightPadding:Float = 20;
 				var bindGap:Float = 10;
 				var totalBindsWidth:Float = (boxWidth - 40) * 0.55; 
 				var bindWidth:Float = Math.min(220, (totalBindsWidth - bindGap) / 2);
-				var firstBindX:Float = boxX + boxWidth - rightPadding - (2 * bindWidth) - bindGap;
+				var firstBindX:Float = boxX + boxWidth - customRightPadding - (2 * bindWidth) - bindGap;
 
 				var curOpt:Array<Dynamic> = options[curOptions[displayIdx]];
 				var isCentered:Bool = (curOpt.length < 3);
@@ -407,7 +410,7 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 				else 
 				{
-					item.x = boxX + 30;
+					item.x = boxX + customTextLeftOffset; // 변경된 좌측 오프셋 적용
 					var maxWidth:Float = (firstBindX - item.x) - 15; 
 					if (item.width > maxWidth) {
 						var factor:Float = maxWidth / item.width;
@@ -442,11 +445,10 @@ class ControlsSubState extends MusicBeatSubstate
 				var n:Int = optBindsIndices.indexOf(actualIdx);
 				if (n == -1) n = 0;
 
-				var rightPadding:Float = 20;
 				var bindGap:Float = 10;
 				var totalBindsWidth:Float = (boxWidth - 40) * 0.55;
 				var bindWidth:Float = Math.min(220, (totalBindsWidth - bindGap) / 2);
-				var boxStartX:Float = boxX + boxWidth - rightPadding - ((2 - n) * bindWidth) - ((1 - n) * bindGap);
+				var boxStartX:Float = boxX + boxWidth - customRightPadding - ((2 - n) * bindWidth) - ((1 - n) * bindGap);
 				
 				var black:AttachedSprite = grpBlacks.members[actualIdx];
 				if(black != null) {
