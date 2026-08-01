@@ -113,11 +113,11 @@ class MainMenuState extends MusicBeatState
 		
 		if (leftOption != null)
 		{
-			leftItem = createMenuItem(leftOption, 50, 520);
+			leftItem = createMenuItem(leftOption, 25, 450);
 		}
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, 300, 520);
+			rightItem = createMenuItem(rightOption, 200, 450);
 		}
 		
 		menuItems.scale.set(0.75, 0.75);
@@ -157,6 +157,7 @@ class MainMenuState extends MusicBeatState
 		#end
 
 		// FlxG.camera.follow(camFollow, null, 0.15);
+		menuItems.y += 120;
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
