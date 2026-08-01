@@ -12,9 +12,6 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 
 import flixel.input.keyboard.FlxKey;
-import flixel.input.gamepad.FlxGamepad;
-import flixel.input.gamepad.FlxGamepadInputID;
-import flixel.input.gamepad.FlxGamepadManager;
 
 class ControlsSubState extends MusicBeatSubstate
 {
@@ -58,11 +55,7 @@ class ControlsSubState extends MusicBeatSubstate
 	var grpBinds:FlxTypedGroup<FlxText>;
 	var selectSpr:AttachedSprite;
 
-	var gamepadColor:FlxColor = 0xfffd7194;
 	var keyboardColor:FlxColor = 0xff7192fd;
-	var onKeyboardMode:Bool = true;
-	
-	var controllerSpr:FlxSprite;
 	
 	public function new()
 	{
@@ -98,27 +91,6 @@ class ControlsSubState extends MusicBeatSubstate
 		grpBinds = new FlxTypedGroup<FlxText>();
 		add(grpBinds);
 
-		controllerSpr = new FlxSprite(50, 40).loadGraphic(Paths.image('controllertype'), true, 82, 60);
-		controllerSpr.antialiasing = ClientPrefs.data.antialiasing;
-		controllerSpr.animation.add('keyboard', [0], 1, false);
-		controllerSpr.animation.add('gamepad', [1], 1, false);
-		if(optionWindow != null) {
-			controllerSpr.cameras = optionWindow.cameras;
-			controllerSpr.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
-		}
-		add(controllerSpr);
-
-		var text:FlxText = new FlxText(90, 90, 0, 'CTRL');
-		text.setFormat(Paths.font("vcr.ttf"), 36, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		text.borderSize = 2.5;
-		text.scale.set(0.5, 0.5);
-		text.updateHitbox();
-		if(optionWindow != null) {
-			text.cameras = optionWindow.cameras;
-			text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
-		}
-		add(text);
-
 		createTexts();
 	}
 
@@ -141,7 +113,7 @@ class ControlsSubState extends MusicBeatSubstate
 		
 		for (i => option in options)
 		{
-			if(onKeyboardMode || option[0])
+			if(option[0])
 			{
 				if(option.length > 1)
 				{
@@ -168,7 +140,6 @@ class ControlsSubState extends MusicBeatSubstate
 						text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 					}
 
-					// 제목 카테고리(isDisplayKey)도 스크롤 리스트에 포함시킵니다.
 					grpOptions.add(text);
 					curOptions.push(i);
 					curOptionsValid.push(myID);
@@ -185,20 +156,12 @@ class ControlsSubState extends MusicBeatSubstate
 	{
 		var optionWindow = OptionsSubState.optionWindow;
 		var keys:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option[2]);
-		if(keys == null && onKeyboardMode)
+		if(keys == null)
 			keys = ClientPrefs.defaultKeys.get(option[2]).copy();
-
-		var gmpds:Array<Null<FlxGamepadInputID>> = ClientPrefs.gamepadBinds.get(option[2]);
-		if(gmpds == null && !onKeyboardMode)
-			gmpds = ClientPrefs.defaultButtons.get(option[2]).copy();
 
 		for (n in 0...2)
 		{
-			var key:String = null;
-			if(onKeyboardMode)
-				key = InputFormatter.getKeyName((keys[n] != null) ? keys[n] : NONE);
-			else
-				key = InputFormatter.getGamepadName((gmpds[n] != null) ? gmpds[n] : NONE);
+			var key:String = InputFormatter.getKeyName((keys[n] != null) ? keys[n] : NONE);
 
 			var attach:FlxText = new FlxText(0, 0, 0, key);
 			attach.setFormat(Paths.font("vcr.ttf"), 34, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -271,23 +234,21 @@ class ControlsSubState extends MusicBeatSubstate
 
 		if(!binding)
 		{
-			if(FlxG.keys.justPressed.ESCAPE || FlxG.gamepads.anyJustPressed(B))
+			if(FlxG.keys.justPressed.ESCAPE)
 			{
 				close();
 				return;
 			}
-			if(FlxG.keys.justPressed.CONTROL || FlxG.gamepads.anyJustPressed(LEFT_SHOULDER) || FlxG.gamepads.anyJustPressed(RIGHT_SHOULDER)) swapMode();
 
-			if(FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT || FlxG.gamepads.anyJustPressed(DPAD_LEFT) || FlxG.gamepads.anyJustPressed(DPAD_RIGHT) ||
-				FlxG.gamepads.anyJustPressed(LEFT_STICK_DIGITAL_LEFT) || FlxG.gamepads.anyJustPressed(LEFT_STICK_DIGITAL_RIGHT)) updateAlt(true);
+			if(FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT) updateAlt(true);
 
-			if(FlxG.keys.justPressed.UP || FlxG.gamepads.anyJustPressed(DPAD_UP) || FlxG.gamepads.anyJustPressed(LEFT_STICK_DIGITAL_UP)) updateText(-1);
-			else if(FlxG.keys.justPressed.DOWN || FlxG.gamepads.anyJustPressed(DPAD_DOWN) || FlxG.gamepads.anyJustPressed(LEFT_STICK_DIGITAL_DOWN)) updateText(1);
+			if(FlxG.keys.justPressed.UP) updateText(-1);
+			else if(FlxG.keys.justPressed.DOWN) updateText(1);
 
-			if(FlxG.keys.justPressed.ENTER || FlxG.gamepads.anyJustPressed(START) || FlxG.gamepads.anyJustPressed(A))
+			if(FlxG.keys.justPressed.ENTER)
 			{
 				var curOpt:Array<Dynamic> = options[curOptions[curSelected]];
-				if(curOpt.length > 2) // 실제 바인딩 가능한 키 항목인 경우
+				if(curOpt.length > 2)
 				{
 					binding = true;
 					holdingEsc = 0;
@@ -306,9 +267,9 @@ class ControlsSubState extends MusicBeatSubstate
 					}
 					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = false;
 				}
-				else if(curOpt[1] == defaultKey) // 초기화 버튼인 경우
+				else if(curOpt[1] == defaultKey)
 				{
-					ClientPrefs.resetKeys(!onKeyboardMode);
+					ClientPrefs.resetKeys(false);
 					ClientPrefs.reloadVolumeKeys();
 					var lastSel:Int = curSelected;
 					createTexts();
@@ -333,7 +294,7 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 			}
 			
-			if(FlxG.keys.pressed.ESCAPE || FlxG.gamepads.anyPressed(B))
+			if(FlxG.keys.pressed.ESCAPE)
 			{
 				holdingEsc += elapsed;
 				if(holdingEsc > 0.5)
@@ -344,17 +305,14 @@ class ControlsSubState extends MusicBeatSubstate
 					ClientPrefs.reloadVolumeKeys();
 				}
 			}
-			else if (FlxG.keys.pressed.BACKSPACE || FlxG.gamepads.anyPressed(BACK))
+			else if (FlxG.keys.pressed.BACKSPACE)
 			{
 				holdingEsc += elapsed;
 				if(holdingEsc > 0.5)
 				{
-					if (onKeyboardMode)
-						ClientPrefs.keyBinds.get(curOption[2])[altNum] = NONE;
-					else
-						ClientPrefs.gamepadBinds.get(curOption[2])[altNum] = NONE;
+					ClientPrefs.keyBinds.get(curOption[2])[altNum] = NONE;
 					ClientPrefs.clearInvalidKeys(curOption[2]);
-					updateBind(bindIndex, onKeyboardMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
+					updateBind(bindIndex, InputFormatter.getKeyName(NONE));
 					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 					binding = false;
@@ -366,73 +324,27 @@ class ControlsSubState extends MusicBeatSubstate
 				holdingEsc = 0;
 				var changed:Bool = false;
 				var curKeys:Array<FlxKey> = ClientPrefs.keyBinds.get(curOption[2]);
-				var curButtons:Array<FlxGamepadInputID> = ClientPrefs.gamepadBinds.get(curOption[2]);
 
-				if(onKeyboardMode)
+				if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
 				{
-					if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
+					var keyPressed:Int = FlxG.keys.firstJustPressed();
+					var keyReleased:Int = FlxG.keys.firstJustReleased();
+					if (keyPressed > -1 && keyPressed != FlxKey.ESCAPE && keyPressed != FlxKey.BACKSPACE)
 					{
-						var keyPressed:Int = FlxG.keys.firstJustPressed();
-						var keyReleased:Int = FlxG.keys.firstJustReleased();
-						if (keyPressed > -1 && keyPressed != FlxKey.ESCAPE && keyPressed != FlxKey.BACKSPACE)
-						{
-							curKeys[altNum] = keyPressed;
-							changed = true;
-						}
-						else if (keyReleased > -1 && (keyReleased == FlxKey.ESCAPE || keyReleased == FlxKey.BACKSPACE))
-						{
-							curKeys[altNum] = keyReleased;
-							changed = true;
-						}
-					}
-				}
-				else if(FlxG.gamepads.anyJustPressed(ANY) || FlxG.gamepads.anyJustPressed(LEFT_TRIGGER) || FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER) || FlxG.gamepads.anyJustReleased(ANY))
-				{
-					var keyPressed:Null<FlxGamepadInputID> = NONE;
-					var keyReleased:Null<FlxGamepadInputID> = NONE;
-					if(FlxG.gamepads.anyJustPressed(LEFT_TRIGGER)) keyPressed = LEFT_TRIGGER;
-					else if(FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER)) keyPressed = RIGHT_TRIGGER;
-					else
-					{
-						for (i in 0...FlxG.gamepads.numActiveGamepads)
-						{
-							var gamepad:FlxGamepad = FlxG.gamepads.getByID(i);
-							if(gamepad != null)
-							{
-								keyPressed = gamepad.firstJustPressedID();
-								keyReleased = gamepad.firstJustReleasedID();
-
-								if(keyPressed == null) keyPressed = NONE;
-								if(keyReleased == null) keyReleased = NONE;
-								if(keyPressed != NONE || keyReleased != NONE) break;
-							}
-						}
-					}
-
-					if (keyPressed != NONE && keyPressed != FlxGamepadInputID.BACK && keyPressed != FlxGamepadInputID.B)
-					{
-						curButtons[altNum] = keyPressed;
+						curKeys[altNum] = keyPressed;
 						changed = true;
 					}
-					else if (keyReleased != NONE && (keyReleased == FlxGamepadInputID.BACK || keyReleased == FlxGamepadInputID.B))
+					else if (keyReleased > -1 && (keyReleased == FlxKey.ESCAPE || keyReleased == FlxKey.BACKSPACE))
 					{
-						curButtons[altNum] = keyReleased;
+						curKeys[altNum] = keyReleased;
 						changed = true;
 					}
 				}
 
 				if(changed)
 				{
-					if (onKeyboardMode)
-					{
-						if(curKeys[altNum] == curKeys[1 - altNum])
-							curKeys[1 - altNum] = FlxKey.NONE;
-					}
-					else
-					{
-						if(curButtons[altNum] == curButtons[1 - altNum])
-							curButtons[1 - altNum] = FlxGamepadInputID.NONE;
-					}
+					if(curKeys[altNum] == curKeys[1 - altNum])
+						curKeys[1 - altNum] = FlxKey.NONE;
 
 					var option:String = options[curOptions[curSelected]][2];
 					ClientPrefs.clearInvalidKeys(option);
@@ -445,17 +357,8 @@ class ControlsSubState extends MusicBeatSubstate
 
 					for (n in 0...2)
 					{
-						var key:String = null;
-						if(onKeyboardMode)
-						{
-							var savKey:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option);
-							key = InputFormatter.getKeyName(savKey[n] != null ? savKey[n] : NONE);
-						}
-						else
-						{
-							var savKey:Array<Null<FlxGamepadInputID>> = ClientPrefs.gamepadBinds.get(option);
-							key = InputFormatter.getGamepadName(savKey[n] != null ? savKey[n] : NONE);
-						}
+						var savKey:Array<Null<FlxKey>> = ClientPrefs.keyBinds.get(option);
+						var key:String = InputFormatter.getKeyName(savKey[n] != null ? savKey[n] : NONE);
 						if(optBindsIndices.length > n) updateBind(optBindsIndices[n], key);
 					}
 					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = true;
@@ -489,7 +392,7 @@ class ControlsSubState extends MusicBeatSubstate
 				var firstBindX:Float = boxX + boxWidth - rightPadding - (2 * bindWidth) - bindGap;
 
 				var curOpt:Array<Dynamic> = options[curOptions[displayIdx]];
-				var isCentered:Bool = (curOpt.length < 3); // 카테고리 제목 및 초기화 버튼 정렬 규칙 설정
+				var isCentered:Bool = (curOpt.length < 3);
 
 				if (isCentered) 
 				{
@@ -610,26 +513,10 @@ class ControlsSubState extends MusicBeatSubstate
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 
-	function swapMode()
-	{
-		var optionWindow = OptionsSubState.optionWindow;
-		if(optionWindow != null)
-		{
-			FlxTween.cancelTweensOf(optionWindow);
-			FlxTween.color(optionWindow, 0.5, optionWindow.color, onKeyboardMode ? gamepadColor : keyboardColor, {ease: FlxEase.linear});
-		}
-		onKeyboardMode = !onKeyboardMode;
-
-		curSelected = 0;
-		curAlt = false;
-		controllerSpr.animation.play(onKeyboardMode ? 'keyboard' : 'gamepad');
-		createTexts();
-	}
-
 	function updateAlt(?doSwap:Bool = false)
 	{
 		var curOpt:Array<Dynamic> = options[curOptions[curSelected]];
-		if(doSwap && curOpt.length > 2) // 실제 키 변경 가능한 항목에서만 alt 전환이 반응하도록 제어
+		if(doSwap && curOpt.length > 2)
 		{
 			curAlt = !curAlt;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
