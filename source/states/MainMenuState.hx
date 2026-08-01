@@ -375,9 +375,6 @@ class MainMenuState extends MusicBeatState
 				
 				for (memb in menuItems)
 				{
-					if(memb == item)
-						continue;
-
 					FlxTween.tween(memb, {x: -1000}, 0.5, {ease: FlxEase.quadOut});
 				}
 			}
