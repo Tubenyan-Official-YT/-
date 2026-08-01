@@ -101,7 +101,7 @@ class MainMenuState extends MusicBeatState
 		
 		for (num => option in optionShit)
 		{
-			var item:FlxSprite = createMenuItem(option, 0, (num * 130) + 30);
+			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
 			item.ID = num; // 👈여기에 ID를 꼭 매겨주어야 트윈 판별이 작동합니다!
 			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
 			{
@@ -121,6 +121,7 @@ class MainMenuState extends MusicBeatState
 		}
 		
 		menuItems.scale.set(0.75, 0.75);
+		menuItems.updateHitbox();
 		
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('psychVer','Legend Engine Version: ') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
