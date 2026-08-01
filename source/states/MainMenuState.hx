@@ -21,7 +21,7 @@ class MainMenuState extends MusicBeatState
 	public static var curColumn:MainMenuColumn = LEFT;
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
-	var menuItems:FlxTypedGroup<FlxSprite>;
+	var menuItems:FlxSpriteGroup;
 	var leftItem:FlxSprite;
 	var rightItem:FlxSprite;
 	var balloonText:FlxText;
@@ -106,8 +106,9 @@ class MainMenuState extends MusicBeatState
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
 			item.x = 50;
+			menuItems.scale.set(0.75, 0.75);
 		}
-
+		
 		if (leftOption != null)
 		{
 			leftItem = createMenuItem(leftOption, 50, 520);
@@ -375,7 +376,8 @@ class MainMenuState extends MusicBeatState
 				
 				for (memb in menuItems)
 				{
-					FlxTween.tween(memb, {x: -1000}, 0.5, {ease: FlxEase.quadOut});
+					if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
+					else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
 				}
 			}
 			#if desktop
