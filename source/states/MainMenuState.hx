@@ -102,7 +102,7 @@ class MainMenuState extends MusicBeatState
 		for (num => option in optionShit)
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
-			item.ID = num; // 👈여기에 ID를 꼭 매겨주어야 트윈 판별이 작동합니다!
+			item.ID = num;
 			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
 			{
         		item.y -= 15; 
@@ -113,11 +113,11 @@ class MainMenuState extends MusicBeatState
 		
 		if (leftOption != null)
 		{
-			leftItem = createMenuItem(leftOption, 25, 450);
+			leftItem = createMenuItem(leftOption, 25, 400);
 		}
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, 200, 450);
+			rightItem = createMenuItem(rightOption, 250, 400);
 		}
 		
 		menuItems.scale.set(0.75, 0.75);
@@ -157,7 +157,7 @@ class MainMenuState extends MusicBeatState
 		#end
 
 		// FlxG.camera.follow(camFollow, null, 0.15);
-		menuItems.y += 120;
+		menuItems.y += 30;
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
