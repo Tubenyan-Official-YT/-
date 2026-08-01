@@ -113,11 +113,11 @@ class MainMenuState extends MusicBeatState
 		
 		if (leftOption != null)
 		{
-			leftItem = createMenuItem(leftOption, 25, 400);
+			leftItem = createMenuItem(leftOption, 25, 450);
 		}
 		if (rightOption != null)
 		{
-			rightItem = createMenuItem(rightOption, 250, 400);
+			rightItem = createMenuItem(rightOption, 250, 450);
 		}
 		
 		menuItems.scale.set(0.75, 0.75);
