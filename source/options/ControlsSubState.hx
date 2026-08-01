@@ -373,9 +373,9 @@ class ControlsSubState extends MusicBeatSubstate
 		var paddingBottom:Float = 40;
 		var spacing:Float = 70; 
 
-		// 조절용 변수: 값을 수정하여 간격을 더 좁히거나 넓힐 수 있습니다.
-		var customRightPadding:Float = 90; // 기존 20에서 90으로 변경 (박스들을 왼쪽으로 당김)
-		var customTextLeftOffset:Float = 90; // 기존 30에서 90으로 변경 (글자들을 오른쪽으로 밂)
+		// 글자가 작아지지 않도록 텍스트 영역의 가로 공간폭을 늘렸습니다.
+		var customRightPadding:Float = 55;   // 박스 위치를 오른쪽으로 살짝 이동 (기존 90)
+		var customTextLeftOffset:Float = 45; // 글자 위치를 왼쪽으로 당겨 배치 공간 확보 (기존 90)
 
 		grpOptions.forEachAlive(function(item:FlxText) {
 			var displayIdx:Int = curOptionsValid.indexOf(item.ID);
@@ -410,7 +410,7 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 				else 
 				{
-					item.x = boxX + customTextLeftOffset; // 변경된 좌측 오프셋 적용
+					item.x = boxX + customTextLeftOffset; 
 					var maxWidth:Float = (firstBindX - item.x) - 15; 
 					if (item.width > maxWidth) {
 						var factor:Float = maxWidth / item.width;
