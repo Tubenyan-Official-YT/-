@@ -63,10 +63,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		// 초기 생성 시 1프레임 튀는 현상을 막기 위해 초기 좌표 배치 수정
-		var initBaseX:Float = 420; 
-		var initStartY:Float = 180;
-		var initSpacingY:Float = 75;
+		// 초기 생성 시 프레임 튀는 현상 방지를 위한 초기 배치 변수
+		var initCheckboxX:Float = 360; // 체크박스 기본 X 위치
+		var initTextX:Float = 430;     // 옵션 텍스트 기본 X 위치
+		var initStartY:Float = 140;    // 첫 항목 Y 시작점 (위로 올려서 잘림 방지)
+		var initSpacingY:Float = 70;   // 항목 간 세로 간격 조절
 
 		for (i in 0...optionsArray.length)
 		{
@@ -77,7 +78,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			optionText.x = initBaseX;
+			optionText.x = initTextX;
 			optionText.y = initStartY + (i * initSpacingY);
 
 			if(optionsArray[i].type == BOOL)
@@ -89,8 +90,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				// 체크박스를 텍스트 왼쪽에 겹치지 않게 안전 배치 (-75px 여백)
-				checkbox.x = optionText.x - 75 + checkbox.offset.x;
+				checkbox.x = initCheckboxX + checkbox.offset.x;
 				checkbox.y = optionText.y - 10 + checkbox.offset.y;
 			}
 			else
@@ -136,18 +136,18 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		// 냥코 커스텀 세팅 창 맞춤형 UI 레이아웃 좌표 컨트롤러
-		var baseX:Float = 425;        // 옵션 텍스트 시작 X 좌표 (스크린샷 기준 노란 창 내부 오른쪽 정렬용)
-		var startY:Float = 180;       // 첫 번째 옵션이 시작될 Y 높이
-		var spacingY:Float = 75;      // 메뉴 항목 간의 세로 간격 (너무 촘촘하지 않게 조정)
-		var checkboxOffsetLeft:Float = 75; // 텍스트 기준 왼쪽에 위치할 체크박스 간격
+		// [중요] 세팅 창 내부 레이아웃 미세 조정 컨트롤러
+		var checkboxBaseX:Float = 360; // 체크박스 좌우 위치 (더 왼쪽으로 보내려면 숫자를 줄이세요)
+		var textBaseX:Float = 430;     // 옵션 글자 좌우 위치 (더 오른쪽으로 보내려면 숫자를 늘리세요)
+		var startY:Float = 140;        // 첫 번째 옵션 Y 높이 (메뉴 전체를 위/아래로 이동)
+		var spacingY:Float = 70;       // 메뉴 항목 간의 세로 간격 (GPU Caching이 잘리지 않도록 축소)
 
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
 			item.alignment = LEFT;
 			item.setScale(0.55);
-			item.x = baseX;
+			item.x = textBaseX;
 			
 			var targetYPos:Float = startY + (item.targetY * spacingY);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
@@ -157,8 +157,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.55, 0.55);
-					// 텍스트 좌측에 겹치지 않고 깔끔하게 고정되도록 수정
-					checkbox.x = item.x - checkboxOffsetLeft + checkbox.offset.x;
+					// 고유 offset과 독립된 X 축 변수를 사용하여 실종 현상 완벽 해결
+					checkbox.x = checkboxBaseX + checkbox.offset.x;
 					checkbox.y = item.y - 10 + checkbox.offset.y;
 				}
 			}
@@ -321,7 +321,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 				else
 				{
-					// 게임패드 삼항연산 제거하고 순수 키보드 디폴트 키값만 할당
 					leOption.setValue(leOption.defaultKeys.keyboard);
 					updateBind(leOption);
 				}
@@ -338,7 +337,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	function bindingKeyUpdate(elapsed:Float)
 	{
-		// 게임패드 중복 조건(anyPressed) 제거
 		if(FlxG.keys.pressed.ESCAPE)
 		{
 			holdingEsc += elapsed;
@@ -364,7 +362,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			holdingEsc = 0;
 			var changed:Bool = false;
 			
-			// 순수 키보드 입력 체크 판정만 유지
 			if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
 			{
 				var keyPressed:FlxKey = cast (FlxG.keys.firstJustPressed(), FlxKey);
@@ -413,7 +410,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		
-		// 플레이스테이션 컨트롤러 전용 예외 스크립트 호출 완전 삭제
 		attach.alignment = LEFT;
 		attach.setScale(0.55);
 		attach.x = bind.x;
