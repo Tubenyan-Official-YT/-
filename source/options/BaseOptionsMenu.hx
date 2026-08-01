@@ -1,10 +1,6 @@
 package options;
 
 import flixel.input.keyboard.FlxKey;
-import flixel.input.gamepad.FlxGamepad;
-import flixel.input.gamepad.FlxGamepadInputID;
-import flixel.input.gamepad.FlxGamepadManager;
-
 import objects.CheckboxThingie;
 import objects.AttachedText;
 import options.Option;
@@ -67,6 +63,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
+		// 초기 생성 시 1프레임 튀는 현상을 막기 위해 초기 좌표 배치 수정
+		var initBaseX:Float = 420; 
+		var initStartY:Float = 180;
+		var initSpacingY:Float = 75;
+
 		for (i in 0...optionsArray.length)
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
@@ -76,18 +77,20 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			var checkboxX:Float = 0;
+			optionText.x = initBaseX;
+			optionText.y = initStartY + (i * initSpacingY);
 
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(checkboxX, optionText.y - 50, Std.string(optionsArray[i].getValue()) == 'true');
+				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.scale.set(0.55, 0.55); 
 				checkbox.updateHitbox();
 				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = checkboxX + checkbox.offset.x;
+				// 체크박스를 텍스트 왼쪽에 겹치지 않게 안전 배치 (-75px 여백)
+				checkbox.x = optionText.x - 75 + checkbox.offset.x;
 				checkbox.y = optionText.y - 10 + checkbox.offset.y;
 			}
 			else
@@ -98,12 +101,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.y += 10;
+				valueText.y = optionText.y + 10;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
 			
-			optionText.x = 130;
 			updateTextFrom(optionsArray[i]);
 		}
 
@@ -134,28 +136,32 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
+		// 냥코 커스텀 세팅 창 맞춤형 UI 레이아웃 좌표 컨트롤러
+		var baseX:Float = 425;        // 옵션 텍스트 시작 X 좌표 (스크린샷 기준 노란 창 내부 오른쪽 정렬용)
+		var startY:Float = 180;       // 첫 번째 옵션이 시작될 Y 높이
+		var spacingY:Float = 75;      // 메뉴 항목 간의 세로 간격 (너무 촘촘하지 않게 조정)
+		var checkboxOffsetLeft:Float = 75; // 텍스트 기준 왼쪽에 위치할 체크박스 간격
+
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
 			item.alignment = LEFT;
 			item.setScale(0.55);
+			item.x = baseX;
 			
-			var checkboxX:Float = 0;
+			var targetYPos:Float = startY + (item.targetY * spacingY);
+			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 
 			for (checkbox in checkboxGroup.members)
 			{
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.55, 0.55);
-					checkbox.x = checkboxX + checkbox.offset.x;
+					// 텍스트 좌측에 겹치지 않고 깔끔하게 고정되도록 수정
+					checkbox.x = item.x - checkboxOffsetLeft + checkbox.offset.x;
 					checkbox.y = item.y - 10 + checkbox.offset.y;
 				}
 			}
-
-			item.x = 110;
-			
-			var targetYPos:Float = 130 + (item.targetY * 70);
-			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 
 			for (text in grpTexts.members)
 			{
@@ -175,14 +181,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			return;
 		}
 		
-		if (controls.UI_UP_P)
-		{
-			changeSelection(-1);
-		}
-		if (controls.UI_DOWN_P)
-		{
-			changeSelection(1);
-		}
+		if (controls.UI_UP_P) changeSelection(-1);
+		if (controls.UI_DOWN_P) changeSelection(1);
 
 		if (controls.BACK) {
 			close();
@@ -321,7 +321,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 				else
 				{
-					leOption.setValue(!Controls.instance.controllerMode ? leOption.defaultKeys.keyboard : leOption.defaultKeys.gamepad);
+					// 게임패드 삼항연산 제거하고 순수 키보드 디폴트 키값만 할당
+					leOption.setValue(leOption.defaultKeys.keyboard);
 					updateBind(leOption);
 				}
 				leOption.change();
@@ -337,7 +338,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	function bindingKeyUpdate(elapsed:Float)
 	{
-		if(FlxG.keys.pressed.ESCAPE || FlxG.gamepads.anyPressed(B))
+		// 게임패드 중복 조건(anyPressed) 제거
+		if(FlxG.keys.pressed.ESCAPE)
 		{
 			holdingEsc += elapsed;
 			if(holdingEsc > 0.5)
@@ -346,14 +348,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				closeBinding();
 			}
 		}
-		else if (FlxG.keys.pressed.BACKSPACE || FlxG.gamepads.anyPressed(BACK))
+		else if (FlxG.keys.pressed.BACKSPACE)
 		{
 			holdingEsc += elapsed;
 			if(holdingEsc > 0.5)
 			{
-				if (!controls.controllerMode) curOption.keys.keyboard = NONE;
-				else curOption.keys.gamepad = NONE;
-				updateBind(!controls.controllerMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
+				curOption.keys.keyboard = NONE;
+				updateBind(InputFormatter.getKeyName(NONE));
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				closeBinding();
 			}
@@ -362,74 +363,32 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			holdingEsc = 0;
 			var changed:Bool = false;
-			if(!controls.controllerMode)
+			
+			// 순수 키보드 입력 체크 판정만 유지
+			if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
 			{
-				if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
-				{
-					var keyPressed:FlxKey = cast (FlxG.keys.firstJustPressed(), FlxKey);
-					var keyReleased:FlxKey = cast (FlxG.keys.firstJustReleased(), FlxKey);
+				var keyPressed:FlxKey = cast (FlxG.keys.firstJustPressed(), FlxKey);
+				var keyReleased:FlxKey = cast (FlxG.keys.firstJustReleased(), FlxKey);
 
-					if(keyPressed != NONE && keyPressed != ESCAPE && keyPressed != BACKSPACE)
-					{
-						changed = true;
-						curOption.keys.keyboard = keyPressed;
-					}
-					else if(keyReleased != NONE && (keyReleased == ESCAPE || keyReleased == BACKSPACE))
-					{
-						changed = true;
-						curOption.keys.keyboard = keyReleased;
-					}
-				}
-			}
-			else if(FlxG.gamepads.anyJustPressed(ANY) || FlxG.gamepads.anyJustPressed(LEFT_TRIGGER) || FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER) || FlxG.gamepads.anyJustReleased(ANY))
-			{
-				var keyPressed:FlxGamepadInputID = NONE;
-				var keyReleased:FlxGamepadInputID = NONE;
-				if(FlxG.gamepads.anyJustPressed(LEFT_TRIGGER))
-					keyPressed = LEFT_TRIGGER;
-				else if(FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER))
-					keyPressed = RIGHT_TRIGGER;
-				else
-				{
-					for (i in 0...FlxG.gamepads.numActiveGamepads)
-					{
-						var gamepad:FlxGamepad = FlxG.gamepads.getByID(i);
-						if(gamepad != null)
-						{
-							keyPressed = gamepad.firstJustPressedID();
-							keyReleased = gamepad.firstJustReleasedID();
-							if(keyPressed != NONE || keyReleased != NONE) break;
-						}
-					}
-				}
-
-				if(keyPressed != NONE && keyPressed != FlxGamepadInputID.BACK && keyPressed != FlxGamepadInputID.B)
+				if(keyPressed != NONE && keyPressed != ESCAPE && keyPressed != BACKSPACE)
 				{
 					changed = true;
-					curOption.keys.gamepad = keyPressed;
+					curOption.keys.keyboard = keyPressed;
 				}
-				else if(keyReleased != NONE && (keyReleased == FlxGamepadInputID.BACK || keyReleased == FlxGamepadInputID.B))
+				else if(keyReleased != NONE && (keyReleased == ESCAPE || keyReleased == BACKSPACE))
 				{
 					changed = true;
-					curOption.keys.gamepad = keyReleased;
+					curOption.keys.keyboard = keyReleased;
 				}
 			}
 
 			if(changed)
 			{
 				var key:String = null;
-				if(!controls.controllerMode)
-				{
-					if(curOption.keys.keyboard == null) curOption.keys.keyboard = 'NONE';
-					curOption.setValue(curOption.keys.keyboard);
-					key = InputFormatter.getKeyName(FlxKey.fromString(curOption.keys.keyboard));
-				}
-				else
-				{
-					if(curOption.keys.gamepad == null) curOption.keys.gamepad = 'NONE';
-					curOption.setValue(curOption.keys.gamepad);
-					key = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(curOption.keys.gamepad));
-				}
+				if(curOption.keys.keyboard == null) curOption.keys.keyboard = 'NONE';
+				curOption.setValue(curOption.keys.keyboard);
+				key = InputFormatter.getKeyName(FlxKey.fromString(curOption.keys.keyboard));
+				
 				updateBind(key);
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 				closeBinding();
@@ -445,11 +404,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			text = option.getValue();
 			if(text == null) text = 'NONE';
-
-			if(!controls.controllerMode)
-				text = InputFormatter.getKeyName(FlxKey.fromString(text));
-			else
-				text = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(text));
+			text = InputFormatter.getKeyName(FlxKey.fromString(text));
 		}
 
 		var bind:AttachedText = cast option.child;
@@ -457,7 +412,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.sprTracker = null;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
-		playstationCheck(attach);
+		
+		// 플레이스테이션 컨트롤러 전용 예외 스크립트 호출 완전 삭제
 		attach.alignment = LEFT;
 		attach.setScale(0.55);
 		attach.x = bind.x;
@@ -468,26 +424,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		grpTexts.insert(grpTexts.members.indexOf(bind), attach);
 		grpTexts.remove(bind);
 		bind.destroy();
-	}
-
-	function playstationCheck(alpha:Alphabet)
-	{
-		if(!controls.controllerMode) return;
-
-		var gamepad:FlxGamepad = FlxG.gamepads.firstActive;
-		var model:FlxGamepadModel = gamepad != null ? gamepad.detectedModel : UNKNOWN;
-		var letter = alpha.letters[0];
-		if(model == PS4)
-		{
-			switch(alpha.text)
-			{
-				case '[', ']':
-					letter.image = 'alphabet_playstation';
-					letter.updateHitbox();
-					letter.offset.x += 4;
-					letter.offset.y -= 5;
-			}
-		}
 	}
 
 	function closeBinding()
