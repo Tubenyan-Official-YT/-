@@ -338,6 +338,7 @@ class MainMenuState extends MusicBeatState
 				{
 					case 'story_mode':
 						openSubState(new substates.StoryMenuSubState());
+						FlxG.keys.reset();
 					case 'freeplay':
 						MusicBeatState.switchState(new FreeplayState());
 
