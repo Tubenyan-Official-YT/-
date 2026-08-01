@@ -168,13 +168,10 @@ class ControlsSubState extends MusicBeatSubstate
 						text.scrollFactor.set(optionWindow.scrollFactor.x, optionWindow.scrollFactor.y);
 					}
 
-					if(!isDisplayKey)
-					{
-						grpOptions.add(text);
-						curOptions.push(i);
-						curOptionsValid.push(myID);
-					}
-					else grpDisplay.add(text);
+					// 제목 카테고리(isDisplayKey)도 스크롤 리스트에 포함시킵니다.
+					grpOptions.add(text);
+					curOptions.push(i);
+					curOptionsValid.push(myID);
 
 					if(!isCentered) addKeyText(text, option, myID);
 				}
@@ -289,7 +286,8 @@ class ControlsSubState extends MusicBeatSubstate
 
 			if(FlxG.keys.justPressed.ENTER || FlxG.gamepads.anyJustPressed(START) || FlxG.gamepads.anyJustPressed(A))
 			{
-				if(options[curOptions[curSelected]][1] != defaultKey)
+				var curOpt:Array<Dynamic> = options[curOptions[curSelected]];
+				if(curOpt.length > 2) // 실제 바인딩 가능한 키 항목인 경우
 				{
 					binding = true;
 					holdingEsc = 0;
@@ -308,7 +306,7 @@ class ControlsSubState extends MusicBeatSubstate
 					}
 					if (bindIndex != -1 && grpBinds.members[bindIndex] != null) grpBinds.members[bindIndex].visible = false;
 				}
-				else
+				else if(curOpt[1] == defaultKey) // 초기화 버튼인 경우
 				{
 					ClientPrefs.resetKeys(!onKeyboardMode);
 					ClientPrefs.reloadVolumeKeys();
@@ -468,21 +466,6 @@ class ControlsSubState extends MusicBeatSubstate
 			}
 		}
 
-		// [카테고리 제목 실시간 동적 매칭 필터링] 
-		// 선택된 키 옵션 ID 이하의 ID 중에서 가장 큰 값을 가진 카테고리 헤더 1개만 활성화합니다.
-		var activeHeaderID:Int = -1;
-		grpDisplay.forEachAlive(function(item:FlxText) {
-			if (item.ID <= curOptionsValid[curSelected] && item.ID > activeHeaderID) {
-				activeHeaderID = item.ID;
-			}
-		});
-
-		grpDisplay.forEachAlive(function(item:FlxText) {
-			item.x = boxX + (boxWidth / 2) - (item.width / 2);
-			item.y = FlxMath.lerp(item.y, boxY + 35, FlxMath.bound(elapsed * 12, 0, 1)); // 겹침을 방지하고자 Y축 값을 미세 보정했습니다.
-			item.visible = (item.ID == activeHeaderID); // 현재 소속 카테고리가 아닌 제목들은 전부 화면에서 숨김 처리합니다.
-		});
-
 		var paddingHeader:Float = 80;
 		var paddingBottom:Float = 40;
 		var spacing:Float = 70; 
@@ -505,7 +488,10 @@ class ControlsSubState extends MusicBeatSubstate
 				var bindWidth:Float = Math.min(220, (totalBindsWidth - bindGap) / 2);
 				var firstBindX:Float = boxX + boxWidth - rightPadding - (2 * bindWidth) - bindGap;
 
-				if (options[curOptions[displayIdx]][1] == defaultKey) 
+				var curOpt:Array<Dynamic> = options[curOptions[displayIdx]];
+				var isCentered:Bool = (curOpt.length < 3); // 카테고리 제목 및 초기화 버튼 정렬 규칙 설정
+
+				if (isCentered) 
 				{
 					item.x = boxX + (boxWidth / 2) - (item.width / 2);
 					var maxWidth:Float = boxWidth - 40;
@@ -642,7 +628,8 @@ class ControlsSubState extends MusicBeatSubstate
 
 	function updateAlt(?doSwap:Bool = false)
 	{
-		if(doSwap)
+		var curOpt:Array<Dynamic> = options[curOptions[curSelected]];
+		if(doSwap && curOpt.length > 2) // 실제 키 변경 가능한 항목에서만 alt 전환이 반응하도록 제어
 		{
 			curAlt = !curAlt;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
