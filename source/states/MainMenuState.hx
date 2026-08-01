@@ -121,7 +121,10 @@ class MainMenuState extends MusicBeatState
 		}
 		
 		menuItems.scale.set(0.75, 0.75);
-		menuItems.updateHitbox();
+		for (memb in menuItems)
+		{
+			memb.updateHitbox();        // 줄어든 스케일에 맞게 개별 충돌 박스 즉시 갱신
+		}
 		
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('psychVer','Legend Engine Version: ') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
