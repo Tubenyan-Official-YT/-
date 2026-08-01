@@ -39,6 +39,8 @@ class MainMenuState extends MusicBeatState
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 
+	var bg:FlxSprite;
+	
 	static var showOutdatedWarning:Bool = true;
 	override function create()
 	{
@@ -65,7 +67,7 @@ class MainMenuState extends MusicBeatState
 		persistentUpdate = persistentDraw = true;
 
 		var yScroll:Float = 0;
-		var bg:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('menuBG'));
+		bg = new FlxSprite(0,0).loadGraphic(Paths.image('menuBG'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.scrollFactor.set(0, yScroll);
 		bg.setGraphicSize(FlxG.width, FlxG.height);
@@ -85,7 +87,7 @@ class MainMenuState extends MusicBeatState
 		magenta.visible = false;
 		add(magenta);
 
-		menuItems = new FlxTypedGroup<FlxSprite>();
+		menuItems = new FlxSpriteGroup();
 		add(menuItems);
 		
 		var g = FlxG.random.getObject(getIntroTextShit());
@@ -100,13 +102,13 @@ class MainMenuState extends MusicBeatState
 		for (num => option in optionShit)
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 130) + 30);
+			item.ID = num; // 👈여기에 ID를 꼭 매겨주어야 트윈 판별이 작동합니다!
 			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
 			{
         		item.y -= 15; 
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
 			item.x = 50;
-			menuItems.scale.set(0.75, 0.75);
 		}
 		
 		if (leftOption != null)
@@ -117,7 +119,9 @@ class MainMenuState extends MusicBeatState
 		{
 			rightItem = createMenuItem(rightOption, 300, 520);
 		}
-
+		
+		menuItems.scale.set(0.75, 0.75);
+		
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('psychVer','Legend Engine Version: ') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
