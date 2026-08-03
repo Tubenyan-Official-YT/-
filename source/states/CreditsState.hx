@@ -77,7 +77,6 @@ class CreditsState extends MusicBeatState
 		FlxG.cameras.add(creditsCam, false);
 
 		grpOptions = new FlxTypedGroup<FlxSprite>();
-		grpOptions.cameras = [creditsCam];
 		add(grpOptions);
 
 		// 좌측 알맹이 콘텐츠 생성 (메인 카메라 사용)
