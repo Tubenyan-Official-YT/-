@@ -285,7 +285,7 @@ class CreditsState extends MusicBeatState
 			
 			creditsCam.scroll.y = FlxMath.lerp(creditsCam.scroll.y, targetScrollY, lerpVal);
 		}
-
+/*
 		// 애니메이션 업데이트 루프 개편 (Null 검사 및 FlxSpriteGroup 스케일 예외 처리 안전장치)
 		for (num => item in grpOptions.members)
 		{
@@ -316,7 +316,7 @@ class CreditsState extends MusicBeatState
 				}
 			}
 		}
-
+		*/
 		super.update(elapsed);
 	}
 
