@@ -215,7 +215,7 @@ class CreditsState extends MusicBeatState
 		add(descText);
 		
 		intendedColor = bg.color;
-		changeSelection();
+		// changeSelection();
 		super.create();
 	}
 
