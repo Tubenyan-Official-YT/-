@@ -180,7 +180,7 @@ class CreditsState extends MusicBeatState
 				optionText.cameras = [creditsCam];
 				grpOptions.add(optionText);
 
-				if(credit[5] != null) Mods.currentModDirectory = credit[5];
+				if(credit.length > 5 && credit[5] != null) Mods.currentModDirectory = credit[5];
 
 				var str:String = 'credits/missing_icon';
 				if(credit[1] != null && credit[1].length > 0) str = 'credits/' + credit[1];
@@ -263,7 +263,7 @@ class CreditsState extends MusicBeatState
 				}
 			}
 
-			if (controls.ACCEPT && (creditsStuff[curSelected][3] == null || creditsStuff[curSelected][3].length > 4)) 
+			if (controls.ACCEPT && (creditsStuff[curSelected][3] != null || creditsStuff[curSelected][3].length > 4)) 
 			{
 				CoolUtil.browserLoad(creditsStuff[curSelected][3]);
 			}
