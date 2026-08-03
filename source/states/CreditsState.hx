@@ -60,14 +60,14 @@ class CreditsState extends MusicBeatState
 		add(bg);
 		bg.screenCenter();
 
-		// 2. 분리형 UI 테두리 박스 이미지 배치 (콘텐츠보다 먼저 add 하여 뒤에 깔리도록 설정)
+		// 2. 분리형 UI 테두리 박스 이미지 배치
 		leftBoxTop = new FlxSprite(100, 60).loadGraphic(Paths.image('credits/left_box_top'));
 		add(leftBoxTop);
 
 		leftBoxMid = new FlxSprite(50, 380).loadGraphic(Paths.image('credits/left_box_mid'));
 		add(leftBoxMid);
 
-		// 우측 카메락 스크롤 뷰포트와 정확히 같은 위치(600, 50)에 리스트 배경 패널 배치
+		// 우측 카메라 스크롤 뷰포트와 정확히 같은 위치(600, 50)에 리스트 배경 패널 배치
 		rightPanelBg = new FlxSprite(600, 50).loadGraphic(Paths.image('credits/right_panel_bg'));
 		add(rightPanelBg);
 
@@ -123,7 +123,7 @@ class CreditsState extends MusicBeatState
 			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"],
 			[""],
 			["SD Card Team"],
-			["Tubenyan",            "tubenyan",         "Make Menu to Korean and did All this mod tasks",           "https://youtube.com/@tubenyan",     "41c0ff"],
+			["Tubenyan",            "tubenyan",         "Make Menu to Korean and did All this mod tasks",            "https://youtube.com/@tubenyan",     "41c0ff"],
 			["NyangBab",            "nb",               'Test',                                                     "https://discord.gg/uwbTRBDJsb",     'FFFFFF'],
 			["RTX 6090",            "6090",             'Nothing. He do not play FNF.',                             "https://discord.gg/zdfQhkVYTD",     '89C5CB'],
 			["2dles",               "2dles",            'Nothing. He do not play FNF, too.',            "https://discord.com/channels/@me/1449048458060234874",     'FF740A'],
@@ -155,31 +155,26 @@ class CreditsState extends MusicBeatState
 
 			if(!isSelectable) 
 			{
-				// [카테고리 타이틀 처리]: 텍스트를 생성하지 않고 배경 테두리와 텍스트 이미지를 결합
 				var catKey:String = StringTools.replace(credit[0].toLowerCase(), " ", "_");
-				catKey = StringTools.replace(catKey, "'", ""); // 특수문자 예외 처리
+				catKey = StringTools.replace(catKey, "'", ""); 
 				
 				var catGroup:FlxSpriteGroup = new FlxSpriteGroup();
 				catGroup.cameras = [creditsCam];
 
-				// 테두리 배경 상자 이미지 로드
 				var catBg:FlxSprite = new FlxSprite(30, currentY).loadGraphic(Paths.image('credits/category_bg_' + catKey));
-				// 글자가 그려진 타이틀 이미지 로드
 				var catTitle:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('credits/category_title_' + catKey));
 				
 				catGroup.add(catBg);
 				catGroup.add(catTitle);
 
-				// 테두리 상자 중앙에 타이틀 글자 이미지 정렬
 				catTitle.x = catBg.x + (catBg.width - catTitle.width) / 2;
 				catTitle.y = catBg.y + (catBg.height - catTitle.height) / 2;
 
 				grpOptions.add(catGroup);
-				currentY += catBg.height + 25; // 이미지 세로폭에 맞추어 유동적 간격 확보
+				currentY += catBg.height + 25; 
 			}
 			else 
 			{
-				// 일반 선택 항목 이름 (텍스트 유지)
 				var optionText:FlxText = new FlxText(30, currentY, 450, credit[0], 32);
 				optionText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT);
 				optionText.cameras = [creditsCam];
@@ -291,26 +286,34 @@ class CreditsState extends MusicBeatState
 			creditsCam.scroll.y = FlxMath.lerp(creditsCam.scroll.y, targetScrollY, lerpVal);
 		}
 
-		// 애니메이션 업데이트 루프 개편
+		// 애니메이션 업데이트 루프 개편 (Null 검사 및 FlxSpriteGroup 스케일 예외 처리 안전장치)
 		for (num => item in grpOptions.members)
 		{
+			if (item == null) continue; // 안전장치 1: null 스킵하여 튕김 완벽 방지
+
 			// 카테고리 이미지 세트는 크기 변동이나 반투명화 없이 항상 100% 선명하게 고정 유지
 			if (unselectableCheck(num))
 			{
 				item.alpha = FlxMath.lerp(item.alpha, 1.0, lerpVal);
-				item.scale.set(FlxMath.lerp(item.scale.x, 1.0, lerpVal), FlxMath.lerp(item.scale.y, 1.0, lerpVal));
+				if (item.scale != null) { // 안전장치 2: 스케일 존재 여부 판별 후 적용
+					item.scale.set(FlxMath.lerp(item.scale.x, 1.0, lerpVal), FlxMath.lerp(item.scale.y, 1.0, lerpVal));
+				}
 				continue;
 			}
 
 			if (num == curSelected) 
 			{
 				item.alpha = FlxMath.lerp(item.alpha, 1.0, lerpVal);
-				item.scale.set(FlxMath.lerp(item.scale.x, 1.05, lerpVal), FlxMath.lerp(item.scale.y, 1.05, lerpVal));
+				if (item.scale != null) {
+					item.scale.set(FlxMath.lerp(item.scale.x, 1.05, lerpVal), FlxMath.lerp(item.scale.y, 1.05, lerpVal));
+				}
 			} 
 			else 
 			{
 				item.alpha = FlxMath.lerp(item.alpha, 0.4, lerpVal);
-				item.scale.set(FlxMath.lerp(item.scale.x, 0.95, lerpVal), FlxMath.lerp(item.scale.y, 0.95, lerpVal));
+				if (item.scale != null) {
+					item.scale.set(FlxMath.lerp(item.scale.x, 0.95, lerpVal), FlxMath.lerp(item.scale.y, 0.95, lerpVal));
+				}
 			}
 		}
 
