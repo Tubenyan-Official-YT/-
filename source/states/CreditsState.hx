@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
@@ -21,15 +22,20 @@ class CreditsState extends MusicBeatState
 {
 	var curSelected:Int = -1;
 
-	private var grpOptions:FlxTypedGroup<FlxText>;
+	// 카테고리 이미지와 일반 텍스트를 동시에 다루기 위해 FlxSprite 타입으로 변경
+	private var grpOptions:FlxTypedGroup<FlxSprite>;
 	private var iconArray:Array<AttachedSprite> = [];
 	private var creditsStuff:Array<Array<String>> = [];
 
-	// 좌우 분할 레이아웃을 위한 UI 변수
-	var creditsCam:FlxCamera;          // 우측 리스트 전용 뷰포트 카메라 (자동 클리핑)
-	var leftIcon:FlxSprite;            // 좌측 상단 이미지 표시 영역
-	var categoryText:FlxText;          // 좌측 중간 상위 카테고리 텍스트
-	var itemPositions:Array<Float> = []; // 각 항목의 절대 고정 Y 좌표 배열
+	// 우측 카메라 및 독립 분리형 UI 박스 변수
+	var creditsCam:FlxCamera;
+	var rightPanelBg:FlxSprite;        // 우측 카메라와 동일 위치에 깔릴 베이스 패널 이미지
+	var leftBoxTop:FlxSprite;          // 좌측 상단 프로필 영역 테두리 박스
+	var leftBoxMid:FlxSprite;          // 좌측 중간 카테고리 영역 테두리 박스
+	
+	var leftIcon:FlxSprite;
+	var categoryText:FlxText;
+	var itemPositions:Array<Float> = [];
 
 	var bg:FlxSprite;
 	var descText:FlxText;
@@ -43,26 +49,38 @@ class CreditsState extends MusicBeatState
 	override function create()
 	{
 		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
 		DiscordClient.changePresence("크레딧 보는 중", null);
 		#end
 
 		persistentUpdate = true;
+		
+		// 1. 최하단 기본 배경
 		bg = new FlxSprite().loadGraphic(Paths.image('Credits'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
 		bg.screenCenter();
 
-		// 1. 우측 크레딧 리스트 영역 전용 카메라 (지정 영역 외 자동 클리핑)
-		creditsCam = new FlxCamera(600, 50, 630, 620);
-		creditsCam.bgColor = 0xFF242424; // 도면의 회색 배경 박스 역할
-		FlxG.cameras.add(creditsCam, false); // false 설정으로 기본 UI 오버랩 차단
+		// 2. 분리형 UI 테두리 박스 이미지 배치 (콘텐츠보다 먼저 add 하여 뒤에 깔리도록 설정)
+		leftBoxTop = new FlxSprite(100, 60).loadGraphic(Paths.image('credits/left_box_top'));
+		add(leftBoxTop);
 
-		grpOptions = new FlxTypedGroup<FlxText>();
+		leftBoxMid = new FlxSprite(50, 380).loadGraphic(Paths.image('credits/left_box_mid'));
+		add(leftBoxMid);
+
+		// 우측 카메락 스크롤 뷰포트와 정확히 같은 위치(600, 50)에 리스트 배경 패널 배치
+		rightPanelBg = new FlxSprite(600, 50).loadGraphic(Paths.image('credits/right_panel_bg'));
+		add(rightPanelBg);
+
+		// 3. 우측 전용 스크롤 카메라 설정 (배경 패널이 보이도록 투명화)
+		creditsCam = new FlxCamera(600, 50, 630, 620);
+		creditsCam.bgColor = FlxColor.TRANSPARENT; 
+		FlxG.cameras.add(creditsCam, false);
+
+		grpOptions = new FlxTypedGroup<FlxSprite>();
 		grpOptions.cameras = [creditsCam];
 		add(grpOptions);
 
-		// 2. 좌측 고정 UI 요소 생성 (기본 메인 카메라 사용)
+		// 좌측 알맹이 콘텐츠 생성 (메인 카메라 사용)
 		leftIcon = new FlxSprite(100, 60);
 		add(leftIcon);
 
@@ -74,7 +92,7 @@ class CreditsState extends MusicBeatState
 		for (mod in Mods.parseList().enabled) pushModCreditsToList(mod);
 		#end
 
-		var defaultList:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
+		var defaultList:Array<Array<String>> = [
 			["Psych Engine Team"],
 			["Shadow Mario",		"shadowmario",		"Main Programmer and Head of Psych Engine",					"https://ko-fi.com/shadowmario",	"444444"],
 			["Riveren",				"riveren",			"Main Artist/Animator of Psych Engine",						"https://x.com/riverennn",			"14967B"],
@@ -101,14 +119,13 @@ class CreditsState extends MusicBeatState
 			["evilsk8r",			"evilsk8r",			"Artist of Friday Night Funkin'",							"https://x.com/evilsk8r",			"5ABD4B"],
 			["kawaisprite",			"kawaisprite",		"Composer of Friday Night Funkin'",							"https://x.com/kawaisprite",		"378FC7"],
 			[""],
-			
 			["Psych Engine Discord"],
 			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"],
 			[""],
 			["SD Card Team"],
 			["Tubenyan",            "tubenyan",         "Make Menu to Korean and did All this mod tasks",           "https://youtube.com/@tubenyan",     "41c0ff"],
-			["NyangBab",            "nb",               'Test',                                                                                    "https://discord.gg/uwbTRBDJsb",     'FFFFFF'],
-			["RTX 6090",            "6090",             'Nothing. He do not play FNF.',                                                            "https://discord.gg/zdfQhkVYTD",     '89C5CB'],
+			["NyangBab",            "nb",               'Test',                                                     "https://discord.gg/uwbTRBDJsb",     'FFFFFF'],
+			["RTX 6090",            "6090",             'Nothing. He do not play FNF.',                             "https://discord.gg/zdfQhkVYTD",     '89C5CB'],
 			["2dles",               "2dles",            'Nothing. He do not play FNF, too.',            "https://discord.com/channels/@me/1449048458060234874",     'FF740A'],
 			["Gemini",              "gemini",           'Made haxe Source for Tubenyan',                            "https://gemini.google.com/app",     '4285F4'],
 			["Claude",              "claude",           'Same with Gemini',                                         "https://claude.ai",     '4285F4'],
@@ -127,22 +144,47 @@ class CreditsState extends MusicBeatState
 			itemPositions.push(currentY);
 
 			if (credit[0] == "") {
+				var dummy:FlxSprite = new FlxSprite();
+				dummy.visible = false;
+				grpOptions.add(dummy);
 				currentY += 40;
 				continue;
 			}
 
 			var isSelectable:Bool = !unselectableCheck(i);
-			var optionText:FlxText = new FlxText(30, currentY, 450, credit[0], 32);
-			optionText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT);
-			optionText.cameras = [creditsCam];
-		
-			if(!isSelectable) {
-				optionText.color = FlxColor.YELLOW;
-			}
-			grpOptions.add(optionText);
 
-			if(isSelectable)
+			if(!isSelectable) 
 			{
+				// [카테고리 타이틀 처리]: 텍스트를 생성하지 않고 배경 테두리와 텍스트 이미지를 결합
+				var catKey:String = StringTools.replace(credit[0].toLowerCase(), " ", "_");
+				catKey = StringTools.replace(catKey, "'", ""); // 특수문자 예외 처리
+				
+				var catGroup:FlxSpriteGroup = new FlxSpriteGroup();
+				catGroup.cameras = [creditsCam];
+
+				// 테두리 배경 상자 이미지 로드
+				var catBg:FlxSprite = new FlxSprite(30, currentY).loadGraphic(Paths.image('credits/category_bg_' + catKey));
+				// 글자가 그려진 타이틀 이미지 로드
+				var catTitle:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image('credits/category_title_' + catKey));
+				
+				catGroup.add(catBg);
+				catGroup.add(catTitle);
+
+				// 테두리 상자 중앙에 타이틀 글자 이미지 정렬
+				catTitle.x = catBg.x + (catBg.width - catTitle.width) / 2;
+				catTitle.y = catBg.y + (catBg.height - catTitle.height) / 2;
+
+				grpOptions.add(catGroup);
+				currentY += catBg.height + 25; // 이미지 세로폭에 맞추어 유동적 간격 확보
+			}
+			else 
+			{
+				// 일반 선택 항목 이름 (텍스트 유지)
+				var optionText:FlxText = new FlxText(30, currentY, 450, credit[0], 32);
+				optionText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT);
+				optionText.cameras = [creditsCam];
+				grpOptions.add(optionText);
+
 				if(credit[5] != null) Mods.currentModDirectory = credit[5];
 
 				var str:String = 'credits/missing_icon';
@@ -160,9 +202,6 @@ class CreditsState extends MusicBeatState
 				Mods.currentModDirectory = '';
 				if(curSelected == -1) curSelected = i;
 				currentY += 90;
-			}
-			else {
-				currentY += 60;
 			}
 		}
 		
@@ -244,7 +283,6 @@ class CreditsState extends MusicBeatState
 
 		var lerpVal:Float = FlxMath.bound(elapsed * 12, 0, 1);
 
-		// 우측 카메라 스크롤 처리
 		if (itemPositions.length > 0 && curSelected >= 0) 
 		{
 			var targetScrollY:Float = itemPositions[curSelected] - (creditsCam.height * 0.5) + 30;
@@ -253,9 +291,17 @@ class CreditsState extends MusicBeatState
 			creditsCam.scroll.y = FlxMath.lerp(creditsCam.scroll.y, targetScrollY, lerpVal);
 		}
 
-		// 우측 리스트 아이템 하이라이트 애니메이션
+		// 애니메이션 업데이트 루프 개편
 		for (num => item in grpOptions.members)
 		{
+			// 카테고리 이미지 세트는 크기 변동이나 반투명화 없이 항상 100% 선명하게 고정 유지
+			if (unselectableCheck(num))
+			{
+				item.alpha = FlxMath.lerp(item.alpha, 1.0, lerpVal);
+				item.scale.set(FlxMath.lerp(item.scale.x, 1.0, lerpVal), FlxMath.lerp(item.scale.y, 1.0, lerpVal));
+				continue;
+			}
+
 			if (num == curSelected) 
 			{
 				item.alpha = FlxMath.lerp(item.alpha, 1.0, lerpVal);
@@ -278,7 +324,6 @@ class CreditsState extends MusicBeatState
 			curSelected = FlxMath.wrap(curSelected + change, 0, creditsStuff.length - 1);
 		} while(unselectableCheck(curSelected));
 
-		// 1. 역추적 연산으로 현재 항목의 최상위 카테고리 실시간 감지
 		var detectedCategory:String = "";
 		var checkIdx:Int = curSelected;
 		while (checkIdx >= 0) 
@@ -292,7 +337,6 @@ class CreditsState extends MusicBeatState
 		}
 		categoryText.text = detectedCategory;
 
-		// 2. 좌측 상단 프로필 이미지 로드 및 중앙 보정 정렬
 		var imgStr:String = 'credits/missing_icon';
 		if(creditsStuff[curSelected][1] != null && creditsStuff[curSelected][1].length > 0) 
 		{
@@ -303,7 +347,6 @@ class CreditsState extends MusicBeatState
 		leftIcon.updateHitbox();
 		leftIcon.x = 50 + (500 - leftIcon.width) / 2;
 
-		// 3. 백그라운드 컬러 트윈 보간
 		var newColor:FlxColor = CoolUtil.colorFromString(creditsStuff[curSelected][4]);
 		if(newColor != intendedColor) 
 		{
@@ -312,7 +355,6 @@ class CreditsState extends MusicBeatState
 			colorTween = FlxTween.color(bg, 1, bg.color, intendedColor, {ease: FlxEase.quadOut});
 		}
 
-		// 4. 하단 설명 텍스트 창 업데이트
 		descText.text = creditsStuff[curSelected][2];
 		if(descText.text != null && StringTools.trim(descText.text).length > 0)
 		{
