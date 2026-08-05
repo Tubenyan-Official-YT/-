@@ -117,7 +117,6 @@ class CreditsState extends MusicBeatState
 
 				if(curSelected == -1) curSelected = i;
 			}
-			else optionText.alignment = CENTERED;
 		}
 		
 		descBox = new AttachedSprite();
@@ -194,8 +193,8 @@ class CreditsState extends MusicBeatState
 				quitting = true;
 			}
 		}
-		
-		for (item in grpOptions.members)
+		var lerpVal:Float = Math.exp(-elapsed * 12);
+		for (i => item in grpOptions.members)
 		{
 			var targetY:Float = (FlxG.height / 2 - item.height / 2) + ((i - curSelected) * 70);
 			item.y = FlxMath.lerp(targetY, item.y, lerpVal);
