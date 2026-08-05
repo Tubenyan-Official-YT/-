@@ -6,7 +6,7 @@ class CreditsState extends MusicBeatState
 {
 	var curSelected:Int = -1;
 
-	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpOptions:FlxTypedGroup<FlxText>;
 	private var iconArray:Array<AttachedSprite> = [];
 	private var creditsStuff:Array<Array<String>> = [];
 
@@ -30,7 +30,7 @@ class CreditsState extends MusicBeatState
 		add(bg);
 		bg.screenCenter();
 		
-		grpOptions = new FlxTypedGroup<Alphabet>();
+		grpOptions = new FlxTypedGroup<FlxText>();
 		add(grpOptions);
 
 		#if MODS_ALLOWED
@@ -87,12 +87,11 @@ class CreditsState extends MusicBeatState
 		for (i => credit in creditsStuff)
 		{
 			var isSelectable:Bool = !unselectableCheck(i);
-			var optionText:Alphabet = new Alphabet(FlxG.width / 2, 300, credit[0], !isSelectable);
-			optionText.isMenuItem = true;
-			optionText.targetY = i;
-			optionText.changeX = false;
-			optionText.snapToPosition();
-			optionText.screenCenter(X);
+			var optionText:FlxText = new FlxText(0, 0, 0, credit[0], isSelectable ? 40 : 48);
+	
+	// 폰트, 크기, 색상, 정렬 방식, 테두리 스타일 설정
+			optionText.setFormat(Paths.font("vcr.ttf"), isSelectable ? 40 : 48, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			optionText.borderSize = 2;
 			grpOptions.add(optionText);
 
 			if(isSelectable)
@@ -198,23 +197,14 @@ class CreditsState extends MusicBeatState
 		
 		for (item in grpOptions.members)
 		{
-			if(!item.bold)
+			var targetY:Float = (FlxG.height / 2 - item.height / 2) + ((i - curSelected) * 70);
+			item.y = FlxMath.lerp(targetY, item.y, lerpVal);
+			var targetX:Float = (FlxG.width - item.width) / 2;
+			if (i == curSelected)
 			{
-				var lerpVal:Float = Math.exp(-elapsed * 12);
-				if(item.targetY == 0)
-				{
-					var lastX:Float = item.x;
-					item.screenCenter(X);
-					item.x = FlxMath.lerp(item.x - 70, lastX, lerpVal);
-				}
-				else
-				{
-					var lastX:Float = item.x;
-    				item.screenCenter(X);
-   					var targetX:Float = item.x; // 중앙 X좌표
-    				item.x = FlxMath.lerp(targetX, lastX, lerpVal);
-				}
+				targetX -= 70;
 			}
+			item.x = FlxMath.lerp(targetX, item.x, lerpVal);
 		}
 		super.update(elapsed);
 	}
@@ -232,14 +222,13 @@ class CreditsState extends MusicBeatState
 		var newColor:FlxColor = CoolUtil.colorFromString(creditsStuff[curSelected][4]);
 		//trace('The BG color is: $newColor');
 
+		// changeSelection() 함수 내부
 		for (num => item in grpOptions.members)
 		{
-			item.targetY = num - curSelected;
 			if(!unselectableCheck(num)) {
-				item.alpha = 0.6;
-				if (item.targetY == 0) {
-					item.alpha = 1;
-				}
+				item.alpha = (num == curSelected) ? 1.0 : 0.6;
+			} else {
+				item.alpha = 1.0;
 			}
 		}
 
