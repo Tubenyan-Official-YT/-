@@ -108,6 +108,7 @@ class CreditsState extends MusicBeatState
     			var icon:AttachedSprite = new AttachedSprite(str);
 				if(str.endsWith('-pixel')) icon.antialiasing = false;
 				icon.xAdd = optionText.width + 10;
+				icon.yAdd = (optionText.height - icon.height) / 2;
 				icon.sprTracker = optionText;
 	
 				// using a FlxGroup is too much fuss!
