@@ -200,6 +200,7 @@ class CreditsState extends MusicBeatState
 		{
 			if(!item.bold)
 			{
+				var lerpVal:Float = Math.exp(-elapsed * 12);
 				if(item.targetY == 0)
 				{
 					var lastX:Float = item.x;
@@ -208,7 +209,10 @@ class CreditsState extends MusicBeatState
 				}
 				else
 				{
-					item.screenCenter(X);
+					var lastX:Float = item.x;
+    				item.screenCenter(X);
+   					var targetX:Float = item.x; // 중앙 X좌표
+    				item.x = FlxMath.lerp(targetX, lastX, lerpVal);
 				}
 			}
 		}
