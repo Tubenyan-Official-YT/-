@@ -196,7 +196,7 @@ class CreditsState extends MusicBeatState
 		var lerpVal:Float = Math.exp(-elapsed * 12);
 		for (i => item in grpOptions.members)
 		{
-			var targetY:Float = (FlxG.height / 2 - item.height / 2) + ((i - curSelected) * 70);
+			var targetY:Float = (FlxG.height / 2 - item.height / 2) + ((i - curSelected) * 150);
 			item.y = FlxMath.lerp(targetY, item.y, lerpVal);
 			var targetX:Float = (FlxG.width - item.width) / 2;
 			if (i == curSelected)
