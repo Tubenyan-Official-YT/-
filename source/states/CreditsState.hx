@@ -172,9 +172,17 @@ class CreditsState extends MusicBeatState
 		{
 			var targetY:Float = (FlxG.height / 2 - item.height / 2) + ((i - curSelected) * 150);
 			item.y = FlxMath.lerp(targetY, item.y, lerpVal);
+			var iconWidth:Float = 0;
+			for (icon in iconArray) {
+				if (icon.sprTracker == item)
+				{
+					iconWidth = icon.width;
+					break;
+				}
+			}
 			var targetX:Float = (FlxG.width - item.width) / 2;
-			if (i == curSelected)
-			{
+			targetX -= iconWidth;
+			if (i == curSelected) {
 				targetX -= 70;
 			}
 			item.x = FlxMath.lerp(targetX, item.x, lerpVal);
