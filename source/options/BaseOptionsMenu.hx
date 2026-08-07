@@ -63,11 +63,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		// 초기 생성 시 프레임 튀는 현상 방지를 위한 초기 배치 변수
-		var initCheckboxX:Float = 360; // 체크박스 기본 X 위치
-		var initTextX:Float = 430;     // 옵션 텍스트 기본 X 위치
-		var initStartY:Float = 140;    // 첫 항목 Y 시작점 (위로 올려서 잘림 방지)
-		var initSpacingY:Float = 70;   // 항목 간 세로 간격 조절
+		// 초기 생성 시 위치 설정
+		var initTextX:Float = 280;     // 옵션 텍스트 기본 X 위치
+		var initCenterY:Float = 200;   // 기준 Y 위치
+		var initSpacingY:Float = 55;   // 항목 간 세로 간격
 
 		for (i in 0...optionsArray.length)
 		{
@@ -79,7 +78,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			grpOptions.add(optionText);
 
 			optionText.x = initTextX;
-			optionText.y = initStartY + (i * initSpacingY);
+			optionText.y = initCenterY + (i * initSpacingY);
 
 			if(optionsArray[i].type == BOOL)
 			{
@@ -90,18 +89,19 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = initCheckboxX + checkbox.offset.x;
-				checkbox.y = optionText.y - 10 + checkbox.offset.y;
+				checkbox.x = optionText.x - 60 + checkbox.offset.x;
+				checkbox.y = optionText.y - 5 + checkbox.offset.y;
 			}
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.alignment = LEFT;
-				valueText.setScale(0.7);
+				valueText.setScale(0.55);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.y = optionText.y + 10;
+				valueText.x = optionText.x + optionText.width + 20;
+				valueText.y = optionText.y;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
@@ -136,11 +136,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		// [중요] 세팅 창 내부 레이아웃 미세 조정 컨트롤러
-		var checkboxBaseX:Float = 360; // 체크박스 좌우 위치 (더 왼쪽으로 보내려면 숫자를 줄이세요)
-		var textBaseX:Float = 430;     // 옵션 글자 좌우 위치 (더 오른쪽으로 보내려면 숫자를 늘리세요)
-		var startY:Float = 140;        // 첫 번째 옵션 Y 높이 (메뉴 전체를 위/아래로 이동)
-		var spacingY:Float = 70;       // 메뉴 항목 간의 세로 간격 (GPU Caching이 잘리지 않도록 축소)
+		// 세팅 창 내부 레이아웃 컨트롤러
+		var textBaseX:Float = 280;     // 옵션 글자 X 위치
+		var centerY:Float = 200;       // 현재 선택된 항목 기준 Y 좌표
+		var spacingY:Float = 55;       // 메뉴 항목 간 세로 간격
 
 		for (i in 0...grpOptions.members.length)
 		{
@@ -149,7 +148,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.setScale(0.55);
 			item.x = textBaseX;
 			
-			var targetYPos:Float = startY + (item.targetY * spacingY);
+			// 선택 항목 기준 스크롤 Y 좌표 계산
+			var targetYPos:Float = centerY + (item.targetY * spacingY);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 
 			for (checkbox in checkboxGroup.members)
@@ -157,9 +157,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.55, 0.55);
-					// 고유 offset과 독립된 X 축 변수를 사용하여 실종 현상 완벽 해결
-					checkbox.x = checkboxBaseX + checkbox.offset.x;
-					checkbox.y = item.y - 10 + checkbox.offset.y;
+					checkbox.x = item.x - 60 + checkbox.offset.x;
+					checkbox.y = item.y - 5 + checkbox.offset.y;
 				}
 			}
 
