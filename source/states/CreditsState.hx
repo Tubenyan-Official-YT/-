@@ -172,16 +172,20 @@ class CreditsState extends MusicBeatState
 		{
 			var targetY:Float = (FlxG.height / 2 - item.height / 2) + ((i - curSelected) * 150);
 			item.y = FlxMath.lerp(targetY, item.y, lerpVal);
+
 			var iconWidth:Float = 0;
 			for (icon in iconArray) {
 				if (icon.sprTracker == item)
 				{
-					iconWidth = icon.width;
+					iconWidth = icon.width + 10; // 아이콘 너비 + 여백(10px)
 					break;
 				}
 			}
-			var targetX:Float = (FlxG.width - item.width) / 2;
-			targetX -= iconWidth;
+
+	// [텍스트 너비 + 아이콘 너비] 전체 그룹의 가로 중앙 X좌표 계산
+			var totalWidth:Float = item.width + iconWidth;
+			var targetX:Float = (FlxG.width - totalWidth) / 2;
+
 			if (i == curSelected) {
 				targetX -= 70;
 			}
