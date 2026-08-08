@@ -63,9 +63,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		var commonTextX:Float = 100;    // 옵션 이름 공통 시작 X 좌표
+		// 기준 좌표
+		var commonTextX:Float = 90;     // 모든 옵션 이름의 동일한 시작 X 좌표
+		var valueTextX:Float = 230;      // 옵션 값(숫자/문자) 시작 X 좌표
 		var initCenterY:Float = 130;    // 첫 항목 Y 좌표
-		var initSpacingY:Float = 38;    // 세로 간격
+		var initSpacingY:Float = 38;    // 항목간 세로 간격
 
 		for (i in 0...optionsArray.length)
 		{
@@ -73,7 +75,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.isMenuItem = false;
 			optionText.changeX = false;
 			optionText.changeY = false;
-			optionText.alignment = LEFT;
+			optionText.distancePerItem.set(0, 0);
 			optionText.setScale(0.38); 
 			optionText.targetY = i;
 			grpOptions.add(optionText);
@@ -86,21 +88,26 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.scale.set(0.38, 0.38); 
 				checkbox.updateHitbox();
+				checkbox.offset.set(0, 0);
 				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = 45; // 체크박스 고정 위치
+				checkbox.x = 45;
 				checkbox.y = optionText.y - 6;
 			}
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
+				valueText.isMenuItem = false;
+				valueText.changeX = false;
+				valueText.changeY = false;
+				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.x = optionText.x + optionText.width + 12; // 옵션 이름 우측에 배치
+				valueText.x = valueTextX;
 				valueText.y = optionText.y;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
@@ -136,14 +143,19 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		var commonTextX:Float = 100;   
+		var commonTextX:Float = 90;   // 모든 옵션 텍스트 시작 X 좌표 통일
+		var valueTextX:Float = 230;
 		var centerY:Float = 130;       
 		var spacingY:Float = 38;       
 
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			item.x = commonTextX;
+			item.isMenuItem = false;
+			item.changeX = false;
+			item.changeY = false;
+			item.distancePerItem.set(0, 0);
+			item.x = commonTextX; // 동일한 X 시작점 강제 적용
 			
 			var targetYPos:Float = centerY + (item.targetY * spacingY);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
@@ -152,6 +164,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (checkbox.ID == i)
 				{
+					checkbox.offset.set(0, 0); // 체크 시 애니메이션 오프셋으로 인한 이동 차단
 					checkbox.x = 45;
 					checkbox.y = item.y - 6;
 				}
@@ -161,7 +174,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (text.ID == i)
 				{
-					text.x = item.x + item.width + 12; 
+					text.isMenuItem = false;
+					text.changeX = false;
+					text.changeY = false;
+					text.distancePerItem.set(0, 0);
+					text.x = valueTextX;
 					text.y = item.y;
 				}
 			}
@@ -398,12 +415,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		var bind:AttachedText = cast option.child;
 		var attach:AttachedText = new AttachedText(text, 0); 
+		attach.isMenuItem = false;
+		attach.changeX = false;
+		attach.changeY = false;
+		attach.distancePerItem.set(0, 0);
 		attach.sprTracker = null;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		
 		attach.setScale(0.38);
-		attach.x = bind.x;
+		attach.x = 230;
 		attach.y = bind.y;
 		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
 
@@ -480,6 +501,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	}
 
 	function reloadCheckboxes()
+	{
 		for (checkbox in checkboxGroup)
+		{
 			checkbox.daValue = Std.string(optionsArray[checkbox.ID].getValue()) == 'true';
+			checkbox.offset.set(0, 0);
+		}
+	}
 }
