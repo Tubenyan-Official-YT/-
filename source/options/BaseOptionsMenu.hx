@@ -63,10 +63,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		// 초기 생성 시 위치 설정
-		var initTextX:Float = 180;     // 옵션 글자 X 위치 (체크박스 공간 확보를 위해 우측 이동)
-		var initCenterY:Float = 180;   // 기준 Y 위치
-		var initSpacingY:Float = 60;   // 항목 간 세로 간격 (겹침 방지)
+		// 초기 생성 시 위치 설정 (작은 창 크기에 맞춘 수치)
+		var initTextX:Float = 220;     // 글자 시작 X 위치 (우측으로 이동)
+		var initCenterY:Float = 145;   // 첫 항목 기준 Y 위치 (위로 상향 조정)
+		var initSpacingY:Float = 48;   // 항목 간 세로 간격 (60 -> 48로 축소)
 
 		for (i in 0...optionsArray.length)
 		{
@@ -89,8 +89,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = optionText.x - 85;
-				checkbox.y = optionText.y - 15;
+				checkbox.x = optionText.x - 110; // 체크박스와 글자 사이 간격 넓힘
+				checkbox.y = optionText.y - 10;
 			}
 			else
 			{
@@ -136,10 +136,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		// 세팅 창 내부 레이아웃 컨트롤러
-		var textBaseX:Float = 180;     // 옵션 글자 X 위치
-		var centerY:Float = 180;       // 현재 선택된 항목 기준 Y 좌표
-		var spacingY:Float = 60;       // 메뉴 항목 간 세로 간격
+		// 프레임 업데이트 시 실시간 좌표 계산 수치
+		var textBaseX:Float = 220;     
+		var centerY:Float = 145;       
+		var spacingY:Float = 48;       
 
 		for (i in 0...grpOptions.members.length)
 		{
@@ -148,7 +148,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.setScale(0.55);
 			item.x = textBaseX;
 			
-			// 선택 항목 기준 스크롤 Y 좌표 계산
 			var targetYPos:Float = centerY + (item.targetY * spacingY);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 
@@ -157,8 +156,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				if (checkbox.ID == i)
 				{
 					checkbox.scale.set(0.50, 0.50);
-					checkbox.x = item.x - 85;
-					checkbox.y = item.y - 15;
+					checkbox.x = item.x - 110;
+					checkbox.y = item.y - 10;
 				}
 			}
 
