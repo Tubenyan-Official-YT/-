@@ -63,8 +63,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		// 레이아웃 기준 좌표
-		var initTextX:Float = 90;      // 옵션 글자 시작 X 좌표
+		// 모든 텍스트가 시작할 공통 X 좌표 설정
+		var commonTextX:Float = 100;    // 공통 X 시작점
 		var initCenterY:Float = 130;    // 첫 항목 Y 좌표
 		var initSpacingY:Float = 38;    // 세로 간격
 
@@ -72,12 +72,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
 			optionText.isMenuItem = false;
+			optionText.changeX = false;
+			optionText.changeY = false;
 			optionText.alignment = LEFT;
 			optionText.setScale(0.38); 
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			optionText.x = initTextX;
+			optionText.x = commonTextX;
 			optionText.y = initCenterY + (i * initSpacingY);
 
 			if(optionsArray[i].type == BOOL)
@@ -89,7 +91,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = 40; // 체크박스 고정 위치
+				checkbox.x = 45; // 체크박스 고정 위치
 				checkbox.y = optionText.y - 6;
 			}
 			else
@@ -100,7 +102,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.x = optionText.x + optionText.width + 12;
+				valueText.x = optionText.x + optionText.width + 12; // 옵션 이름 우측에 값 표시
 				valueText.y = optionText.y;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
@@ -136,15 +138,18 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		var textBaseX:Float = 90;     
+		var commonTextX:Float = 100;   // 공통 X 좌표 강제 고정
 		var centerY:Float = 130;       
 		var spacingY:Float = 38;       
 
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
+			item.isMenuItem = false;
+			item.changeX = false;
+			item.changeY = false;
 			item.alignment = LEFT;
-			item.x = textBaseX;
+			item.x = commonTextX; // 매 프레임 단일 X 좌표 고정
 			
 			var targetYPos:Float = centerY + (item.targetY * spacingY);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
@@ -153,7 +158,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (checkbox.ID == i)
 				{
-					checkbox.x = 40;
+					checkbox.x = 45;
 					checkbox.y = item.y - 6;
 				}
 			}
