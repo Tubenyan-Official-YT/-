@@ -64,9 +64,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(targetCam != null) descText.cameras = [targetCam];
 
 		// 초기 생성 시 위치 설정
-		var initTextX:Float = 140;     // 옵션 텍스트 기본 X 위치
+		var initTextX:Float = 180;     // 옵션 글자 X 위치 (체크박스 공간 확보를 위해 우측 이동)
 		var initCenterY:Float = 180;   // 기준 Y 위치
-		var initSpacingY:Float = 55;   // 항목 간 세로 간격
+		var initSpacingY:Float = 60;   // 항목 간 세로 간격 (겹침 방지)
 
 		for (i in 0...optionsArray.length)
 		{
@@ -83,14 +83,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.55, 0.55); 
+				checkbox.scale.set(0.50, 0.50); 
 				checkbox.updateHitbox();
 				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = optionText.x - 65;
-				checkbox.y = optionText.y - 10;
+				checkbox.x = optionText.x - 85;
+				checkbox.y = optionText.y - 15;
 			}
 			else
 			{
@@ -137,9 +137,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
 		// 세팅 창 내부 레이아웃 컨트롤러
-		var textBaseX:Float = 140;     // 옵션 글자 X 위치
+		var textBaseX:Float = 180;     // 옵션 글자 X 위치
 		var centerY:Float = 180;       // 현재 선택된 항목 기준 Y 좌표
-		var spacingY:Float = 55;       // 메뉴 항목 간 세로 간격
+		var spacingY:Float = 60;       // 메뉴 항목 간 세로 간격
 
 		for (i in 0...grpOptions.members.length)
 		{
@@ -156,9 +156,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (checkbox.ID == i)
 				{
-					checkbox.scale.set(0.55, 0.55);
-					checkbox.x = item.x - 65;
-					checkbox.y = item.y - 10;
+					checkbox.scale.set(0.50, 0.50);
+					checkbox.x = item.x - 85;
+					checkbox.y = item.y - 15;
 				}
 			}
 
