@@ -89,7 +89,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.scale.set(0.38, 0.38); 
 				checkbox.updateHitbox();
 				
-				// optionText를 추적 대상으로 지정하여 상대 오프셋 고정
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = -65;
 				checkbox.offsetY = -6;
@@ -106,8 +105,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
 				valueText.sprTracker = optionText;
-				valueText.xAdd = 220;
-				valueText.yAdd = 0;
+				valueText.offsetX = 220;
+				valueText.offsetY = 0;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
@@ -386,9 +385,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.distancePerItem.set(0, 0);
-		attach.sprTracker = option.child != null ? option.child.sprTracker : null;
-		attach.xAdd = 220;
-		attach.yAdd = 0;
+		
+		if (option.child != null && Std.isOfType(option.child, AttachedText)) {
+			attach.sprTracker = cast(option.child, AttachedText).sprTracker;
+		}
+		attach.offsetX = 220;
+		attach.offsetY = 0;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		
