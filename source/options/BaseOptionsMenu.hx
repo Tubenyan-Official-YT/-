@@ -63,8 +63,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		// 모든 텍스트가 시작할 공통 X 좌표 설정
-		var commonTextX:Float = 100;    // 공통 X 시작점
+		var commonTextX:Float = 100;    // 옵션 이름 공통 시작 X 좌표
 		var initCenterY:Float = 130;    // 첫 항목 Y 좌표
 		var initSpacingY:Float = 38;    // 세로 간격
 
@@ -97,12 +96,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
-				valueText.alignment = LEFT;
 				valueText.setScale(0.38);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.x = optionText.x + optionText.width + 12; // 옵션 이름 우측에 값 표시
+				valueText.x = optionText.x + optionText.width + 12; // 옵션 이름 우측에 배치
 				valueText.y = optionText.y;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
@@ -138,18 +136,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		var commonTextX:Float = 100;   // 공통 X 좌표 강제 고정
+		var commonTextX:Float = 100;   
 		var centerY:Float = 130;       
 		var spacingY:Float = 38;       
 
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			item.isMenuItem = false;
-			item.changeX = false;
-			item.changeY = false;
-			item.alignment = LEFT;
-			item.x = commonTextX; // 매 프레임 단일 X 좌표 고정
+			item.x = commonTextX;
 			
 			var targetYPos:Float = centerY + (item.targetY * spacingY);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
@@ -167,7 +161,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (text.ID == i)
 				{
-					text.alignment = LEFT;
 					text.x = item.x + item.width + 12; 
 					text.y = item.y;
 				}
@@ -409,7 +402,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		
-		attach.alignment = LEFT;
 		attach.setScale(0.38);
 		attach.x = bind.x;
 		attach.y = bind.y;
