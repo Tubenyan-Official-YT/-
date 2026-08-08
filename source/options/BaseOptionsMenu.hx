@@ -63,17 +63,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
-		// 레이아웃 고정 좌표 설정
-		var initTextX:Float = 120;     // 옵션 글자 X 좌표
-		var initCenterY:Float = 135;   // 첫 항목 Y 좌표
-		var initSpacingY:Float = 42;   // 세로 간격
+		// 레이아웃 기준 좌표
+		var initTextX:Float = 90;      // 옵션 글자 시작 X 좌표
+		var initCenterY:Float = 130;    // 첫 항목 Y 좌표
+		var initSpacingY:Float = 38;    // 세로 간격
 
 		for (i in 0...optionsArray.length)
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
 			optionText.isMenuItem = false;
 			optionText.alignment = LEFT;
-			optionText.setScale(0.45); 
+			optionText.setScale(0.38); 
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
@@ -83,24 +83,24 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.42, 0.42); 
+				checkbox.scale.set(0.38, 0.38); 
 				checkbox.updateHitbox();
 				checkbox.sprTracker = null; 
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 				
-				checkbox.x = 45; // 체크박스 고정 X 위치
-				checkbox.y = optionText.y - 8;
+				checkbox.x = 40; // 체크박스 고정 위치
+				checkbox.y = optionText.y - 6;
 			}
 			else
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.alignment = LEFT;
-				valueText.setScale(0.45);
+				valueText.setScale(0.38);
 				valueText.sprTracker = null; 
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.x = optionText.x + optionText.width + 15;
+				valueText.x = optionText.x + optionText.width + 12;
 				valueText.y = optionText.y;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
@@ -136,13 +136,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		var textBaseX:Float = 120;     
-		var centerY:Float = 135;       
-		var spacingY:Float = 42;       
+		var textBaseX:Float = 90;     
+		var centerY:Float = 130;       
+		var spacingY:Float = 38;       
 
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
+			item.alignment = LEFT;
 			item.x = textBaseX;
 			
 			var targetYPos:Float = centerY + (item.targetY * spacingY);
@@ -152,8 +153,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (checkbox.ID == i)
 				{
-					checkbox.x = 45;
-					checkbox.y = item.y - 8;
+					checkbox.x = 40;
+					checkbox.y = item.y - 6;
 				}
 			}
 
@@ -161,7 +162,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				if (text.ID == i)
 				{
-					text.x = item.x + item.width + 15; 
+					text.alignment = LEFT;
+					text.x = item.x + item.width + 12; 
 					text.y = item.y;
 				}
 			}
@@ -403,7 +405,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.ID = bind.ID;
 		
 		attach.alignment = LEFT;
-		attach.setScale(0.45);
+		attach.setScale(0.38);
 		attach.x = bind.x;
 		attach.y = bind.y;
 		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
