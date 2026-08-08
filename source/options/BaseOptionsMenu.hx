@@ -22,13 +22,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 레이아웃 고정 좌표 상수
-// 수정 후
-	private static inline var COMMON_TEXT_X:Float = 90;
-	private static inline var VALUE_TEXT_X:Float = 230;
-	private static inline var CHECKBOX_X:Float = 45;
+	// 레이아웃 고정 좌표 상수 (static inline)
+	private static inline var COMMON_TEXT_X:Float = 120;
+	private static inline var VALUE_TEXT_X:Float = 340;
 	private static inline var INIT_CENTER_Y:Float = 130;
-	private static inline var INIT_SPACING_Y:Float = 38;
+	private static inline var INIT_SPACING_Y:Float = 48;
 
 	public function new()
 	{
@@ -80,22 +78,24 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.distancePerItem.set(0, 0);
 			optionText.setScale(0.38); 
 			optionText.targetY = i;
-			grpOptions.add(optionText);
 
 			optionText.x = COMMON_TEXT_X;
 			optionText.y = INIT_CENTER_Y + (i * INIT_SPACING_Y);
+			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.scale.set(0.38, 0.38); 
 				checkbox.updateHitbox();
-				checkbox.sprTracker = null; 
+				
+				// optionText를 추적 대상으로 지정하여 상대 오프셋 고정
+				checkbox.sprTracker = optionText;
+				checkbox.offsetX = -65;
+				checkbox.offsetY = -6;
+				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
-				
-				checkbox.x = CHECKBOX_X;
-				checkbox.y = optionText.y - 6;
 			}
 			else
 			{
@@ -105,11 +105,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.changeY = false;
 				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
-				valueText.sprTracker = null; 
+				valueText.sprTracker = optionText;
+				valueText.xAdd = 220;
+				valueText.yAdd = 0;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.x = VALUE_TEXT_X;
-				valueText.y = optionText.y;
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
@@ -147,38 +147,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			item.isMenuItem = false;
-			item.changeX = false;
-			item.changeY = false;
-			item.distancePerItem.set(0, 0);
-			item.x = COMMON_TEXT_X;
-			
-			// 고정 목록 레이아웃: 항목 i는 고정된 Y 위치로 수평 보정
 			var targetYPos:Float = INIT_CENTER_Y + (i * INIT_SPACING_Y);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
-
-			for (checkbox in checkboxGroup.members)
-			{
-				if (checkbox.ID == i)
-				{
-					// offset.set(0, 0)을 삭제하여 내부 프레임 오프셋을 유지
-					checkbox.x = CHECKBOX_X;
-					checkbox.y = item.y - 6;
-				}
-			}
-
-			for (text in grpTexts.members)
-			{
-				if (text.ID == i)
-				{
-					text.isMenuItem = false;
-					text.changeX = false;
-					text.changeY = false;
-					text.distancePerItem.set(0, 0);
-					text.x = VALUE_TEXT_X;
-					text.y = item.y;
-				}
-			}
 		}
 
 		if(bindingKey)
@@ -416,13 +386,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.distancePerItem.set(0, 0);
-		attach.sprTracker = null;
+		attach.sprTracker = option.child != null ? option.child.sprTracker : null;
+		attach.xAdd = 220;
+		attach.yAdd = 0;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		
 		attach.setScale(0.38);
-		attach.x = VALUE_TEXT_X;
-		attach.y = bind.y;
 		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
 
 		option.child = attach;
@@ -477,22 +447,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			descText.x = 40;
 		}
 
-		// 절대 인덱스(num) 기준으로 투명도만 조정하고 Y 위치는 고정 유지
 		for (num => item in grpOptions.members)
 		{
-			item.targetY = num;
-			item.alpha = 0.6;
-			if (num == curSelected) item.alpha = 1;
+			item.alpha = (num == curSelected) ? 1.0 : 0.6;
 		}
 		for (text in grpTexts)
 		{
-			text.alpha = 0.6;
-			if(text.ID == curSelected) text.alpha = 1;
+			text.alpha = (text.ID == curSelected) ? 1.0 : 0.6;
 		}
 		for (checkbox in checkboxGroup)
 		{
-			checkbox.alpha = 0.6;
-			if(checkbox.ID == curSelected) checkbox.alpha = 1;
+			checkbox.alpha = (checkbox.ID == curSelected) ? 1.0 : 0.6;
 		}
 
 		descBox.setPosition(descText.x - 10, descText.y - 5);
@@ -508,7 +473,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (checkbox in checkboxGroup)
 		{
 			checkbox.daValue = Std.string(optionsArray[checkbox.ID].getValue()) == 'true';
-			// 애니메이션 오프셋 보전을 위해 offset.set(0, 0) 구문 제거
 		}
 	}
 }
