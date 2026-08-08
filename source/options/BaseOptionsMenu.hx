@@ -23,11 +23,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var rpcTitle:String;
 
 	// 레이아웃 고정 좌표 상수
-	private inline var COMMON_TEXT_X:Float = 90;
-	private inline var VALUE_TEXT_X:Float = 230;
-	private inline var CHECKBOX_X:Float = 45;
-	private inline var INIT_CENTER_Y:Float = 130;
-	private inline var INIT_SPACING_Y:Float = 38;
+// 수정 후
+	private static inline var COMMON_TEXT_X:Float = 90;
+	private static inline var VALUE_TEXT_X:Float = 230;
+	private static inline var CHECKBOX_X:Float = 45;
+	private static inline var INIT_CENTER_Y:Float = 130;
+	private static inline var INIT_SPACING_Y:Float = 38;
 
 	public function new()
 	{
