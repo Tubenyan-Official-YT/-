@@ -26,6 +26,7 @@ class CheckboxThingie extends FlxSprite
 	}
 
 	override function update(elapsed:Float) {
+		updateHitbox();
 		if (sprTracker != null) {
 			setPosition(sprTracker.x - 130 + offsetX, sprTracker.y + offsetY);
 			if(copyAlpha) {
