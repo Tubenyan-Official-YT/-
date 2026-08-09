@@ -22,10 +22,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 레이아웃 고정 좌표 상수 (static inline)
-	private static inline var COMMON_TEXT_X:Float = 120;
-	private static inline var VALUE_TEXT_X:Float = 340;
-	private static inline var INIT_CENTER_Y:Float = 130;
+	// 레이아웃 고정 좌표 상수
+	private static inline var COMMON_TEXT_X:Float = 240;
+	private static inline var INIT_CENTER_Y:Float = 180;
 	private static inline var INIT_SPACING_Y:Float = 48;
 
 	public function new()
@@ -90,7 +89,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -65;
+				checkbox.offsetX = -60;
 				checkbox.offsetY = -6;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
@@ -105,7 +104,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
 				valueText.sprTracker = optionText;
-				valueText.offsetX = 220;
+				valueText.offsetX = 180;
 				valueText.offsetY = 0;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -147,6 +146,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			var item = grpOptions.members[i];
 			var targetYPos:Float = INIT_CENTER_Y + (i * INIT_SPACING_Y);
+			
+			// X좌표를 일괄 강제 고정하여 대각선 쏠림 방지
+			item.x = COMMON_TEXT_X;
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 		}
 
@@ -389,7 +391,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if (option.child != null && Std.isOfType(option.child, AttachedText)) {
 			attach.sprTracker = cast(option.child, AttachedText).sprTracker;
 		}
-		attach.offsetX = 220;
+		attach.offsetX = 180;
 		attach.offsetY = 0;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
