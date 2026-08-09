@@ -36,8 +36,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var rpcTitle:String;
 
 	private static inline var OPTION_X:Float = 170; // 텍스트 X 위치 유지
-	private static inline var START_Y:Float = 50;   // 전체 상단 시작 위치 (위로 올림)
-	private static inline var SPACING_Y:Float = 80; // 세로 간격
+	private static inline var START_Y:Float = 50;   // 전체 상단 시작 위치
+	private static inline var SPACING_Y:Float = 115; // 세로 간격 확장 (체크박스 겹침 방지)
 
 	public function new()
 	{
@@ -154,7 +154,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// 체크박스가 체크될 때 우측 하단으로 밀려나는 오프셋 강제 고정
 		for (checkbox in checkboxGroup)
 		{
 			checkbox.offset.set(0, 0);
