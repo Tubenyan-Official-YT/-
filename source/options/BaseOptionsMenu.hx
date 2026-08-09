@@ -36,8 +36,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var rpcTitle:String;
 
 	private static inline var OPTION_X:Float = 170; // 텍스트 X 위치 유지
-	private static inline var START_Y:Float = 70;   // 전체 상단 시작 위치
-	private static inline var SPACING_Y:Float = 85; // 항목 간 세로 간격
+	private static inline var START_Y:Float = 75;   // 전체 상단 시작 위치
+	private static inline var SPACING_Y:Float = 80; // 세로 간격
 
 	public function new()
 	{
@@ -87,13 +87,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				// 크기 비율 유지 및 정사각형으로 복구
-				checkbox.setGraphicSize(65, 65);
+				checkbox.scale.set(0.6, 0.6); // 크기 고정 (찌그러짐 방지)
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -95; // 체크박스만 원래 좌측 위치(X=75 부근)에 고정
-				checkbox.offsetY = -20;
+				checkbox.offsetX = -55; // 체크박스와 글자 사이 간격을 축소하여 카메라 이탈 방지
+				checkbox.offsetY = -15;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -107,7 +106,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -95; // 수치 텍스트도 체크박스와 동일한 X 라인 맞춤
+				valueText.offsetX = -55; // 수치 텍스트 간격도 동일하게 축소
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -142,6 +141,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	{
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
 
+		// 카메라 범위를 벗어나지 않도록 스크롤 오프셋 한계 설정
 		var scrollOffset:Float = 0;
 		if (curSelected > 3) {
 			scrollOffset = (curSelected - 3) * SPACING_Y;
@@ -442,7 +442,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
-		attach.offsetX = -95;
+		attach.offsetX = -55;
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
