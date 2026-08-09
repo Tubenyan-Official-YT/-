@@ -1,5 +1,13 @@
 package options;
 
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
@@ -8,6 +16,8 @@ import objects.CheckboxThingie;
 import objects.AttachedText;
 import options.Option;
 import backend.InputFormatter;
+import backend.Language;
+import backend.ClientPrefs;
 
 class BaseOptionsMenu extends MusicBeatSubstate
 {
@@ -15,7 +25,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private var curSelected:Int = 0;
 	private var optionsArray:Array<Option>;
 
-	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpOptions:FlxTypedGroup<FlxText>;
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
 	private var grpTexts:FlxTypedGroup<AttachedText>;
 
@@ -24,6 +34,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	public var title:String;
 	public var rpcTitle:String;
+
+	// 좌측 옵션 글자 기준 좌표 및 간격
+	private static inline var OPTION_X:Float = 220;
+	private static inline var CENTER_Y:Float = 220;
+	private static inline var SPACING_Y:Float = 50;
 
 	public function new()
 	{
@@ -38,8 +53,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		// 배경(bg) 없이 서브스테이트 그룹 구성
-		grpOptions = new FlxTypedGroup<Alphabet>();
+		grpOptions = new FlxTypedGroup<FlxText>();
 		if(targetCam != null) grpOptions.cameras = [targetCam];
 		add(grpOptions);
 
@@ -64,17 +78,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
-			
-			// 엔진 기본 메뉴 시스템 사용 (스크롤 연동)
-			optionText.isMenuItem = true;
-			optionText.changeX = false; // 대각선 이동 차단
-			optionText.changeY = true;  // Y축 스크롤 사용
-			optionText.targetY = i - curSelected;
-			optionText.distancePerItem.set(0, 65); // 메뉴 항목 간 Y 간격
-			optionText.xAdd = 180; // 창 내부 좌측 여백 고정
-			optionText.setScale(0.38);
-
+			// Alphabet 대신 FlxText 사용
+			var optionText:FlxText = new FlxText(OPTION_X, CENTER_Y + (i * SPACING_Y), 500, optionsArray[i].name, 28);
+			optionText.setFormat(Paths.font("vcr.ttf"), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			optionText.borderSize = 2;
+			optionText.scrollFactor.set();
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
@@ -83,17 +91,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.scale.set(0.38, 0.38);
 				checkbox.updateHitbox();
 				
-				// 체크박스를 글자 왼쪽에 추적 배치
+				// 체크박스를 옵션 글자 왼쪽에 추적 배치
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -75;
-				checkbox.offsetY = -5;
+				checkbox.offsetX = -65;
+				checkbox.offsetY = -12;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				// 수치를 글자 왼쪽에 추적 배치
+				// 수치를 옵션 글자 왼쪽에 추적 배치
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.isMenuItem = false;
 				valueText.changeX = false;
@@ -129,12 +137,22 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	var bindingKey:Bool = false;
 	var holdingEsc:Float = 0;
 	var bindingBlack:FlxSprite;
-	var bindingText:Alphabet;
-	var bindingText2:Alphabet;
+	var bindingText:FlxText;
+	var bindingText2:FlxText;
 	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		// FlxText Y축 부드러운 스크롤 처리
+		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
+		for (i in 0...grpOptions.members.length)
+		{
+			var item = grpOptions.members[i];
+			var targetYPos:Float = CENTER_Y + ((i - curSelected) * SPACING_Y);
+			item.y = FlxMath.lerp(item.y, targetYPos, lerpVal);
+			item.x = OPTION_X;
+		}
 
 		if(bindingKey)
 		{
@@ -175,13 +193,15 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						FlxTween.tween(bindingBlack, {alpha: 0.6}, 0.35, {ease: FlxEase.linear});
 						add(bindingBlack);
 	
-						bindingText = new Alphabet(400, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
-						bindingText.alignment = CENTERED;
+						bindingText = new FlxText(0, 160, FlxG.width, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]));
+						bindingText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 						if(targetCam != null) bindingText.cameras = [targetCam];
+						add(bindingText);
 						
-						bindingText2 = new Alphabet(400, 280, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'), true);
-						bindingText2.alignment = CENTERED;
+						bindingText2 = new FlxText(0, 280, FlxG.width, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'));
+						bindingText2.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 						if(targetCam != null) bindingText2.cameras = [targetCam];
+						add(bindingText2);
 	
 						bindingKey = true;
 						holdingEsc = 0;
@@ -437,14 +457,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	function closeBinding()
 	{
 		bindingKey = false;
-		bindingBlack.destroy();
-		remove(bindingBlack);
-
-		bindingText.destroy();
-		remove(bindingText);
-
-		bindingText2.destroy();
-		remove(bindingText2);
+		if(bindingBlack != null) { bindingBlack.destroy(); remove(bindingBlack); }
+		if(bindingText != null) { bindingText.destroy(); remove(bindingText); }
+		if(bindingText2 != null) { bindingText2.destroy(); remove(bindingText2); }
 		ClientPrefs.toggleVolumeKeys(true);
 	}
 
@@ -482,8 +497,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (num => item in grpOptions.members)
 		{
-			// 엔진 기본 targetY 갱신 사용
-			item.targetY = num - curSelected;
 			item.alpha = (num == curSelected) ? 1.0 : 0.6;
 		}
 		for (text in grpTexts)
