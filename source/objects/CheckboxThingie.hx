@@ -17,8 +17,8 @@ class CheckboxThingie extends FlxSprite
 		animation.addByPrefix("checked", "checkbox finish", 24, false);
 
 		antialiasing = ClientPrefs.data.antialiasing;
-		setGraphicSize(Std.int(0.9 * width));
-		updateHitbox();
+    	scale.set(0.9, 0.9); // setGraphicSize 대신
+    	updateHitbox();
 
 		animationFinished(checked ? 'checking' : 'unchecking');
 		animation.finishCallback = animationFinished;
@@ -26,14 +26,13 @@ class CheckboxThingie extends FlxSprite
 	}
 
 	override function update(elapsed:Float) {
-		updateHitbox();
-		if (sprTracker != null) {
-			setPosition(sprTracker.x - 130 + offsetX, sprTracker.y + offsetY);
-			if(copyAlpha) {
-				alpha = sprTracker.alpha;
-			}
-		}
-		super.update(elapsed);
+    	updateHitbox();
+    	centerOrigin();
+    	if (sprTracker != null) {
+        	setPosition(sprTracker.x + offsetX, sprTracker.y + offsetY);
+        	if(copyAlpha) alpha = sprTracker.alpha;
+    	}
+    	super.update(elapsed);
 	}
 
 	private function set_daValue(check:Bool):Bool {
