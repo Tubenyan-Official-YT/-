@@ -35,10 +35,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	private static inline var OPTION_X:Float = 220;
-	// 옵션 카메라 상단 제목 바 아래 시작 위치 및 간격 설정
-	private static inline var START_Y:Float = 110;
-	private static inline var SPACING_Y:Float = 68;
+	// 위치 및 간격 상수 조정
+	private static inline var OPTION_X:Float = 170; // 텍스트를 더 왼쪽으로 이동
+	private static inline var START_Y:Float = 85;   // 전체 항목 시작 지점을 위로 올림
+	private static inline var SPACING_Y:Float = 82; // 세로 간격을 더 넓힘
 
 	public function new()
 	{
@@ -78,7 +78,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-			// 폰트 크기 확대 (26 -> 30)
 			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * SPACING_Y), 400, optionsArray[i].name, 30);
 			optionText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			optionText.borderSize = 2;
@@ -89,7 +88,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				// 체크박스 크기 확대 (0.4 -> 0.48) 및 위치 상향 조정 (-35)
 				checkbox.scale.set(0.48, 0.48);
 				checkbox.updateHitbox();
 				
@@ -106,7 +104,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.isMenuItem = false;
 				valueText.changeX = false;
 				valueText.changeY = false;
-				// 수치 텍스트 크기 확대 (0.38 -> 0.45)
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
@@ -145,10 +142,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	{
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
 
-		// 선택 항목이 화면 하단을 벗어날 때만 스크롤되도록 처리
 		var scrollOffset:Float = 0;
-		if (curSelected > 4) {
-			scrollOffset = (curSelected - 4) * SPACING_Y;
+		if (curSelected > 3) {
+			scrollOffset = (curSelected - 3) * SPACING_Y;
 		}
 
 		for (i in 0...grpOptions.members.length)
