@@ -36,7 +36,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var rpcTitle:String;
 
 	private static inline var OPTION_X:Float = 220;
-	private static inline var CENTER_Y:Float = 180;
+	private static inline var CENTER_Y:Float = 200;
 	private static inline var SPACING_Y:Float = 55;
 
 	public function new()
@@ -87,12 +87,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.5, 0.5);
-				// updateHitbox() 호출 금지 (오프셋 깨짐 방지)
+				checkbox.scale.set(0.4, 0.4);
+				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -55;
-				checkbox.offsetY = -15;
+				checkbox.offsetX = -60;
+				// 텍스트 중앙 높이와 체크박스 중앙 높이 동기화
+				checkbox.offsetY = (optionText.height - checkbox.height) / 2;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -107,7 +108,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				valueText.sprTracker = optionText;
 				valueText.offsetX = -85;
-				valueText.offsetY = 0;
+				// 수치 텍스트 중앙 높이 동기화
+				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
@@ -139,6 +141,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	
 	override function update(elapsed:Float)
 	{
+		// super.update 전에 텍스트 목표 좌표를 먼저 확정하여 sprTracker 프레임 밀림 방지
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
 		for (i in 0...grpOptions.members.length)
 		{
@@ -436,7 +439,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
 		attach.offsetX = -85;
-		attach.offsetY = 0;
+		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		attach.setScale(0.38);
