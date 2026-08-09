@@ -22,10 +22,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 레이아웃 고정 좌표 상수
-	private static inline var COMMON_TEXT_X:Float = 130;
-	private static inline var INIT_CENTER_Y:Float = 180;
-	private static inline var INIT_SPACING_Y:Float = 48;
+	// 설정창 박스 내부 좌표 상수
+	private static inline var COMMON_TEXT_X:Float = 540;
+	private static inline var INIT_CENTER_Y:Float = 220;
+	private static inline var INIT_SPACING_Y:Float = 55;
 
 	public function new()
 	{
@@ -62,7 +62,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		titleText.alpha = 0.8;
 		if(targetCam != null) titleText.cameras = [targetCam];
 
-		descText = new FlxText(40, 440, 720, "", 22);
+		descText = new FlxText(40, 560, 720, "", 22);
 		descText.setFormat(Paths.font("vcr.ttf"), 22, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
 		descText.borderSize = 2.0;
@@ -76,7 +76,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.changeY = false;
 			optionText.distancePerItem.set(0, 0);
 			optionText.setScale(0.38); 
-			optionText.targetY = 0; // 대각선 이동 방지를 위해 0으로 고정
+			optionText.targetY = 0; // 대각선 이동 방지
 
 			optionText.x = COMMON_TEXT_X;
 			optionText.y = INIT_CENTER_Y + (i * INIT_SPACING_Y);
@@ -89,7 +89,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -60;
+				checkbox.offsetX = -50;
 				checkbox.offsetY = -6;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
@@ -104,7 +104,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
 				valueText.sprTracker = optionText;
-				valueText.offsetX = 160;
+				valueText.offsetX = 150;
 				valueText.offsetY = 0;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -147,7 +147,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var item = grpOptions.members[i];
 			var targetYPos:Float = INIT_CENTER_Y + (i * INIT_SPACING_Y);
 			
-			// 자동 위치 계산 차단 및 X좌표 고정
+			// Alphabet 자체 이동 로직 무효화 및 X좌표 고정
+			item.isMenuItem = false;
 			item.changeX = false;
 			item.changeY = false;
 			item.targetY = 0;
@@ -394,7 +395,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if (option.child != null && Std.isOfType(option.child, AttachedText)) {
 			attach.sprTracker = cast(option.child, AttachedText).sprTracker;
 		}
-		attach.offsetX = 160;
+		attach.offsetX = 150;
 		attach.offsetY = 0;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
