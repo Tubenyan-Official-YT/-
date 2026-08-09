@@ -25,11 +25,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 고정 위치 기준 좌표 (옵션 이름 위치 및 간격)
-	private static inline var OPTION_X:Float = 260;
-	private static inline var INIT_Y:Float = 180;
-	private static inline var SPACING_Y:Float = 55;
-
 	public function new()
 	{
 		super();
@@ -43,7 +38,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 
-		// 배경(bg) 제거 및 서브스테이트 전용 그룹 구성
+		// 배경(bg) 없이 서브스테이트 그룹 구성
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		if(targetCam != null) grpOptions.cameras = [targetCam];
 		add(grpOptions);
@@ -70,15 +65,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (i in 0...optionsArray.length)
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
-			optionText.isMenuItem = false;
-			optionText.changeX = false;
-			optionText.changeY = false;
-			optionText.distancePerItem.set(0, 0);
+			
+			// 엔진 기본 메뉴 시스템 사용 (스크롤 연동)
+			optionText.isMenuItem = true;
+			optionText.changeX = false; // 대각선 이동 차단
+			optionText.changeY = true;  // Y축 스크롤 사용
+			optionText.targetY = i - curSelected;
+			optionText.distancePerItem.set(0, 65); // 메뉴 항목 간 Y 간격
+			optionText.xAdd = 180; // 창 내부 좌측 여백 고정
 			optionText.setScale(0.38);
-			optionText.targetY = 0;
 
-			optionText.x = OPTION_X;
-			optionText.y = INIT_Y + (i * SPACING_Y);
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
@@ -87,7 +83,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.scale.set(0.38, 0.38);
 				checkbox.updateHitbox();
 				
-				// 체크박스를 옵션 이름 왼쪽에 배치
+				// 체크박스를 글자 왼쪽에 추적 배치
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = -75;
 				checkbox.offsetY = -5;
@@ -97,12 +93,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			}
 			else
 			{
-				// 숫자를 옵션 이름 왼쪽에 배치
+				// 수치를 글자 왼쪽에 추적 배치
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.isMenuItem = false;
 				valueText.changeX = false;
 				valueText.changeY = false;
-				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
 				
 				valueText.sprTracker = optionText;
@@ -140,23 +135,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
-
-		for (i in 0...grpOptions.members.length)
-		{
-			var item = grpOptions.members[i];
-			var targetYPos:Float = INIT_Y + (i * SPACING_Y);
-			
-			// 대각선 이동 차단 및 Y축 직하단 보정
-			item.isMenuItem = false;
-			item.changeX = false;
-			item.changeY = false;
-			item.distancePerItem.set(0, 0);
-			item.targetY = 0;
-			item.x = OPTION_X;
-			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
-		}
 
 		if(bindingKey)
 		{
@@ -421,7 +399,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 	}
 
-	final MAX_KEYBIND_WIDTH = 320;
 	function updateBind(?text:String = null, ?option:Option = null)
 	{
 		if(option == null) option = curOption;
@@ -441,7 +418,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.isMenuItem = false;
 		attach.changeX = false;
 		attach.changeY = false;
-		attach.distancePerItem.set(0, 0);
 		attach.sprTracker = bind.sprTracker;
 		attach.offsetX = -85;
 		attach.offsetY = 0;
@@ -506,11 +482,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (num => item in grpOptions.members)
 		{
-			item.targetY = 0;
-			item.isMenuItem = false;
-			item.changeX = false;
-			item.changeY = false;
-			item.x = OPTION_X;
+			// 엔진 기본 targetY 갱신 사용
+			item.targetY = num - curSelected;
 			item.alpha = (num == curSelected) ? 1.0 : 0.6;
 		}
 		for (text in grpTexts)
