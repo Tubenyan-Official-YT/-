@@ -87,12 +87,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.6, 0.6); // 크기 고정 (찌그러짐 방지)
+				checkbox.scale.set(0.6, 0.6);
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -55; // 체크박스와 글자 사이 간격을 축소하여 카메라 이탈 방지
-				checkbox.offsetY = -15;
+				checkbox.offsetX = -42; // 가로 간격 축소
+				checkbox.offsetY = -35; // 체크박스 위치 위로 올림
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -106,7 +106,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -55; // 수치 텍스트 간격도 동일하게 축소
+				valueText.offsetX = -42; // 수치 텍스트 X 위치 일치
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -141,7 +141,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	{
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
 
-		// 카메라 범위를 벗어나지 않도록 스크롤 오프셋 한계 설정
 		var scrollOffset:Float = 0;
 		if (curSelected > 3) {
 			scrollOffset = (curSelected - 3) * SPACING_Y;
@@ -442,7 +441,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
-		attach.offsetX = -55;
+		attach.offsetX = -42;
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
