@@ -35,10 +35,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 좌측 옵션 글자 기준 좌표 및 간격
 	private static inline var OPTION_X:Float = 220;
-	private static inline var CENTER_Y:Float = 220;
-	private static inline var SPACING_Y:Float = 50;
+	private static inline var CENTER_Y:Float = 180;
+	private static inline var SPACING_Y:Float = 55;
 
 	public function new()
 	{
@@ -70,38 +69,36 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(targetCam != null) descBox.cameras = [targetCam];
 		add(descBox);
 
-		descText = new FlxText(40, 560, 720, "", 22);
-		descText.setFormat(Paths.font("vcr.ttf"), 22, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText = new FlxText(40, 560, 720, "", 20);
+		descText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
 		for (i in 0...optionsArray.length)
 		{
-			// Alphabet 대신 FlxText 사용
-			var optionText:FlxText = new FlxText(OPTION_X, CENTER_Y + (i * SPACING_Y), 500, optionsArray[i].name, 28);
-			optionText.setFormat(Paths.font("vcr.ttf"), 28, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			var optionText:FlxText = new FlxText(OPTION_X, CENTER_Y + (i * SPACING_Y), 400, optionsArray[i].name, 26);
+			optionText.setFormat(Paths.font("vcr.ttf"), 26, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			optionText.borderSize = 2;
 			optionText.scrollFactor.set();
+			optionText.ID = i;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.38, 0.38);
-				checkbox.updateHitbox();
+				checkbox.scale.set(0.5, 0.5);
+				// updateHitbox() 호출 금지 (오프셋 깨짐 방지)
 				
-				// 체크박스를 옵션 글자 왼쪽에 추적 배치
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -65;
-				checkbox.offsetY = -12;
+				checkbox.offsetX = -55;
+				checkbox.offsetY = -15;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				// 수치를 옵션 글자 왼쪽에 추적 배치
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.isMenuItem = false;
 				valueText.changeX = false;
@@ -142,9 +139,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	
 	override function update(elapsed:Float)
 	{
-		super.update(elapsed);
-
-		// FlxText Y축 부드러운 스크롤 처리
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
 		for (i in 0...grpOptions.members.length)
 		{
@@ -153,6 +147,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.y = FlxMath.lerp(item.y, targetYPos, lerpVal);
 			item.x = OPTION_X;
 		}
+
+		super.update(elapsed);
 
 		if(bindingKey)
 		{
@@ -490,7 +486,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 		if (targetCam != null) {
-			descText.y = targetCam.height - 65;
+			descText.y = targetCam.height - 55;
 			descText.fieldWidth = targetCam.width - 80;
 			descText.x = 40;
 		}
