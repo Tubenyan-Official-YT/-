@@ -158,7 +158,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (checkbox in checkboxGroup)
 		{
-			checkbox.offset.set(0, 0);
+    		checkbox.offset.set(0, 0);
+    		checkbox.updateHitbox();
 		}
 
 		super.update(elapsed);
