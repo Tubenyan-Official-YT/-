@@ -36,7 +36,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var rpcTitle:String;
 
 	private static inline var OPTION_X:Float = 170; // 텍스트 X 위치 유지
-	private static inline var START_Y:Float = 75;   // 전체 상단 시작 위치
+	private static inline var START_Y:Float = 50;   // 전체 상단 시작 위치 (위로 올림)
 	private static inline var SPACING_Y:Float = 80; // 세로 간격
 
 	public function new()
@@ -91,8 +91,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -42; // 가로 간격 축소
-				checkbox.offsetY = -35; // 체크박스 위치 위로 올림
+				checkbox.offsetX = -42;
+				checkbox.offsetY = -35;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -106,7 +106,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -42; // 수치 텍스트 X 위치 일치
+				valueText.offsetX = -42;
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -152,6 +152,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var targetYPos:Float = START_Y + (i * SPACING_Y) - scrollOffset;
 			item.y = FlxMath.lerp(item.y, targetYPos, lerpVal);
 			item.x = OPTION_X;
+		}
+
+		// 체크박스가 체크될 때 우측 하단으로 밀려나는 오프셋 강제 고정
+		for (checkbox in checkboxGroup)
+		{
+			checkbox.offset.set(0, 0);
 		}
 
 		super.update(elapsed);
