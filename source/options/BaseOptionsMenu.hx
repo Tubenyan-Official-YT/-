@@ -37,8 +37,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
-	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 (원래대로)
-	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 (넓게 유지)
+	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 유지
+	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 넓게 유지
 
 	public function new()
 	{
@@ -93,8 +93,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = -42;
-				// 글자 간격과 체크박스 간격의 차이를 반영하여 체크박스만 아래로 더 벌어지도록 설정
-				checkbox.offsetY = -35 + (i * (CHECKBOX_SPACING - TEXT_SPACING));
+				// 오프셋 계산식에 전체 위쪽 이동 값(-40)과 간격 차이 계산식을 함께 반영
+				checkbox.offsetY = -40 + (i * (CHECKBOX_SPACING - TEXT_SPACING));
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
