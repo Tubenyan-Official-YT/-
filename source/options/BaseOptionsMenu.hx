@@ -92,8 +92,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = -60;
-				// 텍스트 중앙 높이와 체크박스 중앙 높이 동기화
-				checkbox.offsetY = (optionText.height - checkbox.height) / 2;
+				// 체크박스 상단 프레임 여백 보정을 위한 수동 Y축 위치 조정
+				checkbox.offsetY = -25;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -108,7 +108,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				valueText.sprTracker = optionText;
 				valueText.offsetX = -85;
-				// 수치 텍스트 중앙 높이 동기화
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -141,7 +140,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	
 	override function update(elapsed:Float)
 	{
-		// super.update 전에 텍스트 목표 좌표를 먼저 확정하여 sprTracker 프레임 밀림 방지
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
 		for (i in 0...grpOptions.members.length)
 		{
