@@ -93,8 +93,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = -42;
-				// 오프셋 계산식에 전체 위쪽 이동 값(-40)과 간격 차이 계산식을 함께 반영
-				checkbox.offsetY = (108 * 0.6 - optionText.height) / 2 - TEXT_SPACING;
+				checkbox.offsetY = (108 * 0.6 - optionText.height) / 2;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
