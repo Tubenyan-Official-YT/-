@@ -22,10 +22,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 설정창 박스 내부 좌표 상수
-	private static inline var COMMON_TEXT_X:Float = 540;
-	private static inline var INIT_CENTER_Y:Float = 220;
-	private static inline var INIT_SPACING_Y:Float = 55;
+	// 설정창 박스 내부 배치 기준 좌표
+	private static inline var COMMON_TEXT_X:Float = 240;
+	private static inline var INIT_CENTER_Y:Float = 200;
+	private static inline var INIT_SPACING_Y:Float = 50;
 
 	public function new()
 	{
@@ -76,7 +76,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			optionText.changeY = false;
 			optionText.distancePerItem.set(0, 0);
 			optionText.setScale(0.38); 
-			optionText.targetY = 0; // 대각선 이동 방지
+			optionText.targetY = 0;
 
 			optionText.x = COMMON_TEXT_X;
 			optionText.y = INIT_CENTER_Y + (i * INIT_SPACING_Y);
@@ -104,7 +104,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.distancePerItem.set(0, 0);
 				valueText.setScale(0.38);
 				valueText.sprTracker = optionText;
-				valueText.offsetX = 150;
+				valueText.offsetX = 160;
 				valueText.offsetY = 0;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -147,10 +147,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var item = grpOptions.members[i];
 			var targetYPos:Float = INIT_CENTER_Y + (i * INIT_SPACING_Y);
 			
-			// Alphabet 자체 이동 로직 무효화 및 X좌표 고정
+			// Alphabet 자체 위치 계산 완전 차단 및 X좌표 고정
 			item.isMenuItem = false;
 			item.changeX = false;
 			item.changeY = false;
+			item.distancePerItem.set(0, 0);
 			item.targetY = 0;
 			item.x = COMMON_TEXT_X;
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
@@ -395,7 +396,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if (option.child != null && Std.isOfType(option.child, AttachedText)) {
 			attach.sprTracker = cast(option.child, AttachedText).sprTracker;
 		}
-		attach.offsetX = 150;
+		attach.offsetX = 160;
 		attach.offsetY = 0;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
@@ -457,6 +458,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (num => item in grpOptions.members)
 		{
+			item.targetY = 0;
+			item.isMenuItem = false;
+			item.changeX = false;
+			item.changeY = false;
+			item.x = COMMON_TEXT_X;
 			item.alpha = (num == curSelected) ? 1.0 : 0.6;
 		}
 		for (text in grpTexts)
