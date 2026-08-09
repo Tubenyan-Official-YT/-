@@ -36,8 +36,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var rpcTitle:String;
 
 	private static inline var OPTION_X:Float = 220;
-	private static inline var CENTER_Y:Float = 200;
-	private static inline var SPACING_Y:Float = 55;
+	// 옵션 카메라 상단 제목 바 아래 시작 위치 및 간격 설정
+	private static inline var START_Y:Float = 110;
+	private static inline var SPACING_Y:Float = 68;
 
 	public function new()
 	{
@@ -77,8 +78,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:FlxText = new FlxText(OPTION_X, CENTER_Y + (i * SPACING_Y), 400, optionsArray[i].name, 26);
-			optionText.setFormat(Paths.font("vcr.ttf"), 26, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			// 폰트 크기 확대 (26 -> 30)
+			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * SPACING_Y), 400, optionsArray[i].name, 30);
+			optionText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			optionText.borderSize = 2;
 			optionText.scrollFactor.set();
 			optionText.ID = i;
@@ -87,13 +89,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(optionsArray[i].type == BOOL)
 			{
 				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.4, 0.4);
+				// 체크박스 크기 확대 (0.4 -> 0.48) 및 위치 상향 조정 (-35)
+				checkbox.scale.set(0.48, 0.48);
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -60;
-				// 체크박스 상단 프레임 여백 보정을 위한 수동 Y축 위치 조정
-				checkbox.offsetY = -25;
+				checkbox.offsetX = -65;
+				checkbox.offsetY = -35;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -104,10 +106,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.isMenuItem = false;
 				valueText.changeX = false;
 				valueText.changeY = false;
-				valueText.setScale(0.38);
+				// 수치 텍스트 크기 확대 (0.38 -> 0.45)
+				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -85;
+				valueText.offsetX = -90;
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -141,10 +144,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		var lerpVal:Float = FlxMath.bound(elapsed * 9.6, 0, 1);
+
+		// 선택 항목이 화면 하단을 벗어날 때만 스크롤되도록 처리
+		var scrollOffset:Float = 0;
+		if (curSelected > 4) {
+			scrollOffset = (curSelected - 4) * SPACING_Y;
+		}
+
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			var targetYPos:Float = CENTER_Y + ((i - curSelected) * SPACING_Y);
+			var targetYPos:Float = START_Y + (i * SPACING_Y) - scrollOffset;
 			item.y = FlxMath.lerp(item.y, targetYPos, lerpVal);
 			item.x = OPTION_X;
 		}
@@ -436,11 +446,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
-		attach.offsetX = -85;
+		attach.offsetX = -90;
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
-		attach.setScale(0.38);
+		attach.setScale(0.45);
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 		if(targetCam != null) attach.cameras = [targetCam];
