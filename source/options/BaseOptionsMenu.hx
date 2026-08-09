@@ -1,6 +1,10 @@
 package options;
 
 import flixel.input.keyboard.FlxKey;
+import flixel.input.gamepad.FlxGamepad;
+import flixel.input.gamepad.FlxGamepadInputID;
+import flixel.input.gamepad.FlxGamepadManager;
+
 import objects.CheckboxThingie;
 import objects.AttachedText;
 import options.Option;
@@ -22,10 +26,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	// 설정창 박스 내부 배치 기준 좌표
-	private static inline var COMMON_TEXT_X:Float = 240;
-	private static inline var INIT_CENTER_Y:Float = 200;
-	private static inline var INIT_SPACING_Y:Float = 50;
+	public var bg:FlxSprite;
+
+	// 고정 위치 기준 좌표 상수
+	private static inline var BASE_X:Float = 320;
+	private static inline var CHECKBOX_OFFSET_X:Float = -105;
 
 	public function new()
 	{
@@ -37,75 +42,61 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
-
-		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
+		
+		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg.color = 0xFFea71fd;
+		bg.screenCenter();
+		bg.antialiasing = ClientPrefs.data.antialiasing;
+		add(bg);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
-		if(targetCam != null) grpOptions.cameras = [targetCam];
 		add(grpOptions);
 
 		grpTexts = new FlxTypedGroup<AttachedText>();
-		if(targetCam != null) grpTexts.cameras = [targetCam];
 		add(grpTexts);
 
 		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
-		if(targetCam != null) checkboxGroup.cameras = [targetCam];
 		add(checkboxGroup);
 
 		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.alpha = 0.6;
-		if(targetCam != null) descBox.cameras = [targetCam];
 		add(descBox);
 
-		var titleText:Alphabet = new Alphabet(20, 12.5, title, true);
-		titleText.setScale(0.5);
-		titleText.alpha = 0.8;
-		if(targetCam != null) titleText.cameras = [targetCam];
+		var titleText:Alphabet = new Alphabet(75, 45, title, true);
+		titleText.setScale(0.6);
+		titleText.alpha = 0.4;
+		add(titleText);
 
-		descText = new FlxText(40, 560, 720, "", 22);
-		descText.setFormat(Paths.font("vcr.ttf"), 22, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText = new FlxText(50, 600, 1180, "", 32);
+		descText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
-		descText.borderSize = 2.0;
-		if(targetCam != null) descText.cameras = [targetCam];
+		descText.borderSize = 2.4;
+		add(descText);
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, 0, optionsArray[i].name, true);
-			optionText.isMenuItem = false;
-			optionText.changeX = false;
-			optionText.changeY = false;
-			optionText.distancePerItem.set(0, 0);
-			optionText.setScale(0.38); 
-			optionText.targetY = 0;
-
-			optionText.x = COMMON_TEXT_X;
-			optionText.y = INIT_CENTER_Y + (i * INIT_SPACING_Y);
+			var optionText:Alphabet = new Alphabet(BASE_X, 260, optionsArray[i].name, false);
+			optionText.isMenuItem = true;
+			optionText.changeX = false; // 대각선 X좌표 계산 비활성화
+			optionText.targetY = i;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
-				var checkbox:CheckboxThingie = new CheckboxThingie(0, 0, Std.string(optionsArray[i].getValue()) == 'true');
-				checkbox.scale.set(0.38, 0.38); 
-				checkbox.updateHitbox();
-				
+				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x + CHECKBOX_OFFSET_X, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -50;
-				checkbox.offsetY = -6;
-				checkbox.copyAlpha = true;
+				checkbox.offsetX = CHECKBOX_OFFSET_X;
+				checkbox.offsetY = -10;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
-				valueText.isMenuItem = false;
-				valueText.changeX = false;
-				valueText.changeY = false;
-				valueText.distancePerItem.set(0, 0);
-				valueText.setScale(0.38);
+				optionText.x = BASE_X - 80;
+				optionText.startPosition.x = BASE_X - 80;
+
+				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 60);
 				valueText.sprTracker = optionText;
-				valueText.offsetX = 160;
-				valueText.offsetY = 0;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
@@ -134,35 +125,17 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	var bindingBlack:FlxSprite;
 	var bindingText:Alphabet;
 	var bindingText2:Alphabet;
-	
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		
-		var lerpVal:Float = flixel.math.FlxMath.bound(elapsed * 9.6, 0, 1);
-		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
-
-		for (i in 0...grpOptions.members.length)
-		{
-			var item = grpOptions.members[i];
-			var targetYPos:Float = INIT_CENTER_Y + (i * INIT_SPACING_Y);
-			
-			// Alphabet 자체 위치 계산 완전 차단 및 X좌표 고정
-			item.isMenuItem = false;
-			item.changeX = false;
-			item.changeY = false;
-			item.distancePerItem.set(0, 0);
-			item.targetY = 0;
-			item.x = COMMON_TEXT_X;
-			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
-		}
 
 		if(bindingKey)
 		{
 			bindingKeyUpdate(elapsed);
 			return;
 		}
-		
+
 		if (controls.UI_UP_P) changeSelection(-1);
 		if (controls.UI_DOWN_P) changeSelection(1);
 
@@ -191,17 +164,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						bindingBlack.scale.set(FlxG.width, FlxG.height);
 						bindingBlack.updateHitbox();
 						bindingBlack.alpha = 0;
-						if(targetCam != null) bindingBlack.cameras = [targetCam];
 						FlxTween.tween(bindingBlack, {alpha: 0.6}, 0.35, {ease: FlxEase.linear});
 						add(bindingBlack);
 	
-						bindingText = new Alphabet(400, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
+						bindingText = new Alphabet(FlxG.width / 2, 160, Language.getPhrase('controls_rebinding', 'Rebinding {1}', [curOption.name]), false);
 						bindingText.alignment = CENTERED;
-						if(targetCam != null) bindingText.cameras = [targetCam];
+						add(bindingText);
 						
-						bindingText2 = new Alphabet(400, 280, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete', []), true);
+						bindingText2 = new Alphabet(FlxG.width / 2, 340, Language.getPhrase('controls_rebinding2', 'Hold ESC to Cancel\nHold Backspace to Delete'), true);
 						bindingText2.alignment = CENTERED;
-						if(targetCam != null) bindingText2.cameras = [targetCam];
+						add(bindingText2);
 	
 						bindingKey = true;
 						holdingEsc = 0;
@@ -303,7 +275,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 				else
 				{
-					leOption.setValue(leOption.defaultKeys.keyboard);
+					leOption.setValue(!Controls.instance.controllerMode ? leOption.defaultKeys.keyboard : leOption.defaultKeys.gamepad);
 					updateBind(leOption);
 				}
 				leOption.change();
@@ -319,7 +291,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	function bindingKeyUpdate(elapsed:Float)
 	{
-		if(FlxG.keys.pressed.ESCAPE)
+		if(FlxG.keys.pressed.ESCAPE || FlxG.gamepads.anyPressed(B))
 		{
 			holdingEsc += elapsed;
 			if(holdingEsc > 0.5)
@@ -328,13 +300,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				closeBinding();
 			}
 		}
-		else if (FlxG.keys.pressed.BACKSPACE)
+		else if (FlxG.keys.pressed.BACKSPACE || FlxG.gamepads.anyPressed(BACK))
 		{
 			holdingEsc += elapsed;
 			if(holdingEsc > 0.5)
 			{
-				curOption.keys.keyboard = NONE;
-				updateBind(InputFormatter.getKeyName(NONE));
+				if (!controls.controllerMode) curOption.keys.keyboard = NONE;
+				else curOption.keys.gamepad = NONE;
+				updateBind(!controls.controllerMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				closeBinding();
 			}
@@ -343,31 +316,74 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			holdingEsc = 0;
 			var changed:Bool = false;
-			
-			if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
+			if(!controls.controllerMode)
 			{
-				var keyPressed:FlxKey = cast (FlxG.keys.firstJustPressed(), FlxKey);
-				var keyReleased:FlxKey = cast (FlxG.keys.firstJustReleased(), FlxKey);
+				if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
+				{
+					var keyPressed:FlxKey = cast (FlxG.keys.firstJustPressed(), FlxKey);
+					var keyReleased:FlxKey = cast (FlxG.keys.firstJustReleased(), FlxKey);
 
-				if(keyPressed != NONE && keyPressed != ESCAPE && keyPressed != BACKSPACE)
-				{
-					changed = true;
-					curOption.keys.keyboard = keyPressed;
+					if(keyPressed != NONE && keyPressed != ESCAPE && keyPressed != BACKSPACE)
+					{
+						changed = true;
+						curOption.keys.keyboard = keyPressed;
+					}
+					else if(keyReleased != NONE && (keyReleased == ESCAPE || keyReleased == BACKSPACE))
+					{
+						changed = true;
+						curOption.keys.keyboard = keyReleased;
+					}
 				}
-				else if(keyReleased != NONE && (keyReleased == ESCAPE || keyReleased == BACKSPACE))
+			}
+			else if(FlxG.gamepads.anyJustPressed(ANY) || FlxG.gamepads.anyJustPressed(LEFT_TRIGGER) || FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER) || FlxG.gamepads.anyJustReleased(ANY))
+			{
+				var keyPressed:FlxGamepadInputID = NONE;
+				var keyReleased:FlxGamepadInputID = NONE;
+				if(FlxG.gamepads.anyJustPressed(LEFT_TRIGGER))
+					keyPressed = LEFT_TRIGGER;
+				else if(FlxG.gamepads.anyJustPressed(RIGHT_TRIGGER))
+					keyPressed = RIGHT_TRIGGER;
+				else
+				{
+					for (i in 0...FlxG.gamepads.numActiveGamepads)
+					{
+						var gamepad:FlxGamepad = FlxG.gamepads.getByID(i);
+						if(gamepad != null)
+						{
+							keyPressed = gamepad.firstJustPressedID();
+							keyReleased = gamepad.firstJustReleasedID();
+							if(keyPressed != NONE || keyReleased != NONE) break;
+						}
+					}
+				}
+
+				if(keyPressed != NONE && keyPressed != FlxGamepadInputID.BACK && keyPressed != FlxGamepadInputID.B)
 				{
 					changed = true;
-					curOption.keys.keyboard = keyReleased;
+					curOption.keys.gamepad = keyPressed;
+				}
+				else if(keyReleased != NONE && (keyReleased == FlxGamepadInputID.BACK || keyReleased == FlxGamepadInputID.B))
+				{
+					changed = true;
+					curOption.keys.gamepad = keyReleased;
 				}
 			}
 
 			if(changed)
 			{
 				var key:String = null;
-				if(curOption.keys.keyboard == null) curOption.keys.keyboard = 'NONE';
-				curOption.setValue(curOption.keys.keyboard);
-				key = InputFormatter.getKeyName(FlxKey.fromString(curOption.keys.keyboard));
-				
+				if(!controls.controllerMode)
+				{
+					if(curOption.keys.keyboard == null) curOption.keys.keyboard = 'NONE';
+					curOption.setValue(curOption.keys.keyboard);
+					key = InputFormatter.getKeyName(FlxKey.fromString(curOption.keys.keyboard));
+				}
+				else
+				{
+					if(curOption.keys.gamepad == null) curOption.keys.gamepad = 'NONE';
+					curOption.setValue(curOption.keys.gamepad);
+					key = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(curOption.keys.gamepad));
+				}
 				updateBind(key);
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 				closeBinding();
@@ -383,31 +399,48 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			text = option.getValue();
 			if(text == null) text = 'NONE';
-			text = InputFormatter.getKeyName(FlxKey.fromString(text));
+
+			if(!controls.controllerMode)
+				text = InputFormatter.getKeyName(FlxKey.fromString(text));
+			else
+				text = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(text));
 		}
 
 		var bind:AttachedText = cast option.child;
-		var attach:AttachedText = new AttachedText(text, 0); 
-		attach.isMenuItem = false;
-		attach.changeX = false;
-		attach.changeY = false;
-		attach.distancePerItem.set(0, 0);
-		
-		if (option.child != null && Std.isOfType(option.child, AttachedText)) {
-			attach.sprTracker = cast(option.child, AttachedText).sprTracker;
-		}
-		attach.offsetX = 160;
-		attach.offsetY = 0;
+		var attach:AttachedText = new AttachedText(text, bind.offsetX);
+		attach.sprTracker = bind.sprTracker;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
-		
-		attach.setScale(0.38);
-		if(OptionsSubState.instance != null) attach.cameras = [OptionsSubState.instance.optionCam];
+		playstationCheck(attach);
+		attach.scaleX = Math.min(1, MAX_KEYBIND_WIDTH / attach.width);
+		attach.x = bind.x;
+		attach.y = bind.y;
 
 		option.child = attach;
 		grpTexts.insert(grpTexts.members.indexOf(bind), attach);
 		grpTexts.remove(bind);
 		bind.destroy();
+	}
+
+	function playstationCheck(alpha:Alphabet)
+	{
+		if(!controls.controllerMode) return;
+
+		var gamepad:FlxGamepad = FlxG.gamepads.firstActive;
+		var model:FlxGamepadModel = gamepad != null ? gamepad.detectedModel : UNKNOWN;
+		var letter = alpha.letters[0];
+		if(model == PS4)
+		{
+			switch(alpha.text)
+			{
+				case '[', ']':
+					letter.image = 'alphabet_playstation';
+					letter.updateHitbox();
+					
+					letter.offset.x += 4;
+					letter.offset.y -= 5;
+			}
+		}
 	}
 
 	function closeBinding()
@@ -436,11 +469,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(option.type == PERCENT) val *= 100;
 		var def:Dynamic = option.defaultValue;
 		option.text = text.replace('%v', val).replace('%d', def);
-
-		if(option.child != null)
-		{
-			option.child.text = '' + val;
-		}
 	}
 	
 	function changeSelection(change:Int = 0)
@@ -448,34 +476,23 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		curSelected = FlxMath.wrap(curSelected + change, 0, optionsArray.length - 1);
 
 		descText.text = optionsArray[curSelected].description;
-
-		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
-		if (targetCam != null) {
-			descText.y = targetCam.height - 65;
-			descText.fieldWidth = targetCam.width - 80;
-			descText.x = 40;
-		}
+		descText.screenCenter(Y);
+		descText.y += 270;
 
 		for (num => item in grpOptions.members)
 		{
-			item.targetY = 0;
-			item.isMenuItem = false;
-			item.changeX = false;
-			item.changeY = false;
-			item.x = COMMON_TEXT_X;
-			item.alpha = (num == curSelected) ? 1.0 : 0.6;
+			item.targetY = num - curSelected;
+			item.alpha = 0.6;
+			if (item.targetY == 0) item.alpha = 1;
 		}
 		for (text in grpTexts)
 		{
-			text.alpha = (text.ID == curSelected) ? 1.0 : 0.6;
-		}
-		for (checkbox in checkboxGroup)
-		{
-			checkbox.alpha = (checkbox.ID == curSelected) ? 1.0 : 0.6;
+			text.alpha = 0.6;
+			if(text.ID == curSelected) text.alpha = 1;
 		}
 
-		descBox.setPosition(descText.x - 10, descText.y - 5);
-		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 10));
+		descBox.setPosition(descText.x - 10, descText.y - 10);
+		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
 		descBox.updateHitbox();
 
 		curOption = optionsArray[curSelected];
@@ -487,6 +504,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (checkbox in checkboxGroup)
 		{
 			checkbox.daValue = Std.string(optionsArray[checkbox.ID].getValue()) == 'true';
+			checkbox.offset.set(0, 0); // 체크 상태 변경 시 애니메이션 프레임 오프셋 초기화
 		}
 	}
 }
