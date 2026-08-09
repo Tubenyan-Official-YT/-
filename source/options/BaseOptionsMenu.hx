@@ -35,9 +35,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	public var title:String;
 	public var rpcTitle:String;
 
-	private static inline var OPTION_X:Float = 170; // 텍스트 X 위치 유지
-	private static inline var START_Y:Float = 50;   // 전체 상단 시작 위치
-	private static inline var SPACING_Y:Float = 115; // 세로 간격 확장 (체크박스 겹침 방지)
+	private static inline var OPTION_X:Float = 170;
+	private static inline var START_Y:Float = 50;
+	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 (원래대로)
+	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 (넓게 유지)
 
 	public function new()
 	{
@@ -77,7 +78,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * SPACING_Y), 400, optionsArray[i].name, 30);
+			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * TEXT_SPACING), 400, optionsArray[i].name, 30);
 			optionText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			optionText.borderSize = 2;
 			optionText.scrollFactor.set();
@@ -92,7 +93,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = -42;
-				checkbox.offsetY = -35;
+				// 글자 간격과 체크박스 간격의 차이를 반영하여 체크박스만 아래로 더 벌어지도록 설정
+				checkbox.offsetY = -35 + (i * (CHECKBOX_SPACING - TEXT_SPACING));
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -143,13 +145,13 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		var scrollOffset:Float = 0;
 		if (curSelected > 3) {
-			scrollOffset = (curSelected - 3) * SPACING_Y;
+			scrollOffset = (curSelected - 3) * TEXT_SPACING;
 		}
 
 		for (i in 0...grpOptions.members.length)
 		{
 			var item = grpOptions.members[i];
-			var targetYPos:Float = START_Y + (i * SPACING_Y) - scrollOffset;
+			var targetYPos:Float = START_Y + (i * TEXT_SPACING) - scrollOffset;
 			item.y = FlxMath.lerp(item.y, targetYPos, lerpVal);
 			item.x = OPTION_X;
 		}
