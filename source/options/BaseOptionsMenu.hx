@@ -37,9 +37,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
-	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 유지
-	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 넓게 유지
-	private static inline var VALUE_OFFSET_X:Float = 350;   // 수치형 텍스트 위치만 오프셋 조절 (원하는 위치로 변경 가능)
+	private static inline var TEXT_SPACING:Float = 80;
+	private static inline var VALUE_PADDING_X:Float = 20; // 텍스트 끝으로부터 떨어진 X 거리
 
 	public function new()
 	{
@@ -108,8 +107,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = VALUE_OFFSET_X;
-				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
 				grpTexts.add(valueText);
@@ -154,6 +151,21 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			var targetYPos:Float = START_Y + (i * TEXT_SPACING) - scrollOffset;
 			item.y = FlxMath.lerp(item.y, targetYPos, lerpVal);
 			item.x = OPTION_X;
+		}
+
+		// 수치 텍스트의 X, Y 좌표 직접 동적 계산
+		for (text in grpTexts)
+		{
+			if (text.ID >= 0 && text.ID < grpOptions.members.length)
+			{
+				var optionText = grpOptions.members[text.ID];
+				if (optionText != null)
+				{
+					var textWidth:Float = Math.max(optionText.frameWidth, optionText.width);
+					text.x = optionText.x + textWidth + VALUE_PADDING_X;
+					text.y = optionText.y + (optionText.height - text.height) / 2;
+				}
+			}
 		}
 
 		for (checkbox in checkboxGroup)
@@ -449,8 +461,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
-		attach.offsetX = VALUE_OFFSET_X;
-		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
 		attach.setScale(0.45);
