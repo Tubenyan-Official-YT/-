@@ -38,7 +38,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
-	private static inline var VALUE_PADDING_X:Float = 25; // 옵션 이름과 수치 텍스트 사이의 간격
+	
+	// X 좌표 기준점과 개별 오프셋을 따로 지정합니다.
+	private static inline var VALUE_BASE_X:Float = 340; // 옵션 이름으로부터 떨어질 기본 X 기준점
+	private static inline var VALUE_OFFSET_X:Float = 0;  // 미세 조정용 추가 오프셋
 
 	public function new()
 	{
@@ -153,7 +156,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// 수치 텍스트의 x, y 좌표를 직접 계산하여 대입
+		// 기준 X 좌표와 오프셋을 따로 합산하여 정확한 위치에 반영
 		for (text in grpTexts)
 		{
 			if (text.ID >= 0 && text.ID < grpOptions.members.length)
@@ -161,7 +164,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				var optionText = grpOptions.members[text.ID];
 				if (optionText != null)
 				{
-					text.x = optionText.x + optionText.width + VALUE_PADDING_X;
+					text.x = optionText.x + VALUE_BASE_X + VALUE_OFFSET_X;
 					text.y = optionText.y + (optionText.height - text.height) / 2;
 				}
 			}
