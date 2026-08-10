@@ -37,8 +37,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
-	private static inline var TEXT_SPACING:Float = 80;
-	private static inline var VALUE_OFFSET_X:Float = -100; // 수치형 항목 오프셋 위치
+	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 유지
+	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 넓게 유지
 
 	public function new()
 	{
@@ -68,6 +68,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.alpha = 0.6;
 		if(targetCam != null) descBox.cameras = [targetCam];
+		add(descBox);
 
 		descText = new FlxText(40, 560, 720, "", 20);
 		descText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -91,8 +92,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -135;
-				checkbox.offsetY = -10;
+				checkbox.offsetX = -42;
+				checkbox.offsetY = (108 * 0.6 - optionText.height) / 2;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -101,13 +102,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.isMenuItem = false;
-				valueText.changeX = true;
-				valueText.changeY = true;
+				valueText.changeX = false;
+				valueText.changeY = false;
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.updateHitbox();
-				valueText.offsetX = VALUE_OFFSET_X;
+				valueText.offsetX = -42; // 체크박스와 동일한 X 위치로 조정
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -155,10 +155,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		for (text in grpTexts)
+		for (checkbox in checkboxGroup)
 		{
-			text.updateHitbox();
-			text.offsetX = VALUE_OFFSET_X;
+			checkbox.offset.set(0, 0);
+			checkbox.updateHitbox();
 		}
 
 		super.update(elapsed);
@@ -445,15 +445,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var bind:AttachedText = cast option.child;
 		var attach:AttachedText = new AttachedText(text, 0);
 		attach.isMenuItem = false;
-		attach.changeX = true;
-		attach.changeY = true;
+		attach.changeX = false;
+		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
-		attach.setScale(0.45);
-		attach.updateHitbox();
-		attach.offsetX = VALUE_OFFSET_X;
+		attach.offsetX = -42;
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
+		attach.setScale(0.45);
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 		if(targetCam != null) attach.cameras = [targetCam];
@@ -489,7 +488,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(option.child != null)
 		{
 			option.child.text = '' + val;
-			option.child.updateHitbox();
 		}
 	}
 	
