@@ -39,6 +39,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 유지
 	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 넓게 유지
+	private static inline var VALUE_OFFSET_X:Float = -42;   // 수치형 텍스트 X 위치 조절용 변수
 
 	public function new()
 	{
@@ -107,7 +108,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -42; // 체크박스와 동일한 X 위치로 조정
+				valueText.offsetX = VALUE_OFFSET_X;
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -448,7 +449,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeX = false;
 		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
-		attach.offsetX = -42;
+		attach.offsetX = VALUE_OFFSET_X;
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
