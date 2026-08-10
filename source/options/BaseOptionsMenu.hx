@@ -101,12 +101,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			{
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.isMenuItem = false;
-				valueText.changeX = false;
-				valueText.changeY = false;
+				valueText.changeX = true;
+				valueText.changeY = true;
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -42 + (108 * 0.6 / 2) - 0;
+				valueText.offsetX = -42 + (108 * 0.6 / 2) - (valueText.width / 2);
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -156,8 +156,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (checkbox in checkboxGroup)
 		{
-    		checkbox.offset.set(0, 0);
-    		checkbox.updateHitbox();
+			checkbox.offset.set(0, 0);
+			checkbox.updateHitbox();
+		}
+
+		// super.update 이전에 텍스트 오프셋을 계산하여 위치가 즉시 반영되도록 수정
+		for (text in grpTexts)
+		{
+			text.offsetX = -42 + (108 * 0.6 / 2) - (text.width / 2);
 		}
 
 		super.update(elapsed);
@@ -323,10 +329,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(nextAccept > 0) {
 			nextAccept -= 1;
 		}
-		for (text in grpTexts)
-		{
-    		text.offsetX = -42 + (108 * 0.6 / 2) - text.width / 2;
-		}
 	}
 
 	function bindingKeyUpdate(elapsed:Float)
@@ -448,14 +450,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		var bind:AttachedText = cast option.child;
 		var attach:AttachedText = new AttachedText(text, 0);
 		attach.isMenuItem = false;
-		attach.changeX = false;
-		attach.changeY = false;
+		attach.changeX = true;
+		attach.changeY = true;
 		attach.sprTracker = bind.sprTracker;
-		attach.offsetX = -42;
+		attach.setScale(0.45);
+		attach.offsetX = -42 + (108 * 0.6 / 2) - (attach.width / 2);
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
-		attach.setScale(0.45);
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 		if(targetCam != null) attach.cameras = [targetCam];
