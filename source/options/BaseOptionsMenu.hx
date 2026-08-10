@@ -39,7 +39,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
 	
-	// X 좌표 계산식 설정 (기준점 + 오프셋)
+	// X 좌표 계산식 기준점과 오프셋 설정
 	private static inline var VALUE_BASE_X:Float = 340;
 	private static inline var VALUE_OFFSET_X:Float = 0;
 
@@ -103,9 +103,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			}
 			else
 			{
-				// AttachedText 생성 시 계산식(기준점 + 오프셋) 적용
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), VALUE_BASE_X + VALUE_OFFSET_X);
+				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
 				valueText.isMenuItem = false;
+				valueText.changeX = false;
+				valueText.changeY = false;
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
@@ -155,7 +156,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// 수치 텍스트의 세로 위치 정렬만 처리
+		// 계산식을 사용하여 자릿수가 늘어나도 X 좌표가 고정되도록 설정
 		for (text in grpTexts)
 		{
 			if (text.ID >= 0 && text.ID < grpOptions.members.length)
@@ -163,7 +164,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				var optionText = grpOptions.members[text.ID];
 				if (optionText != null)
 				{
-					text.offsetY = (optionText.height - text.height) / 2;
+					text.x = optionText.x + VALUE_BASE_X + VALUE_OFFSET_X;
+					text.y = optionText.y + (optionText.height - text.height) / 2;
 				}
 			}
 		}
@@ -456,9 +458,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		var bind:AttachedText = cast option.child;
-		// 갱신될 때도 계산식(기준점 + 오프셋)을 적용하여 생성
-		var attach:AttachedText = new AttachedText(text, VALUE_BASE_X + VALUE_OFFSET_X);
+		var attach:AttachedText = new AttachedText(text, 0);
 		attach.isMenuItem = false;
+		attach.changeX = false;
+		attach.changeY = false;
 		attach.sprTracker = bind.sprTracker;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
