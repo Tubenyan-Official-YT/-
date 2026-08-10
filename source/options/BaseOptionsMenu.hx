@@ -68,7 +68,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.alpha = 0.6;
 		if(targetCam != null) descBox.cameras = [targetCam];
-		add(descBox);
 
 		descText = new FlxText(40, 560, 720, "", 20);
 		descText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -107,7 +106,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
-				valueText.offsetX = -42 + (108 * 0.6 / 2); // 체크박스 중심 x
+				valueText.offsetX = -42 + (108 * 0.6 / 2) - 0;
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -323,6 +322,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		if(nextAccept > 0) {
 			nextAccept -= 1;
+		}
+		for (text in grpTexts)
+		{
+    		text.offsetX = -42 + (108 * 0.6 / 2) - text.width / 2;
 		}
 	}
 
