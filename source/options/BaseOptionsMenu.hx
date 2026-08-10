@@ -38,7 +38,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
-	private static inline var VALUE_PADDING_X:Float = 20; // 텍스트 끝으로부터 떨어진 X 간격
+	private static inline var VALUE_PADDING_X:Float = 25; // 옵션 이름과 수치 텍스트 사이의 간격
 
 	public function new()
 	{
@@ -78,7 +78,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * TEXT_SPACING), 400, optionsArray[i].name, 30);
+			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * TEXT_SPACING), 0, optionsArray[i].name, 30);
 			optionText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			optionText.borderSize = 2;
 			optionText.scrollFactor.set();
@@ -153,7 +153,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// 수치 텍스트 오프셋 동적 계산 적용
+		// 수치 텍스트의 x, y 좌표를 직접 계산하여 대입
 		for (text in grpTexts)
 		{
 			if (text.ID >= 0 && text.ID < grpOptions.members.length)
@@ -161,9 +161,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				var optionText = grpOptions.members[text.ID];
 				if (optionText != null)
 				{
-					var textWidth:Float = Math.max(optionText.frameWidth, optionText.width);
-					text.offsetX = textWidth + VALUE_PADDING_X;
-					text.offsetY = (optionText.height - text.height) / 2;
+					text.x = optionText.x + optionText.width + VALUE_PADDING_X;
+					text.y = optionText.y + (optionText.height - text.height) / 2;
 				}
 			}
 		}
