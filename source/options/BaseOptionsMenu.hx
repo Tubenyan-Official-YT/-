@@ -38,8 +38,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
-	private static inline var CHECKBOX_OFFSET_X:Float = -135; // 체크박스 원래 좌측 위치
-	private static inline var VALUE_CENTER_X:Float = -103;    // 체크박스 중심선 좌표에 수치 정렬
+	private static inline var CHECKBOX_OFFSET_X:Float = -105; // 패널 안쪽에 정상 위치하는 체크박스 오프셋
+	private static inline var VALUE_OFFSET_X:Float = -100;    // 수치 텍스트를 체크박스와 동일한 열에 정렬
 
 	public function new()
 	{
@@ -93,7 +93,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX = CHECKBOX_OFFSET_X;
-				checkbox.offsetY = (108 * 0.6 - optionText.height) / 2;
+				checkbox.offsetY = -10;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
@@ -108,7 +108,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				valueText.sprTracker = optionText;
 				valueText.updateHitbox();
-				valueText.offsetX = VALUE_CENTER_X - (valueText.width / 2);
+				valueText.offsetX = VALUE_OFFSET_X;
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
 				valueText.ID = i;
@@ -159,7 +159,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		for (text in grpTexts)
 		{
 			text.updateHitbox();
-			text.offsetX = VALUE_CENTER_X - (text.width / 2);
+			text.offsetX = VALUE_OFFSET_X;
 		}
 
 		super.update(elapsed);
@@ -451,7 +451,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.sprTracker = bind.sprTracker;
 		attach.setScale(0.45);
 		attach.updateHitbox();
-		attach.offsetX = VALUE_CENTER_X - (attach.width / 2);
+		attach.offsetX = VALUE_OFFSET_X;
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
 		attach.ID = bind.ID;
