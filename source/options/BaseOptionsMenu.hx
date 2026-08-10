@@ -37,8 +37,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
-	private static inline var TEXT_SPACING:Float = 80;     // 글자 간격 유지
-	private static inline var CHECKBOX_SPACING:Float = 115; // 체크박스 간격 넓게 유지
+	private static inline var TEXT_SPACING:Float = 80;
+	private static inline var CHECKBOX_SPACING:Float = 115;
 
 	public function new()
 	{
@@ -106,6 +106,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				valueText.setScale(0.45);
 				
 				valueText.sprTracker = optionText;
+				valueText.updateHitbox();
 				valueText.offsetX = -42 + (108 * 0.6 / 2) - (valueText.width / 2);
 				valueText.offsetY = (optionText.height - valueText.height) / 2;
 				valueText.copyAlpha = true;
@@ -160,9 +161,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			checkbox.updateHitbox();
 		}
 
-		// super.update 이전에 텍스트 오프셋을 계산하여 위치가 즉시 반영되도록 수정
 		for (text in grpTexts)
 		{
+			text.updateHitbox();
 			text.offsetX = -42 + (108 * 0.6 / 2) - (text.width / 2);
 		}
 
@@ -454,6 +455,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		attach.changeY = true;
 		attach.sprTracker = bind.sprTracker;
 		attach.setScale(0.45);
+		attach.updateHitbox();
 		attach.offsetX = -42 + (108 * 0.6 / 2) - (attach.width / 2);
 		attach.offsetY = (bind.sprTracker.height - attach.height) / 2;
 		attach.copyAlpha = true;
@@ -493,6 +495,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(option.child != null)
 		{
 			option.child.text = '' + val;
+			option.child.updateHitbox();
 		}
 	}
 	
