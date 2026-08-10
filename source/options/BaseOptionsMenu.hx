@@ -38,8 +38,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var OPTION_X:Float = 170;
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
-	private static inline var CHECKBOX_OFFSET_X:Float = -105; // 패널 안쪽에 정상 위치하는 체크박스 오프셋
-	private static inline var VALUE_OFFSET_X:Float = -100;    // 수치 텍스트를 체크박스와 동일한 열에 정렬
+	private static inline var VALUE_OFFSET_X:Float = -100; // 수치형 항목 오프셋 위치
 
 	public function new()
 	{
@@ -92,7 +91,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = CHECKBOX_OFFSET_X;
+				checkbox.offsetX = -135;
 				checkbox.offsetY = -10;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
