@@ -104,7 +104,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			else
 			{
 				var valueText:FlxText = new FlxText(0, 0, 0, '' + optionsArray[i].getValue(), 24);
-				valueText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				valueText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				valueText.borderSize = 2;
 				valueText.scrollFactor.set();
 				valueText.ID = i;
@@ -153,17 +153,18 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// FlxText 위치 매 프레임 업데이트
 // FlxText(값 텍스트) 위치 매 프레임 업데이트
 		for (text in grpTexts)
 		{
 			if (text.ID >= 0 && text.ID < grpOptions.members.length)
 			{
+				var option = optionsArray[text.ID];
 				var optionText = grpOptions.members[text.ID];
-				if (optionText != null)
+				
+				if (option != null && optionText != null && option.type != KEYBIND)
 				{
-					// 옵션 글자 바로 오른쪽에 20px 간격을 두고 배치
-					text.x = optionText.x + optionText.width + 20;
+					// 옵션 이름 왼쪽에 간격을 두고 정렬
+					text.x = optionText.x - text.width - 20;
 					text.y = optionText.y + (optionText.height - text.height) / 2;
 				}
 			}
