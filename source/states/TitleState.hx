@@ -1,6 +1,7 @@
 package states;
 
 import backend.WeekData;
+import backend.EnergySystem;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -66,6 +67,7 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
+		EnergySystem.init()
 		Paths.clearStoredMemory();
 		super.create();
 		Paths.clearUnusedMemory();
@@ -109,6 +111,10 @@ class TitleState extends MusicBeatState
 		else
 			startIntro();
 		#end
+		var testEnergy:FlxText = FlxText(0,0,0,EnergySystem.currentEnergy ,48,true);
+		testEnergy.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		testEnergy.borderSize = 1.5; // 외곽선 두께 (1.2 ~ 2.0 권장)
+		add(testEnergy);
 	}
 
 	var logoBl:FlxSprite;
@@ -460,8 +466,6 @@ class TitleState extends MusicBeatState
 
 		if (initialized && pressedEnter && !skippedIntro)
 		{
-			FlxG.sound.music.stop();
-			FlxG.sound.playMusic(Paths.music('nyankoMain'));
 			skipIntro();
 		}
 
@@ -543,7 +547,7 @@ class TitleState extends MusicBeatState
 					FlxG.sound.playMusic(Paths.music('nyankoIntro'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
-					createCoolText(['냥코대전쟁:전설의 시작'], 40);
+					createCoolText(['프나펑 냥코대전쟁:전설의 시작'], 40);
 				case 4:
 					addMoreText('냥코 유튜버 튜브냥이 제작', 40);
 				case 5:
@@ -570,6 +574,8 @@ class TitleState extends MusicBeatState
 					addMoreText(': 전설의 시작'); // credTextShit.text += '\nFunkin';
 
 				case 17:
+					FlxG.sound.music.stop();
+					FlxG.sound.playMusic(Paths.music('nyankoMain'));
 					skipIntro();
 			}
 		}
