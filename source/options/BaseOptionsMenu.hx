@@ -38,10 +38,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
 	
-	// 체크박스 위치 및 크기 기준 상수
+	// 체크박스 오프셋 및 위치 기준
 	private static inline var CHECKBOX_OFFSET_X:Float = -42;
 	private static inline var CHECKBOX_SIZE:Float = 108 * 0.6; // 64.8
-	private static inline var VALUE_OFFSET_X:Float = 0; // 미세 조정용 추가 오프셋
+	private static inline var VALUE_OFFSET_X:Float = 0;
 
 	public function new()
 	{
@@ -153,7 +153,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// 일반 FlxText 위치 계산식 적용
+		// FlxText 위치 매 프레임 업데이트
 		for (text in grpTexts)
 		{
 			if (text.ID >= 0 && text.ID < grpOptions.members.length)
@@ -495,7 +495,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		if(option.child != null)
 		{
-			option.child.text = '' + val;
+			var textChild:FlxText = cast option.child;
+			textChild.text = '' + val;
 		}
 	}
 	
