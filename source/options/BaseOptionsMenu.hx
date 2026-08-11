@@ -163,8 +163,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				
 				if (option != null && optionText != null && option.type != KEYBIND)
 				{
-					// 옵션 이름 왼쪽에 간격을 두고 정렬
-					text.x = optionText.x - text.width - 20;
+					// 여백을 20에서 60으로 늘려 더 왼쪽으로 배치
+					text.x = optionText.x - text.width - 60;
 					text.y = optionText.y + (optionText.height - text.height) / 2;
 				}
 			}
