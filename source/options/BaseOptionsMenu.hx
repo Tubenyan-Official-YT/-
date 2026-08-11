@@ -159,15 +159,16 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		// 계산식을 사용하여 자릿수가 늘어나도 X 좌표가 고정되도록 설정
 		for (text in grpTexts)
 		{
-			if (text.ID >= 0 && text.ID < grpOptions.members.length)
-			{
-				var optionText = grpOptions.members[text.ID];
-				if (optionText != null)
-				{
-					text.x = optionText.x + VALUE_BASE_X + VALUE_OFFSET_X;
-					text.y = optionText.y + (optionText.height - text.height) / 2;
-				}
-			}
+    		if (text.ID >= 0 && text.ID < grpOptions.members.length)
+    		{
+        		var optionText = grpOptions.members[text.ID];
+        		if (optionText != null)
+        		{
+            		var checkboxCenterX:Float = optionText.x + (-42) + (108 * 0.6 / 2);
+            		text.x = checkboxCenterX - text.width / 2;
+            		text.y = optionText.y + (optionText.height - text.height) / 2;
+        		}
+    		}
 		}
 
 		for (checkbox in checkboxGroup)
