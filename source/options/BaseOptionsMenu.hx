@@ -154,6 +154,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		// FlxText 위치 매 프레임 업데이트
+// FlxText(값 텍스트) 위치 매 프레임 업데이트
 		for (text in grpTexts)
 		{
 			if (text.ID >= 0 && text.ID < grpOptions.members.length)
@@ -161,8 +162,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				var optionText = grpOptions.members[text.ID];
 				if (optionText != null)
 				{
-					var checkboxCenterX:Float = optionText.x + CHECKBOX_OFFSET_X + (CHECKBOX_SIZE / 2);
-					text.x = checkboxCenterX - (text.width / 2) + VALUE_OFFSET_X;
+					// 옵션 글자 바로 오른쪽에 20px 간격을 두고 배치
+					text.x = optionText.x + optionText.width + 20;
 					text.y = optionText.y + (optionText.height - text.height) / 2;
 				}
 			}
