@@ -13,7 +13,6 @@ import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
 
 import objects.CheckboxThingie;
-import objects.AttachedText;
 import options.Option;
 import backend.InputFormatter;
 import backend.Language;
@@ -27,7 +26,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 	private var grpOptions:FlxTypedGroup<FlxText>;
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
-	private var grpTexts:FlxTypedGroup<AttachedText>;
+	private var grpTexts:FlxTypedGroup<FlxText>;
 
 	private var descBox:FlxSprite;
 	private var descText:FlxText;
@@ -39,9 +38,10 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private static inline var START_Y:Float = 50;
 	private static inline var TEXT_SPACING:Float = 80;
 	
-	// X 좌표 계산식 기준점과 오프셋 설정
-	private static inline var VALUE_BASE_X:Float = 340;
-	private static inline var VALUE_OFFSET_X:Float = 0;
+	// 체크박스 위치 및 크기 기준 상수
+	private static inline var CHECKBOX_OFFSET_X:Float = -42;
+	private static inline var CHECKBOX_SIZE:Float = 108 * 0.6; // 64.8
+	private static inline var VALUE_OFFSET_X:Float = 0; // 미세 조정용 추가 오프셋
 
 	public function new()
 	{
@@ -60,7 +60,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		if(targetCam != null) grpOptions.cameras = [targetCam];
 		add(grpOptions);
 
-		grpTexts = new FlxTypedGroup<AttachedText>();
+		grpTexts = new FlxTypedGroup<FlxText>();
 		if(targetCam != null) grpTexts.cameras = [targetCam];
 		add(grpTexts);
 
@@ -95,23 +95,20 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				checkbox.updateHitbox();
 				
 				checkbox.sprTracker = optionText;
-				checkbox.offsetX = -42;
-				checkbox.offsetY = (108 * 0.6 - optionText.height) / 2;
+				checkbox.offsetX = CHECKBOX_OFFSET_X;
+				checkbox.offsetY = (CHECKBOX_SIZE - optionText.height) / 2;
 				checkbox.copyAlpha = true;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
 			}
 			else
 			{
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), 0);
-				valueText.isMenuItem = false;
-				valueText.changeX = false;
-				valueText.changeY = false;
-				valueText.setScale(0.45);
-				
-				valueText.sprTracker = optionText;
-				valueText.copyAlpha = true;
+				var valueText:FlxText = new FlxText(0, 0, 0, '' + optionsArray[i].getValue(), 24);
+				valueText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				valueText.borderSize = 2;
+				valueText.scrollFactor.set();
 				valueText.ID = i;
+				
 				grpTexts.add(valueText);
 				optionsArray[i].child = valueText;
 			}
@@ -156,19 +153,19 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			item.x = OPTION_X;
 		}
 
-		// 계산식을 사용하여 자릿수가 늘어나도 X 좌표가 고정되도록 설정
+		// 일반 FlxText 위치 계산식 적용
 		for (text in grpTexts)
 		{
-    		if (text.ID >= 0 && text.ID < grpOptions.members.length)
-    		{
-        		var optionText = grpOptions.members[text.ID];
-        		if (optionText != null)
-        		{
-            		var checkboxCenterX:Float = optionText.x + (-42) + (108 * 0.6 / 2);
-            		text.x = checkboxCenterX - text.width / 2;
-            		text.y = optionText.y + (optionText.height - text.height) / 2;
-        		}
-    		}
+			if (text.ID >= 0 && text.ID < grpOptions.members.length)
+			{
+				var optionText = grpOptions.members[text.ID];
+				if (optionText != null)
+				{
+					var checkboxCenterX:Float = optionText.x + CHECKBOX_OFFSET_X + (CHECKBOX_SIZE / 2);
+					text.x = checkboxCenterX - (text.width / 2) + VALUE_OFFSET_X;
+					text.y = optionText.y + (optionText.height - text.height) / 2;
+				}
+			}
 		}
 
 		for (checkbox in checkboxGroup)
@@ -458,15 +455,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				text = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(text));
 		}
 
-		var bind:AttachedText = cast option.child;
-		var attach:AttachedText = new AttachedText(text, 0);
-		attach.isMenuItem = false;
-		attach.changeX = false;
-		attach.changeY = false;
-		attach.sprTracker = bind.sprTracker;
-		attach.copyAlpha = true;
+		var bind:FlxText = cast option.child;
+		var attach:FlxText = new FlxText(0, 0, 0, text, 24);
+		attach.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		attach.borderSize = 2;
+		attach.scrollFactor.set();
 		attach.ID = bind.ID;
-		attach.setScale(0.45);
 
 		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
 		if(targetCam != null) attach.cameras = [targetCam];
