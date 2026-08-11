@@ -111,7 +111,7 @@ class TitleState extends MusicBeatState
 		else
 			startIntro();
 		#end
-		var testEnergy:FlxText = new FlxText(0,0,0,EnergySystem.currentEnergy ,48,true);
+		var testEnergy:FlxText = new FlxText(0,0,0,Std.string(EnergySystem.currentEnergy) ,48,true);
 		testEnergy.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		testEnergy.borderSize = 1.5; // 외곽선 두께 (1.2 ~ 2.0 권장)
 		add(testEnergy);
