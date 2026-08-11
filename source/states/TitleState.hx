@@ -67,7 +67,7 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		EnergySystem.init()
+		EnergySystem.init();
 		Paths.clearStoredMemory();
 		super.create();
 		Paths.clearUnusedMemory();
