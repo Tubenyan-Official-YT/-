@@ -357,11 +357,10 @@ class FreeplayState extends MusicBeatState
 						EnergySystem.spendIt(Std.int(value));
 					}
 					else {
-						new ErrorState("통솔력 부족", function ():Void{
-							MusicBeatState.switchState(new FreeplayState());
-						}, function ():Void{
-							MusicBeatState.switchState(new FreeplayState());
-						});
+						MusicBeatState.switchState(new states.ErrorState("통솔력부족",
+							function() MusicBeatState.switchState(new states.MainMenuState()),
+							function() MusicBeatState.switchState(new states.MainMenuState())));
+						return;
 					}
 				}
 				
@@ -595,6 +594,12 @@ class FreeplayState extends MusicBeatState
 			if (value != null) {
 				if (EnergySystem.canSpend(Std.int(value))) {
 					EnergySystem.spendIt(Std.int(value));
+				}
+				else {
+					MusicBeatState.switchState(new states.ErrorState("통솔력부족",
+						function() MusicBeatState.switchState(new states.MainMenuState()),
+						function() MusicBeatState.switchState(new states.MainMenuState())));
+					return;
 				}
 			}
 			
