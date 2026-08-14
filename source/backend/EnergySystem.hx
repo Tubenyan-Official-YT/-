@@ -10,7 +10,7 @@ class EnergySystem
     public static var currentEnergy:Int = 100;
     public static var givingSec:Float = 300;
     public static var lastSaveTime:Float = 0;
-    private var timer:Float = 0;
+    private static var timer:Float = 0;
 
     public static function init():Void
     {
