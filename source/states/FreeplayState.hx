@@ -356,6 +356,13 @@ class FreeplayState extends MusicBeatState
 					if (EnergySystem.canSpend(Std.int(value))) {
 						EnergySystem.spendIt(Std.int(value));
 					}
+					else {
+						new ErrorState("통솔력 부족", function ():Void{
+							MusicBeatState.switchState(new FreeplayState());
+						}, function ():Void{
+							MusicBeatState.switchState(new FreeplayState());
+						});
+					}
 				}
 				
 				try {
