@@ -213,9 +213,11 @@ class FreeplayState extends MusicBeatState
     	startButton.animation.addByPrefix('selected', 'start selected', 24, true);
 		startButton.animation.play('idle');
     	startButton.antialiasing = ClientPrefs.data.antialiasing;
+		startButton.scale.set(0.6, 0.6);
+		startButton.updateHitbox();
     	freeplayUIGrp.add(startButton);
 		
-		var energyTxt:FlxText = new FlxText(startButton.x, 0, 0,Std.string(EnergySystem.currentEnergy) ,48,true);
+		var energyTxt:FlxText = new FlxText(0, 0, 0,Std.string(EnergySystem.currentEnergy) ,48,true);
 		energyTxt.setFormat(Paths.font("pixel-latin.ttf"), 17, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		energyTxt.borderSize = 1.5;
 		energyTxt.x = startButton.x + startButton.width - energyTxt.width;
