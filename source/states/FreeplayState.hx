@@ -212,7 +212,9 @@ class FreeplayState extends MusicBeatState
 		startButton.animation.play('idle');
     	startButton.antialiasing = ClientPrefs.data.antialiasing;
     	freeplayUIGrp.add(startButton);
-
+		
+		energyText = new FlxText(startButton.x,)
+		
 		add(freeplayUIGrp);
 		
 		if(curSelected >= songs.length) curSelected = 0;
@@ -328,7 +330,15 @@ class FreeplayState extends MusicBeatState
 				persistentUpdate = false;
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-
+			
+				var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energy.json'));
+				var value:Dynamic = Reflect.field(energyData, poop);
+				if (value != null) {
+					if (EnergySystem.canSpend(Std.int(value))) {
+						EnergySystem.spendIt(Std.int(value));
+					}
+				}
+				
 				try {
 					Song.loadFromJson(poop, songLowercase);
 					PlayState.isStoryMode = false;
@@ -553,7 +563,15 @@ class FreeplayState extends MusicBeatState
 			persistentUpdate = false;
 			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-
+			
+			var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energy.json'));
+			var value:Dynamic = Reflect.field(energyData, poop);
+			if (value != null) {
+				if (EnergySystem.canSpend(Std.int(value))) {
+					EnergySystem.spendIt(Std.int(value));
+				}
+			}
+			
 			try
 			{
 				Song.loadFromJson(poop, songLowercase);
