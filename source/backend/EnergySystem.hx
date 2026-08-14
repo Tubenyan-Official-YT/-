@@ -70,7 +70,16 @@ class EnergySystem
         FlxG.save.data.lastSaveTime = lastSaveTime;
         FlxG.save.flush();
     }
-
+    public static function canSpend(howmuch:Int):Bool {
+        if (howmuch > currentEnergy) return false;
+        else return true;
+    }
+    public static function spendIt(howmuch:Int):Void {
+        if (canSpend(howmuch)) {
+            currentEnergy -= howmuch;
+            save();
+        }
+    }
     public static function update(elapsed:Float):Void
     {
         timer += elapsed;
