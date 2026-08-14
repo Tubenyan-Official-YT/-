@@ -3,6 +3,8 @@ package states;
 import backend.WeekData;
 import backend.Highscore;
 import backend.Song;
+import backend.EnergySystem;
+
 
 import objects.HealthIcon;
 import objects.MusicPlayer;
