@@ -218,8 +218,12 @@ class FreeplayState extends MusicBeatState
     	freeplayUIGrp.add(startButton);
 
 		var energyBox:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('freeplayUI/energyBox'));
+		energyBox.scale.set(0.6,0.6);
+		energyBox.updateHitbox();
 		energyBox.x = startButton.x;
 		energyBox.y = startButton.y - energyBox.height - 5;
+		startButton.antialiasing = ClientPrefs.data.antialiasing;
+		freeplayUIGrp.add(energyBox);
 		
 		var energyTxt:FlxText = new FlxText(0, 0, 0,Std.string(EnergySystem.currentEnergy) ,48,true);
 		energyTxt.setFormat(Paths.font("pixel-latin.ttf"), 17, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
