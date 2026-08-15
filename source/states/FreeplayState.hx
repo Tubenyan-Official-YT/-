@@ -44,6 +44,9 @@ class FreeplayState extends MusicBeatState
 	var diffButtons:Array<FlxSprite> = [];
 	var charSelectBtn:FlxSprite;
 	var startButton:FlxSprite;
+
+	var energyTxt:FlxText;
+	var energyBox:FlxSprite;
 	
 	var bg:FlxSprite;
 	var missingTextBG:FlxSprite;
@@ -217,7 +220,7 @@ class FreeplayState extends MusicBeatState
 		startButton.updateHitbox();
     	freeplayUIGrp.add(startButton);
 
-		var energyBox:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('freeplayUI/energyBox'));
+		energyBox:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('freeplayUI/energyBox'));
 		energyBox.scale.set(0.6,0.6);
 		energyBox.updateHitbox();
 		freeplayUIGrp.add(energyBox);
@@ -226,7 +229,7 @@ class FreeplayState extends MusicBeatState
 		startButton.antialiasing = ClientPrefs.data.antialiasing;
 		
 		
-		var energyTxt:FlxText = new FlxText(0, 0, 0,Std.string(EnergySystem.currentEnergy) ,48,true);
+		energyTxt:FlxText = new FlxText(0, 0, 0,Std.string(EnergySystem.currentEnergy) ,48,true);
 		energyTxt.setFormat(Paths.font("pixel-latin.ttf"), 17, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		energyTxt.borderSize = 1.5;
 		freeplayUIGrp.add(energyTxt);
@@ -318,6 +321,7 @@ class FreeplayState extends MusicBeatState
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
 		energyTxt.text = Std.string(EnergySystem.currentEnergy);
+		
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
 			if (charSelectBtn.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
 			charSelectBtn.scale.set(0.7, 0.7);
