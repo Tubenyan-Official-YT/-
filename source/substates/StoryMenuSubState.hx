@@ -260,7 +260,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 			try
 			{
 				var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energyStory.json'));
-				var value:Dynamic = Reflect.field(energyData, Std.string(loadedWeeks[curWeek] + curDifficulty));
+				var value:Dynamic = Reflect.field(energyData, Std.string(loadedWeeks[curWeek].fileName + curDifficulty));
 				if (value != null) {
 					if (EnergySystem.canSpend(Std.int(value))) {
 						EnergySystem.spendIt(Std.int(value));
