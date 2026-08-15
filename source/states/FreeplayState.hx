@@ -335,7 +335,6 @@ class FreeplayState extends MusicBeatState
 			charSelectBtn.animation.play('idle');
 		}
 		
-		// 👌👈👌👈👌👈👌👈 내가 하고싶은거 승주는 맨날 여친이랑 하는거. I want to do this, and my friend kim seung ju do this every day with his girlfriend.
 		
 		
 		if (FlxG.mouse.overlaps(startButton)) { 
@@ -425,6 +424,9 @@ class FreeplayState extends MusicBeatState
 			
 			if(songs.length > 0)
 			{
+				if (FlxG.keys.justPressed.INSERT) {
+					EnergySystem.currentEnergy += 10;
+				}
 				if(FlxG.keys.justPressed.HOME)
 				{
 					curSelected = 0;
