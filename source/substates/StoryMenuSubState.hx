@@ -6,6 +6,8 @@ import backend.StageData;
 import backend.Difficulty;
 import backend.Paths;
 import backend.ClientPrefs;
+import backend.EnergySystem;
+
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -257,6 +259,19 @@ class StoryMenuSubState extends MusicBeatSubstate
 
 			try
 			{
+				var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energyStory.json'));
+				var value:Dynamic = Reflect.field(energyData, loadedWeeks[curWeek] + curDifficulty);
+				if (value != null) {
+					if (EnergySystem.canSpend(Std.int(value))) {
+						EnergySystem.spendIt(Std.int(value));
+					}
+					else {
+						MusicBeatState.switchState(new states.ErrorState("통솔력이 부족해서 게임을 못 해요!",
+							function() MusicBeatState.switchState(new states.MainMenuState()),
+							function() MusicBeatState.switchState(new states.MainMenuState())));
+						return;
+					}
+				}
 				PlayState.storyPlaylist = songArray;
 				PlayState.isStoryMode = true;
 				selectedWeek = true;
@@ -272,7 +287,9 @@ class StoryMenuSubState extends MusicBeatSubstate
 			}
 			catch(e:Dynamic)
 			{
-				trace('ERROR! $e');
+				MusicBeatState.switchState(new states.ErrorState("에러! : %e",
+					function() MusicBeatState.switchState(new states.MainMenuState()),
+					function() MusicBeatState.switchState(new states.MainMenuState())));
 				return;
 			}
 			
