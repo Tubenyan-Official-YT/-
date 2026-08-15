@@ -317,7 +317,7 @@ class FreeplayState extends MusicBeatState
 		var shiftMult:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
-		
+		energyTxt.text = Std.string(EnergySystem.currentEnergy);
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
 			if (charSelectBtn.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
 			charSelectBtn.scale.set(0.7, 0.7);
