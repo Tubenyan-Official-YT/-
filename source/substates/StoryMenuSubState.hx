@@ -257,21 +257,29 @@ class StoryMenuSubState extends MusicBeatSubstate
 				songArray.push(leWeek[i][0]);
 			}
 
-			try
-			{
-				var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energyStory.json'));
-				var value:Dynamic = Reflect.field(energyData, Std.string(loadedWeeks[curWeek].fileName + curDifficulty));
-				if (value != null) {
-					if (EnergySystem.canSpend(Std.int(value))) {
-						EnergySystem.spendIt(Std.int(value));
-					}
-					else {
-						MusicBeatState.switchState(new states.ErrorState("통솔력이 부족해서 게임을 못 해요!",
-							function() MusicBeatState.switchState(new states.MainMenuState()),
-							function() MusicBeatState.switchState(new states.MainMenuState())));
-						return;
-					}
-				}
+			try {
+				var rawJson:String = Paths.getTextFromFile('data/energyStory.json');
+    			if (rawJson != null && rawJson.length > 0)
+    			{
+        			var energyData:Dynamic = haxe.Json.parse(rawJson);
+        			var diffName:String = Difficulty.getString(curDifficulty, false).toLowerCase();
+        			var keyName:String = loadedWeeks[curWeek].fileName + '-' + diffName;
+        
+        			var value:Dynamic = Reflect.field(energyData, keyName);
+        			if (value != null) {
+            			var cost:Int = Std.parseInt(Std.string(value));
+            
+            			if (EnergySystem.canSpend(cost)) {
+                			EnergySystem.spendIt(cost);
+            			}
+            			else {
+                			MusicBeatState.switchState(new states.ErrorState("통솔력이 부족해서 게임을 못 해요!",
+                    			function() MusicBeatState.switchState(new states.MainMenuState()),
+                    			function() MusicBeatState.switchState(new states.MainMenuState())));
+                			return;
+            			}
+        			}
+    			}
 				PlayState.storyPlaylist = songArray;
 				PlayState.isStoryMode = true;
 				selectedWeek = true;
