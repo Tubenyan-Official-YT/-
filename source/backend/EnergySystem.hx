@@ -85,13 +85,15 @@ class EnergySystem
             save();
         }
     }
-    public static function update(elapsed:Float):Void
+public static function update(elapsed:Float):Void
     {
         timer += elapsed;
-        if (timer > givingSec) {
-            if (currentEnergy < maxEnergy) currentEnergy += addEnergy;
-            timer = 0;
-            save();
+        if (timer >= givingSec) {
+            if (currentEnergy < maxEnergy) {
+                currentEnergy += addEnergy;
+                if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
+            }
+            timer = 0; lastSaveTime = Date.now().getTime() / 1000; save();
         }
     }
     public static function addLS(howmuch:Int):Void {
