@@ -75,17 +75,20 @@ class EnergySystem
         FlxG.save.data.leaderShip = leaderShip;
         FlxG.save.flush();
     }
+
     public static function canSpend(howmuch:Int):Bool {
         if (howmuch > currentEnergy) return false;
         else return true;
     }
+
     public static function spendIt(howmuch:Int):Void {
         if (canSpend(howmuch)) {
             currentEnergy -= howmuch;
             save();
         }
     }
-public static function update(elapsed:Float):Void
+
+    public static function update(elapsed:Float):Void
     {
         timer += elapsed;
         if (timer >= givingSec) {
@@ -93,13 +96,15 @@ public static function update(elapsed:Float):Void
                 currentEnergy += addEnergy;
                 if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
             }
-            timer = 0; lastSaveTime = Date.now().getTime() / 1000; save();
+            timer = 0; 
+            lastSaveTime = Date.now().getTime() / 1000; 
+            save();
         }
     }
+
     public static function addLS(howmuch:Int):Void {
-        // 리더십추가
-        if (leaderShip != null) {
-            leaderShip += 1;
-        }
+        // 리더십 추가 (Int 타입 null 검사 제거 및 인자값 반영)
+        leaderShip += howmuch;
+        save();
     }
 }
