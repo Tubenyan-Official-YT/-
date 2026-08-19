@@ -40,7 +40,7 @@ class CharacterSelectState extends MusicBeatState
         leftArrow = new FlxSprite(100, 0);
         leftArrow.frames = Paths.getSparrowAtlas('charSelect/arrowLeft');
         leftArrow.animation.addByPrefix('idle', 'idle', 24, true);
-        leftArrow.animation.addByPrefix('select', 'select', 24, false);
+        leftArrow.animation.addByPrefix('select', 'select', 24, true); // 누르는 동안 무한 반복
         leftArrow.animation.play('idle');
         leftArrow.screenCenter(Y);
         add(leftArrow);
@@ -49,7 +49,7 @@ class CharacterSelectState extends MusicBeatState
         rightArrow = new FlxSprite(FlxG.width - 200, 0);
         rightArrow.frames = Paths.getSparrowAtlas('charSelect/arrowRight');
         rightArrow.animation.addByPrefix('idle', 'idle', 24, true);
-        rightArrow.animation.addByPrefix('select', 'select', 24, false);
+        rightArrow.animation.addByPrefix('select', 'select', 24, true); // 무한 반복
         rightArrow.animation.play('idle');
         rightArrow.screenCenter(Y);
         add(rightArrow);
@@ -65,16 +65,27 @@ class CharacterSelectState extends MusicBeatState
         super.update(elapsed);
         if (isTransitioning) return;
 
-        // select 애니메이션 재생 종료 후 idle로 복귀
-        if (leftArrow.animation.curAnim != null && leftArrow.animation.curAnim.name == 'select' && leftArrow.animation.curAnim.finished) {
+        // Psych Engine controls 시스템 적용 (누르고 있으면 select 재생, 떼면 idle)
+        if (controls.UI_LEFT) {
+            leftArrow.animation.play('select');
+        } else {
             leftArrow.animation.play('idle');
         }
-        if (rightArrow.animation.curAnim != null && rightArrow.animation.curAnim.name == 'select' && rightArrow.animation.curAnim.finished) {
+
+        if (controls.UI_RIGHT) {
+            rightArrow.animation.play('select');
+        } else {
             rightArrow.animation.play('idle');
         }
 
-        if (FlxG.keys.justPressed.LEFT) changeSelection(-1);
-        if (FlxG.keys.justPressed.RIGHT) changeSelection(1);
+        // 입력 시 1회 선택 변경
+        if (controls.UI_LEFT_P) {
+            changeSelection(-1);
+        }
+        if (controls.UI_RIGHT_P) {
+            changeSelection(1);
+        }
+
         if (controls.ACCEPT) selectCharacter();
         if (controls.BACK) MusicBeatState.switchState(new MainMenuState());
     }
@@ -112,13 +123,6 @@ class CharacterSelectState extends MusicBeatState
         curSelected %= charList.length;
 
         FlxG.sound.play(Paths.sound('scrollMenu'));
-
-        // 선택 방향에 따라 화살표 애니메이션 재생
-        if (change < 0) {
-            leftArrow.animation.play('select', true);
-        } else if (change > 0) {
-            rightArrow.animation.play('select', true);
-        }
 
         var name:String = charList[curSelected];
         var data:Array<String> = charData.get(name);
