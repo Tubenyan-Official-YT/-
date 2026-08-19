@@ -241,7 +241,7 @@ class FreeplayState extends MusicBeatState
 		lsTxt.borderSize = 1.5;
 		freeplayUIGrp.add(lsTxt);
 		lsTxt.x = startButton.x + startButton.width - lsTxt.width - 2;
-		lsTxt.y = startButton.y - 2
+		lsTxt.y = startButton.y - 2;
 		
 		add(freeplayUIGrp);
 		
