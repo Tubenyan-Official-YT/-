@@ -1,5 +1,5 @@
 package states;
- 
+
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxTimer;
@@ -8,9 +8,8 @@ import openfl.utils.Assets;
 
 class CharacterSelectState extends MusicBeatState
 {
-
     public static var selectedSongGroup:String = "bf_songs";
-    // 위의 항목은 캐릭터선택임
+
     var charData:Map<String, Array<String>> = new Map<String, Array<String>>();
     var charList:Array<String> = [];
     var curSelected:Int = 0;
@@ -19,21 +18,32 @@ class CharacterSelectState extends MusicBeatState
     // 화면 요소
     var bg:FlxSprite;
     var charSprite:FlxSprite;
-    var nameSprite:FlxSprite; // 텍스트 대신 사용할 이름 이미지
+    var nameSprite:FlxSprite;
+    var leftArrow:FlxSprite;
+    var rightArrow:FlxSprite;
 
     override function create()
     {
-        // 1. 배경 (초기화)
+        // 1. 배경
         bg = new FlxSprite().loadGraphic(Paths.image('charSelectBG'));
         add(bg);
 
-        // 2. 캐릭터 스프라이트
+        // 2. 캐릭터 스프라이트 (스패로우 시트용)
         charSprite = new FlxSprite();
         add(charSprite);
 
-        // 3. 이름 이미지 스프라이트 (하단 배치용)
+        // 3. 이름 이미지 스프라이트
         nameSprite = new FlxSprite(0, 600);
         add(nameSprite);
+
+        // 4. 왼쪽/오른쪽 화살표
+        leftArrow = new FlxSprite(100, 0).loadGraphic(Paths.image('charSelect/arrowLeft'));
+        leftArrow.screenCenter(Y);
+        add(leftArrow);
+
+        rightArrow = new FlxSprite(FlxG.width - 200, 0).loadGraphic(Paths.image('charSelect/arrowRight'));
+        rightArrow.screenCenter(Y);
+        add(rightArrow);
 
         loadCharacterJson();
         changeSelection(0);
@@ -51,19 +61,17 @@ class CharacterSelectState extends MusicBeatState
         if (controls.ACCEPT) selectCharacter();
         if (controls.BACK) MusicBeatState.switchState(new MainMenuState());
     }
+
     function loadCharacterJson()
     {
         var path:String = Paths.modsJson('characterSelect');
     
         if (sys.FileSystem.exists(path)) {
-        // 파일을 읽어온 뒤, 혹시 모를 공백이나 유령 문자를 trim()으로 완전히 잘라냅니다.
             var rawJson:String = sys.io.File.getContent(path).trim();
         
-        // 가져온 텍스트가 제대로 열리고 닫혔는지 검사합니다.
             if (rawJson.startsWith('{') && rawJson.endsWith('}')) {
                 var parsed:Dynamic = Json.parse(rawJson);
                 for (field in Reflect.fields(parsed)) {
-                // 내부 배열 데이터를 안전하게 String 배열로 캐스팅하여 맵에 넣습니다.
                     var dataArray:Array<Dynamic> = Reflect.field(parsed, field);
                     var stringArray:Array<String> = [];
                     for (item in dataArray) {
@@ -80,7 +88,6 @@ class CharacterSelectState extends MusicBeatState
             trace("JSON 파일을 찾을 수 없습니다: " + path);
         }
     }
-    
 
     function changeSelection(change:Int = 0)
     {
@@ -92,12 +99,17 @@ class CharacterSelectState extends MusicBeatState
         var name:String = charList[curSelected];
         var data:Array<String> = charData.get(name); // [노래폴더, 배경이미지]
 
-        // 이미지 적용
+        // 배경 적용
         bg.loadGraphic(Paths.image(data[1])); 
-        charSprite.loadGraphic(Paths.image('charSelect/' + name));
+
+        // 캐릭터 스패로우 시트 로드 및 idle 애니메이션 재생
+        charSprite.frames = Paths.getSparrowAtlas('charSelect/' + name);
+        charSprite.animation.addByPrefix('idle', 'idle', 24, true);
+        charSprite.animation.addByPrefix('select', 'select', 24, false);
+        charSprite.animation.play('idle');
         charSprite.screenCenter();
 
-        // 이름 이미지 적용 (shared/images/charNames/ 폴더 활용)
+        // 이름 이미지 적용
         nameSprite.loadGraphic(Paths.image('charNames/' + name));
         nameSprite.screenCenter(X);
     }
@@ -109,22 +121,22 @@ class CharacterSelectState extends MusicBeatState
     
         var data:Array<String> = charData.get(name);
         if (data != null && data.length > 0) {
-            // 1. 메모리에 값을 대입합니다.
             FlxG.save.data.selectedSongGroup = data[0];
-            // 2. 물리 하드디스크에 강제로 즉시 완벽 저장합니다.
             FlxG.save.flush();
         }
     
         FlxG.sound.play(Paths.sound('charSelect/' + name));
-        charSprite.loadGraphic(Paths.image('charSelect/' + name + 'go'));
+
+        // 선택 애니메이션 재생
+        if (charSprite.animation.getByName('select') != null) {
+            charSprite.animation.play('select');
+        }
         charSprite.screenCenter();
 
-        // 3. 타이머가 돌기 전에 프리플레이의 이전 곡 데이터를 완전히 밀어버려 충돌을 방지합니다.
         backend.WeekData.weeksList = [];
         backend.WeekData.weeksLoaded.clear();
 
         new FlxTimer().start(1.5, function(tmr:FlxTimer) {
-            // 상태를 깨끗이 하고 안전하게 FreeplayState 진입
             MusicBeatState.switchState(new FreeplayState());
         });
     }
