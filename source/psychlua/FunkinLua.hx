@@ -425,6 +425,7 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "addLS", function(howmuch:Int) {
 			EnergySystem.addLS(howmuch);
+			EnergySystem.save();
 		});
 		Lua_helper.add_callback(lua, "loadMultipleFrames", function(variable:String, images:Array<String>) {
 			var split:Array<String> = variable.split('.');
