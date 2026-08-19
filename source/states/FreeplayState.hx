@@ -234,7 +234,7 @@ class FreeplayState extends MusicBeatState
 		energyTxt.borderSize = 1.5;
 		freeplayUIGrp.add(energyTxt);
 		energyTxt.x = startButton.x + startButton.width - energyTxt.width - 50;
-		energyTxt.y = startButton.y - energyTxt.height - 10;
+		energyTxt.y = startButton.y - energyTxt.height - 12;
 		
 		
 		add(freeplayUIGrp);
