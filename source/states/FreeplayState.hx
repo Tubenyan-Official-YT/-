@@ -47,6 +47,8 @@ class FreeplayState extends MusicBeatState
 
 	var energyTxt:FlxText;
 	var energyBox:FlxSprite;
+
+	var lsTxt:FlxText;
 	
 	var bg:FlxSprite;
 	var missingTextBG:FlxSprite;
