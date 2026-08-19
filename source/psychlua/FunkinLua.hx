@@ -4,6 +4,7 @@ package psychlua;
 import backend.WeekData;
 import backend.Highscore;
 import backend.Song;
+import backend.EnergySystem;
 
 import openfl.Lib;
 import openfl.utils.Assets;
@@ -421,6 +422,9 @@ class FunkinLua {
 			{
 				LuaUtils.loadFrames(spr, image, spriteType);
 			}
+		});
+		Lua_helper.add_callback(lua, "addLS", function(howmuch:Int) {
+			EnergySystem.addLS(howmuch);
 		});
 		Lua_helper.add_callback(lua, "loadMultipleFrames", function(variable:String, images:Array<String>) {
 			var split:Array<String> = variable.split('.');
