@@ -10,6 +10,8 @@ class EnergySystem
     public static var currentEnergy:Int = 100;
     public static var givingSec:Float = 300;
     public static var lastSaveTime:Float = 0;
+
+    public static var leaderShip:Int = 0;
     private static var timer:Float = 0;
 
     public static function init():Void
@@ -54,6 +56,8 @@ class EnergySystem
         if (FlxG.save.data.addEnergy != null) addEnergy = FlxG.save.data.addEnergy;
         if (FlxG.save.data.currentEnergy != null) currentEnergy = FlxG.save.data.currentEnergy;
         if (FlxG.save.data.givingSec != null) givingSec = FlxG.save.data.givingSec;
+
+        if (FlxG.save.data.leaderShip != null) leaderShip = FlxG.save.data.leaderShip;
         
         if (FlxG.save.data.lastSaveTime != null) lastSaveTime = FlxG.save.data.lastSaveTime;
         else lastSaveTime = Date.now().getTime() / 1000;
@@ -68,6 +72,7 @@ class EnergySystem
         FlxG.save.data.currentEnergy = currentEnergy;
         FlxG.save.data.givingSec = givingSec;
         FlxG.save.data.lastSaveTime = lastSaveTime;
+        FlxG.save.data.leaderShip = leaderShip;
         FlxG.save.flush();
     }
     public static function canSpend(howmuch:Int):Bool {
@@ -87,6 +92,12 @@ class EnergySystem
             if (currentEnergy < maxEnergy) currentEnergy += addEnergy;
             timer = 0;
             save();
+        }
+    }
+    public static function addLS(howmuch:Int):Void {
+        // 리더십추가
+        if (leaderShip != null) {
+            leaderShip += 1;
         }
     }
 }
