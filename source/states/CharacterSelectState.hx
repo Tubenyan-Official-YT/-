@@ -28,7 +28,7 @@ class CharacterSelectState extends MusicBeatState
         bg = new FlxSprite().loadGraphic(Paths.image('charSelectBG'));
         add(bg);
 
-        // 2. 캐릭터 스프라이트 (스패로우 시트용)
+        // 2. 캐릭터 스프라이트
         charSprite = new FlxSprite();
         add(charSprite);
 
@@ -36,12 +36,21 @@ class CharacterSelectState extends MusicBeatState
         nameSprite = new FlxSprite(0, 600);
         add(nameSprite);
 
-        // 4. 왼쪽/오른쪽 화살표
-        leftArrow = new FlxSprite(100, 0).loadGraphic(Paths.image('charSelect/arrowLeft'));
+        // 4. 왼쪽 화살표 (스패로우 시트)
+        leftArrow = new FlxSprite(100, 0);
+        leftArrow.frames = Paths.getSparrowAtlas('charSelect/arrowLeft');
+        leftArrow.animation.addByPrefix('idle', 'idle', 24, true);
+        leftArrow.animation.addByPrefix('select', 'select', 24, false);
+        leftArrow.animation.play('idle');
         leftArrow.screenCenter(Y);
         add(leftArrow);
 
-        rightArrow = new FlxSprite(FlxG.width - 200, 0).loadGraphic(Paths.image('charSelect/arrowRight'));
+        // 5. 오른쪽 화살표 (스패로우 시트)
+        rightArrow = new FlxSprite(FlxG.width - 200, 0);
+        rightArrow.frames = Paths.getSparrowAtlas('charSelect/arrowRight');
+        rightArrow.animation.addByPrefix('idle', 'idle', 24, true);
+        rightArrow.animation.addByPrefix('select', 'select', 24, false);
+        rightArrow.animation.play('idle');
         rightArrow.screenCenter(Y);
         add(rightArrow);
 
@@ -55,6 +64,14 @@ class CharacterSelectState extends MusicBeatState
     {
         super.update(elapsed);
         if (isTransitioning) return;
+
+        // select 애니메이션 재생 종료 후 idle로 복귀
+        if (leftArrow.animation.curAnim != null && leftArrow.animation.curAnim.name == 'select' && leftArrow.animation.curAnim.finished) {
+            leftArrow.animation.play('idle');
+        }
+        if (rightArrow.animation.curAnim != null && rightArrow.animation.curAnim.name == 'select' && rightArrow.animation.curAnim.finished) {
+            rightArrow.animation.play('idle');
+        }
 
         if (FlxG.keys.justPressed.LEFT) changeSelection(-1);
         if (FlxG.keys.justPressed.RIGHT) changeSelection(1);
@@ -96,20 +113,21 @@ class CharacterSelectState extends MusicBeatState
 
         FlxG.sound.play(Paths.sound('scrollMenu'));
 
-        var name:String = charList[curSelected];
-        var data:Array<String> = charData.get(name); // [노래폴더, 배경이미지]
+        // 선택 방향에 따라 화살표 애니메이션 재생
+        if (change < 0) {
+            leftArrow.animation.play('select', true);
+        } else if (change > 0) {
+            rightArrow.animation.play('select', true);
+        }
 
-        // 배경 적용
+        var name:String = charList[curSelected];
+        var data:Array<String> = charData.get(name);
+
         bg.loadGraphic(Paths.image(data[1])); 
 
-        // 캐릭터 스패로우 시트 로드 및 idle 애니메이션 재생
-        charSprite.frames = Paths.getSparrowAtlas('charSelect/' + name);
-        charSprite.animation.addByPrefix('idle', 'idle', 24, true);
-        charSprite.animation.addByPrefix('select', 'select', 24, false);
-        charSprite.animation.play('idle');
+        charSprite.loadGraphic(Paths.image('charSelect/' + name));
         charSprite.screenCenter();
 
-        // 이름 이미지 적용
         nameSprite.loadGraphic(Paths.image('charNames/' + name));
         nameSprite.screenCenter(X);
     }
@@ -126,11 +144,7 @@ class CharacterSelectState extends MusicBeatState
         }
     
         FlxG.sound.play(Paths.sound('charSelect/' + name));
-
-        // 선택 애니메이션 재생
-        if (charSprite.animation.getByName('select') != null) {
-            charSprite.animation.play('select');
-        }
+        charSprite.loadGraphic(Paths.image('charSelect/' + name + 'go'));
         charSprite.screenCenter();
 
         backend.WeekData.weeksList = [];
