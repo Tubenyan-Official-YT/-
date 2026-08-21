@@ -109,8 +109,7 @@ class EnergySystem
     }
     public static function spendLS(howmuch:Int):Void {
         // 리더십빼기, 통솔력 추가하기 (Int 타입 null 검사 제거 및 인자값 반영)
-        leaderShip -= howmuch;
-        addLS(howmuch * maxEnergy);
+        if (leaderShip > 0) leaderShip -= howmuch; currentEnergy += howmuch * maxEnergy;
         save();
     }
 }
