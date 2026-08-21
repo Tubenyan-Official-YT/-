@@ -38,10 +38,6 @@ class EnergySystem
         var cycles:Int = Std.int(elapsed / givingSec);
 
         currentEnergy += cycles * addEnergy;
-        if (currentEnergy > maxEnergy)
-        {
-            currentEnergy = maxEnergy;
-        }
 
         lastSaveTime += cycles * givingSec;
         save();
