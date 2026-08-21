@@ -242,8 +242,8 @@ class FreeplayState extends MusicBeatState
 		lsTxt.setFormat(Paths.font("pixel-latin.ttf"), 15, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		lsTxt.borderSize = 1.5;
 		freeplayUIGrp.add(lsTxt);
-		lsTxt.x = startButton.x + startButton.width - lsTxt.width - lsTxt.width / 2;
-		lsTxt.y = energyBox.y - 2;
+		lsTxt.x = startButton.x + startButton.width - lsTxt.width - lsTxt.width / 2 - 1;
+		lsTxt.y = energyBox.y;
 		
 		add(freeplayUIGrp);
 		
