@@ -338,7 +338,7 @@ class FreeplayState extends MusicBeatState
 		}
 		
 		if (FlxG.mouse.overlaps(energyBox) && FlxG.mouse.justPressed) { 
-        	EnergySystem.spendLS(1);
+			if (EnergySystem.leaderShip > 0) EnergySystem.spendLS(1);
 		}
 		
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
