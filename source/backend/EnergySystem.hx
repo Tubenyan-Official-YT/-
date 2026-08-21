@@ -103,8 +103,13 @@ class EnergySystem
     }
 
     public static function addLS(howmuch:Int):Void {
-        // 리더십 추가 (Int 타입 null 검사 제거 및 인자값 반영)
+        // 리더십추가 (Int 타입 null 검사 제거 및 인자값 반영)
         leaderShip += howmuch;
+        save();
+    }
+    public static function spendLS(howmuch:Int):Void {
+        // 리더십빼기 (Int 타입 null 검사 제거 및 인자값 반영)
+        leaderShip -= howmuch;
         save();
     }
 }
