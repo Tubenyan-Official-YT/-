@@ -329,6 +329,10 @@ class FreeplayState extends MusicBeatState
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
 		energyTxt.text = Std.string(EnergySystem.currentEnergy);
+		lsTxt.text = Std.string(EnergySystem.leaderShip);
+		if (FlxG.mouse.overlaps(energyBox) && FlxG.mouse.justPressed) { 
+        	EnergySystem.spendLS(1);
+		}
 		
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
 			if (charSelectBtn.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
