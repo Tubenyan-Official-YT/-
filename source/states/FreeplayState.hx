@@ -330,6 +330,13 @@ class FreeplayState extends MusicBeatState
 
 		energyTxt.text = Std.string(EnergySystem.currentEnergy);
 		lsTxt.text = Std.string(EnergySystem.leaderShip);
+
+		if (EnergySystem.currentEnergy > EnergySystem.maxEnergy) {
+    		energyTxt.color = 0xFF04BD20; // Alpha(FF), Red(04), Green(BD), Blue(20)
+		} else {
+    		energyTxt.color = 0xFFFFFFFF; // 초과 상태가 아닐 때 기본 색상(흰색) 복원
+		}
+		
 		if (FlxG.mouse.overlaps(energyBox) && FlxG.mouse.justPressed) { 
         	EnergySystem.spendLS(1);
 		}
