@@ -31,13 +31,17 @@ class EnergySystem
     public static function calculateEnergy():Void
     {
         var now = Date.now().getTime() / 1000;
+        if (currentEnergy >= maxEnergy) {
+            lastSaveTime = now;
+            return;
+        }
         var elapsed = now - lastSaveTime;
-
         if (elapsed < givingSec) return;
-
+        
         var cycles:Int = Std.int(elapsed / givingSec);
 
         currentEnergy += cycles * addEnergy;
+        if (currentEnergy > maxEnergy) currentEnergy = maxEnergy; // 최대치 제한
 
         lastSaveTime += cycles * givingSec;
         save();
