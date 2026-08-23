@@ -79,10 +79,24 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.0;
 		if(targetCam != null) descText.cameras = [targetCam];
 
+		var maxTextWidth:Float = (targetCam != null ? targetCam.width : FlxG.width) - OPTION_X - 20;
+
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * TEXT_SPACING), 0, optionsArray[i].name, 30);
+			var optionText:FlxText = new FlxText(OPTION_X, START_Y + (i * TEXT_SPACING), maxTextWidth, optionsArray[i].name, 30);
 			optionText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			optionText.wordWrap = true;
+			optionText.autoSize = false;
+			// 텍스트가 2줄 이상이면 글자 크기를 줄여서 한 줄에 맞춤
+			if(optionText.textField.numLines > 1)
+			{
+				var shrinkSize:Int = 30;
+				while(optionText.textField.numLines > 1 && shrinkSize > 16)
+				{
+					shrinkSize -= 2;
+					optionText.setFormat(Paths.font("vcr.ttf"), shrinkSize, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				}
+			}
 			optionText.borderSize = 2;
 			optionText.scrollFactor.set();
 			optionText.ID = i;
