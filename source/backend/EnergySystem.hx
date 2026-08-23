@@ -112,4 +112,8 @@ class EnergySystem
         if (leaderShip > 0) leaderShip -= howmuch; currentEnergy += howmuch * maxEnergy;
         save();
     }
+    public static function addMaxEnergy(howmuch:Int):Void {
+        maxEnergy += howmuch;
+        save();
+    }
 }
