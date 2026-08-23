@@ -38,22 +38,7 @@ class LanguageSubState extends MusicBeatSubstate
 						languages.push(langFile);
 
 					if(!displayLanguages.exists(langFile))
-					{
-						var path:String = '$directory/$file';
-						#if MODS_ALLOWED 
-						var txt:String = File.getContent(path);
-						#else
-						var txt:String = Assets.getText(path);
-						#end
-
-						var id:Int = txt.indexOf('\n');
-						if(id > 0) //language display name shouldnt be an empty string or null
-						{
-							var name:String = txt.substr(0, id).trim();
-							if(!name.contains(':')) displayLanguages.set(langFile, name);
-						}
-						else if(txt.trim().length > 0 && !txt.contains(':')) displayLanguages.set(langFile, txt.trim());
-					}
+						displayLanguages.set(langFile, langFile);
 				}
 			}
 		}
