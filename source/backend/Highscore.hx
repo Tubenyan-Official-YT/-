@@ -26,20 +26,25 @@ class Highscore
 		if(song == null) return;
 		var daSong:String = formatSong(song, diff);
 
+		// 미스 카운트는 최소 기록으로 독립 저장 (점수 갱신과 무관)
+		if(misses >= 0)
+		{
+			if (!songMisses.exists(daSong) || songMisses.get(daSong) > misses)
+				setMisses(daSong, misses);
+		}
+
 		if (songScores.exists(daSong))
 		{
 			if (songScores.get(daSong) < score)
 			{
 				setScore(daSong, score);
 				if(rating >= 0) setRating(daSong, rating);
-				if(misses >= 0) setMisses(daSong, misses);
 			}
 		}
 		else
 		{
 			setScore(daSong, score);
 			if(rating >= 0) setRating(daSong, rating);
-			if(misses >= 0) setMisses(daSong, misses);
 		}
 	}
 
