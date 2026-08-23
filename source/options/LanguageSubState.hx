@@ -25,7 +25,7 @@ class LanguageSubState extends MusicBeatSubstate
 		add(grpLanguages);
 
 		languages.push(ClientPrefs.defaultData.language); //English (US)
-		displayLanguages.set(ClientPrefs.defaultData.language, Language.defaultLangName);
+		displayLanguages.set(ClientPrefs.defaultData.language, ClientPrefs.defaultData.language);
 		var directories:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'data/');
 		for (directory in directories)
 		{
@@ -65,7 +65,9 @@ class LanguageSubState extends MusicBeatSubstate
 			if(name == null) name = lang;
 
 			var text:FlxSprite = new FlxSprite().loadGraphic(Paths.image(name));
-			text.scale.set(0.55, 0.55); // 글자 크기 축소
+			text.scale.set(0.55, 0.55);
+			text.screenCenter(X);
+			text.x += 0; // 화면 중앙
 			grpLanguages.add(text);
 		}
 		changeSelected();
@@ -81,11 +83,10 @@ class LanguageSubState extends MusicBeatSubstate
 		{
 			if (item == null) continue;
 			item.scale.set(0.55, 0.55);
-			item.x = 150; // 좌측 시작점 고정
+			item.screenCenter(X); // 화면 중앙 정렬
 			
-			// 개별 스프라이트에 변수를 저장하지 않고, 현재 순번(num)과 선택된 값의 차이로 targetY를 계산합니다.
 			var itemTargetY:Float = num - curSelected;
-			var targetYPos:Float = 140 + (itemTargetY * 70); // 작은 창 규격에 맞춘 간격
+			var targetYPos:Float = 140 + (itemTargetY * 70);
 			item.y = flixel.math.FlxMath.lerp(item.y, targetYPos, lerpVal);
 		}
 		
