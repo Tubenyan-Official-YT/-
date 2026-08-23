@@ -427,6 +427,11 @@ class FunkinLua {
 			EnergySystem.addLS(howmuch);
 			EnergySystem.save();
 		});
+		
+		Lua_helper.add_callback(lua, "addMaxEnergy", function(howmuch:Int) {
+			EnergySystem.addMaxEnergy(howmuch);
+		});
+		
 		Lua_helper.add_callback(lua, "loadMultipleFrames", function(variable:String, images:Array<String>) {
 			var split:Array<String> = variable.split('.');
 			var spr:FlxSprite = LuaUtils.getObjectDirectly(split[0]);
