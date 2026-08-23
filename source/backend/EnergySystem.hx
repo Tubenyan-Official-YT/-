@@ -116,7 +116,7 @@ class EnergySystem
         maxEnergy += howmuch;
         save();
     }
-    public static function addEnergy(howmuch:Int):Void {
+    public static function addcurEnergy(howmuch:Int):Void {
         currentEnergy += howmuch;
         if (currentEnergy >= maxEnergy) currentEnergy = maxEnergy;
         save();
