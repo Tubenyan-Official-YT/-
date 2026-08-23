@@ -11,13 +11,14 @@ class LanguageSubState extends MusicBeatSubstate
 	var languages:Array<String> = [];
 	var displayLanguages:Map<String, String> = [];
 	var curSelected:Int = 0;
+	var optionCam:flixel.FlxCamera;
 	
 	public function new()
 	{
 		super();
 		
-		var targetCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
-		if(targetCam != null) grpLanguages.cameras = [targetCam];
+		optionCam = OptionsSubState.instance != null ? OptionsSubState.instance.optionCam : null;
+		if(optionCam != null) grpLanguages.cameras = [optionCam];
 		
 		var bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
@@ -64,10 +65,10 @@ class LanguageSubState extends MusicBeatSubstate
 			var name:String = displayLanguages.get(lang);
 			if(name == null) name = lang;
 
-			var text:FlxSprite = new FlxSprite().loadGraphic(Paths.image(name));
+			var graphic = Paths.image(name);
+			var text:FlxSprite = new FlxSprite();
+			if(graphic != null) text.loadGraphic(graphic);
 			text.scale.set(0.55, 0.55);
-			text.screenCenter(X);
-			text.x += 0; // 화면 중앙
 			grpLanguages.add(text);
 		}
 		changeSelected();
@@ -83,7 +84,10 @@ class LanguageSubState extends MusicBeatSubstate
 		{
 			if (item == null) continue;
 			item.scale.set(0.55, 0.55);
-			item.screenCenter(X); // 화면 중앙 정렬
+			
+			// 카메라 기준 x 중앙 정렬
+			var camWidth:Float = optionCam != null ? optionCam.width : FlxG.width;
+			item.x = (camWidth - item.width) * 0.5;
 			
 			var itemTargetY:Float = num - curSelected;
 			var targetYPos:Float = 140 + (itemTargetY * 70);
