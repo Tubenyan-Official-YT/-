@@ -433,7 +433,7 @@ class FunkinLua {
 		});
 		
 		Lua_helper.add_callback(lua, "addEnergy", function(howmuch:Int) {
-			EnergySystem.addEnergy(howmuch);
+			EnergySystem.addcurEnergy(howmuch);
 		});
 		
 		Lua_helper.add_callback(lua, "loadMultipleFrames", function(variable:String, images:Array<String>) {
