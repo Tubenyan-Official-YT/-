@@ -537,77 +537,77 @@ class FreeplayState extends MusicBeatState
 			persistentUpdate = false;
 			openSubState(new GameplayChangersSubstate());
 		}
-		else if(FlxG.keys.justPressed.SPACE)
-		{
-			if(instPlaying != curSelected && !player.playingMusic)
-			{
-				destroyFreeplayVocals();
-				FlxG.sound.music.volume = 0;
-
-				Mods.currentModDirectory = songs[curSelected].folder;
-				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-				Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
-				if (PlayState.SONG.needsVoices)
-				{
-					vocals = new FlxSound();
-					try
-					{
-						var playerVocals:String = getVocalFromCharacter(PlayState.SONG.player1);
-						var loadedVocals = Paths.voices(PlayState.SONG.song, (playerVocals != null && playerVocals.length > 0) ? playerVocals : 'Player');
-						if(loadedVocals == null) loadedVocals = Paths.voices(PlayState.SONG.song);
-						
-						if(loadedVocals != null && loadedVocals.length > 0)
-						{
-							vocals.loadEmbedded(loadedVocals);
-							FlxG.sound.list.add(vocals);
-							vocals.persist = vocals.looped = true;
-							vocals.volume = 0.8;
-							vocals.play();
-							vocals.pause();
-						}
-						else vocals = FlxDestroyUtil.destroy(vocals);
-					}
-					catch(e:Dynamic)
-					{
-						vocals = FlxDestroyUtil.destroy(vocals);
-					}
-					
-					opponentVocals = new FlxSound();
-					try
-					{
-						var oppVocals:String = getVocalFromCharacter(PlayState.SONG.player2);
-						var loadedVocals = Paths.voices(PlayState.SONG.song, (oppVocals != null && oppVocals.length > 0) ? oppVocals : 'Opponent');
-						if(loadedVocals != null && loadedVocals.length > 0)
-						{
-							opponentVocals.loadEmbedded(loadedVocals);
-							FlxG.sound.list.add(opponentVocals);
-							opponentVocals.persist = opponentVocals.looped = true;
-							opponentVocals.volume = 0.8;
-							opponentVocals.play();
-							opponentVocals.pause();
-						}
-						else opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
-					}
-					catch(e:Dynamic)
-					{
-						opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
-					}
-				}
-
-				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.8);
-				FlxG.sound.music.pause();
-				instPlaying = curSelected;
-
-				player.playingMusic = true;
-				player.curTime = 0;
-				player.switchPlayMusic();
-				player.pauseOrResume(true);
-			}
-			else if (instPlaying == curSelected && player.playingMusic)
-			{
-				player.pauseOrResume(!player.playing);
-			}
-		}
+// 		else if(FlxG.keys.justPressed.SPACE)
+// 		{
+// 			if(instPlaying != curSelected && !player.playingMusic)
+// 			{
+// 				destroyFreeplayVocals();
+// 				FlxG.sound.music.volume = 0;
+// 
+// 				Mods.currentModDirectory = songs[curSelected].folder;
+// 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+// 				Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+// 				if (PlayState.SONG.needsVoices)
+// 				{
+// 					vocals = new FlxSound();
+// 					try
+// 					{
+// 						var playerVocals:String = getVocalFromCharacter(PlayState.SONG.player1);
+// 						var loadedVocals = Paths.voices(PlayState.SONG.song, (playerVocals != null && playerVocals.length > 0) ? playerVocals : 'Player');
+// 						if(loadedVocals == null) loadedVocals = Paths.voices(PlayState.SONG.song);
+// 						
+// 						if(loadedVocals != null && loadedVocals.length > 0)
+// 						{
+// 							vocals.loadEmbedded(loadedVocals);
+// 							FlxG.sound.list.add(vocals);
+// 							vocals.persist = vocals.looped = true;
+// 							vocals.volume = 0.8;
+// 							vocals.play();
+// 							vocals.pause();
+// 						}
+// 						else vocals = FlxDestroyUtil.destroy(vocals);
+// 					}
+// 					catch(e:Dynamic)
+// 					{
+// 						vocals = FlxDestroyUtil.destroy(vocals);
+// 					}
+// 					
+// 					opponentVocals = new FlxSound();
+// 					try
+// 					{
+// 						var oppVocals:String = getVocalFromCharacter(PlayState.SONG.player2);
+// 						var loadedVocals = Paths.voices(PlayState.SONG.song, (oppVocals != null && oppVocals.length > 0) ? oppVocals : 'Opponent');
+// 						if(loadedVocals != null && loadedVocals.length > 0)
+// 						{
+// 							opponentVocals.loadEmbedded(loadedVocals);
+// 							FlxG.sound.list.add(opponentVocals);
+// 							opponentVocals.persist = opponentVocals.looped = true;
+// 							opponentVocals.volume = 0.8;
+// 							opponentVocals.play();
+// 							opponentVocals.pause();
+// 						}
+// 						else opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
+// 					}
+// 					catch(e:Dynamic)
+// 					{
+// 						opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
+// 					}
+// 				}
+// 
+// 				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0.8);
+// 				FlxG.sound.music.pause();
+// 				instPlaying = curSelected;
+// 
+// 				player.playingMusic = true;
+// 				player.curTime = 0;
+// 				player.switchPlayMusic();
+// 				player.pauseOrResume(true);
+// 			}
+// 			else if (instPlaying == curSelected && player.playingMusic)
+// 			{
+// 				player.pauseOrResume(!player.playing);
+// 			}
+// 		}
 		else if (controls.ACCEPT && !player.playingMusic)
 		{
 			persistentUpdate = false;
