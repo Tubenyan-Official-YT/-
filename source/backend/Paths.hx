@@ -236,7 +236,7 @@ class Paths
 		if (langCode != null && langCode != ClientPrefs.defaultData.language)
 		{
 			var localizedKey:String = 'images/$langCode/$key';
-			if (fileExists(localizedKey + '.png', IMAGE, true))
+			if (fileExists(localizedKey + '.png', IMAGE))
 				return localizedKey;
 		}
 		return 'images/$key';
