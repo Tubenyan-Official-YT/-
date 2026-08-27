@@ -7,6 +7,7 @@ import haxe.Json;
 
 #if LUA_ALLOWED
 import psychlua.FunkinLua;
+import backend.Language;
 #end
 
 typedef Achievement =
@@ -202,11 +203,11 @@ class Achievements {
 
 		var modLoaded:String = Mods.currentModDirectory;
 		Mods.currentModDirectory = null;
-		loadAchievementJson(Paths.mods('data/achievements.json'));
+		loadAchievementJson(Paths.mods(Language.getFileTranslation('data/achievements') + '.json'));
 		for (i => mod in Mods.parseList().enabled)
 		{
 			Mods.currentModDirectory = mod;
-			loadAchievementJson(Paths.mods('$mod/data/achievements.json'));
+			loadAchievementJson(Paths.mods('$mod/' + Language.getFileTranslation('data/achievements') + '.json'));
 		}
 		Mods.currentModDirectory = modLoaded;
 	}
