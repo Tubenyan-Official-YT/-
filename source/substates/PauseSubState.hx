@@ -32,7 +32,8 @@ class PauseSubState extends MusicBeatSubstate
 
 	override function create()
 	{
-		if(Difficulty.list.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
+		menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
+		menuItemsOG.remove('Options');
 		if(PlayState.chartingMode)
 		{
 			menuItemsOG.insert(2, 'Leave Charting Mode');
