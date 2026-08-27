@@ -434,7 +434,9 @@ class Paths
 		var json:String = modsImagesJson(imgPath);
 		if(FileSystem.exists(json)) jsonExists = true;
 
+		return FlxAtlasFrames.fromAseprite(imageLoaded, (jsonExists ? File.getContent(json) : getPath(getLocalizedImagePath(key) + '.json', TEXT, parentFolder)));
 		#else
+		return FlxAtlasFrames.fromAseprite(imageLoaded, getPath(getLocalizedImagePath(key) + '.json', TEXT, parentFolder));
 		#end
 	}
 
