@@ -181,13 +181,13 @@ class Paths
 		return 'assets/shared/$file';
 
 	inline static public function txt(key:String, ?folder:String)
-		return getPath('data/$key.txt', TEXT, folder, true);
+		return getPath(Language.getFileTranslation('data/$key') + '.txt', TEXT, folder, true);
 
 	inline static public function xml(key:String, ?folder:String)
-		return getPath('data/$key.xml', TEXT, folder, true);
+		return getPath(Language.getFileTranslation('data/$key') + '.xml', TEXT, folder, true);
 
 	inline static public function json(key:String, ?folder:String)
-		return getPath('data/$key.json', TEXT, folder, true);
+		return getPath(Language.getFileTranslation('data/$key') + '.json', TEXT, folder, true);
 
 	inline static public function shaderFragment(key:String, ?folder:String)
 		return getPath('shaders/$key.frag', TEXT, folder, true);
@@ -228,13 +228,24 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), modsAllowed);
 
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
+	// 이미지 경로 자동 언어 폴더 분기
+	// images/키 → images/언어코드/키 (파일이 존재하면), 없으면 images/키 그대로
+	static public function getLocalizedImagePath(key:String):String
+	{
+		var langCode:String = ClientPrefs.data.language;
+		if (langCode != null && langCode != ClientPrefs.defaultData.language)
+		{
+			var localizedKey:String = 'images/$langCode/$key';
+			if (fileExists(localizedKey + '.png', IMAGE, true))
+				return localizedKey;
+		}
+		return 'images/$key';
+	}
+
 	static public function image(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxGraphic
 	{
-		// Language.hx의 .lang 파일 번역 시스템을 그대로 사용 (font(), sound(), Atlas() 등과 동일한 방식)
-		// .lang 파일에 'images/key: "images/ko/key"' 형태로 적어두면 해당 경로로 자동 매핑됨
-		var finalKey:String = Language.getFileTranslation('images/$key') + '.png';
+		var finalKey:String = getLocalizedImagePath(key) + '.png';
 
-		// 캐시된 그래픽이 있는지 확인 후 반환
 		if (currentTrackedAssets.exists(finalKey))
 		{
 			localTrackedAssets.push(finalKey);
@@ -330,7 +341,8 @@ class Paths
 		var useMod = false;
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
 
-		var myXml:Dynamic = getPath('images/$key.xml', TEXT, parentFolder, true);
+		var imgPath:String = getLocalizedImagePath(key);
+		var myXml:Dynamic = getPath('$imgPath.xml', TEXT, parentFolder, true);
 		if(OpenFlAssets.exists(myXml) #if MODS_ALLOWED || (FileSystem.exists(myXml) && (useMod = true)) #end )
 		{
 			#if MODS_ALLOWED
@@ -341,7 +353,7 @@ class Paths
 		}
 		else
 		{
-			var myJson:Dynamic = getPath('images/$key.json', TEXT, parentFolder, true);
+			var myJson:Dynamic = getPath('$imgPath.json', TEXT, parentFolder, true);
 			if(OpenFlAssets.exists(myJson) #if MODS_ALLOWED || (FileSystem.exists(myJson) && (useMod = true)) #end )
 			{
 				#if MODS_ALLOWED
@@ -380,15 +392,15 @@ class Paths
 		#if MODS_ALLOWED
 		var xmlExists:Bool = false;
 
-		var translatedKey:String = Language.getFileTranslation('images/$key');
-		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+		var imgPath:String = getLocalizedImagePath(key);
+		if (imgPath.startsWith('images/')) imgPath = imgPath.substr(7);
 
-		var xml:String = modsXml(translatedKey);
+		var xml:String = modsXml(imgPath);
 		if(FileSystem.exists(xml)) xmlExists = true;
 
-		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder)));
+		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(getLocalizedImagePath(key) + '.xml', TEXT, parentFolder)));
 		#else
-		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.xml', TEXT, parentFolder));
+		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath(getLocalizedImagePath(key) + '.xml', TEXT, parentFolder));
 		#end
 	}
 
@@ -398,15 +410,15 @@ class Paths
 		#if MODS_ALLOWED
 		var txtExists:Bool = false;
 		
-		var translatedKey:String = Language.getFileTranslation('images/$key');
-		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+		var imgPath:String = getLocalizedImagePath(key);
+		if (imgPath.startsWith('images/')) imgPath = imgPath.substr(7);
 
-		var txt:String = modsTxt(translatedKey);
+		var txt:String = modsTxt(imgPath);
 		if(FileSystem.exists(txt)) txtExists = true;
 
-		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? File.getContent(txt) : getPath(Language.getFileTranslation('images/$key') + '.txt', TEXT, parentFolder)));
+		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? File.getContent(txt) : getPath(getLocalizedImagePath(key) + '.txt', TEXT, parentFolder)));
 		#else
-		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.txt', TEXT, parentFolder));
+		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, getPath(getLocalizedImagePath(key) + '.txt', TEXT, parentFolder));
 		#end
 	}
 
@@ -416,15 +428,13 @@ class Paths
 		#if MODS_ALLOWED
 		var jsonExists:Bool = false;
 
-		var translatedKey:String = Language.getFileTranslation('images/$key');
-		if (translatedKey.startsWith('images/')) translatedKey = translatedKey.substr(7);
+		var imgPath:String = getLocalizedImagePath(key);
+		if (imgPath.startsWith('images/')) imgPath = imgPath.substr(7);
 
-		var json:String = modsImagesJson(translatedKey);
+		var json:String = modsImagesJson(imgPath);
 		if(FileSystem.exists(json)) jsonExists = true;
 
-		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, (jsonExists ? File.getContent(json) : getPath(Language.getFileTranslation('images/$key') + '.json', TEXT, parentFolder)));
 		#else
-		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.json', TEXT, parentFolder));
 		#end
 	}
 
