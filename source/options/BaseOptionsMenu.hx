@@ -71,7 +71,6 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.alpha = 0.6;
 		if(targetCam != null) descBox.cameras = [targetCam];
-		add(descBox);
 
 		descText = new FlxText(40, 560, 720, "", 20);
 		descText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
