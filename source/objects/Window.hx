@@ -10,13 +10,15 @@ class Window extends FlxSpriteGroup {
 	var cam:FlxCamera;
 
 	var doAutoMove:Bool = false;
-
+	var hasDim:Bool = true;
+	
 	var posMap:EasyJson;
 
-	public function new(winImage:String, offsetF:Float, autoMove:Bool, hasDim:Bool) {
+	public function new(winImage:String, offsetF:Float, autoMove:Bool, hasDimF:Bool) {
 		super();
 
 		this.offset = offsetF;
+		this.hasDim = hasDimF;
 
 		if (hasDim) {
 			//반투명배경
@@ -87,6 +89,7 @@ class Window extends FlxSpriteGroup {
 		sprite.y = pos[1];
 	}
 	override function update(elapsed:Float) {
-		dimBG.screenCenter();
+		if (hasDim && dimBG != null) dimBG.screenCenter();
+		super.update(elapsed)
 	}
 }
