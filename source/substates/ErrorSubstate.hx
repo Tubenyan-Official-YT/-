@@ -34,11 +34,14 @@ class ErrorSubstate extends MusicBeatSubstate
 	{
 		errorSine += 180 * elapsed;
 		errorText.alpha = 1 - Math.sin((Math.PI * errorSine) / 180);
-
 		if(controls.ACCEPT && acceptCallback != null)
 			acceptCallback();
+		else if(controls.ACCEPT && acceptCallback == null)
+			close();
 		else if(controls.BACK && backCallback != null)
 			backCallback();
+		else if(controls.BACK && backCallback == null)
+			close();
 
 		super.update(elapsed);
 	}
