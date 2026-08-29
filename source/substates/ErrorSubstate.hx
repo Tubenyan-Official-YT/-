@@ -6,13 +6,19 @@ class ErrorSubstate extends MusicBeatSubstate
 	public var acceptCallback:Void->Void;
 	public var backCallback:Void->Void;
 	public var errorMsg:String;
+	public var isFatal:Bool = false;
 
-	public function new(error:String, accept:Void->Void = null, back:Void->Void = null)
+	public function new(error:String, accept:Void->Void = null, back:Void->Void = null, itFatal:Bool)
 	{
 		this.errorMsg = error;
 		this.acceptCallback = accept;
 		this.backCallback = back;
-
+		if (itFatal = null) {
+			isFatal = false;
+		}
+		else {
+			this.isFatal = itFatal;
+		}
 		super();
 	}
 
@@ -24,6 +30,12 @@ class ErrorSubstate extends MusicBeatSubstate
 
 		errorText = new FlxText(0, 0, FlxG.width - 300, errorMsg, 32);
 		errorText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		if (!isFatal) {
+			errorText.color = FlxColor.WHITE;
+		}
+		else {
+			errorText.color = FlxColor.RED;
+		}
 		
 		win.addItem("screenCenter", errorText);
 		add(win);
