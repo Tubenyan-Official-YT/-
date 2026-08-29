@@ -43,7 +43,7 @@ class Window extends FlxSpriteGroup {
 		refreshCam();
 	}
 
-	function refreshWin() {
+	public function refreshWin() {
 		if (doAutoMove) {
 			screenCenter();
 			contents.x = mainWin.x + mainWin.width - contents.width;
