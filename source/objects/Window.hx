@@ -52,6 +52,7 @@ class Window extends FlxSpriteGroup {
 	}
 	public function refreshCam() {
 		if (cam != null) {
+			cam.zoom = cam.width / baseWidth;
 			cam.x = mainWin.x;
 			cam.y = mainWin.y + offset;
 			cam.width = mainWin.width;
