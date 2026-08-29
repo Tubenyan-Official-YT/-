@@ -90,6 +90,6 @@ class Window extends FlxSpriteGroup {
 	}
 	override function update(elapsed:Float) {
 		if (hasDim && dimBG != null) dimBG.screenCenter();
-		super.update(elapsed)
+		super.update(elapsed);
 	}
 }
