@@ -17,13 +17,6 @@ class Window extends FlxSpriteGroup {
 		super();
 
 		this.offset = offsetF;
-		
-		mainWin = new FlxSprite(0,0).loadGraphic(Paths.image(winImage));
-		mainWin.antialiasing = ClientPrefs.data.antialiasing;
-		mainWin.updateHitbox();
-		add(mainWin);
-		
-		posMap = new EasyJson('${winImage}Set');
 
 		if (hasDim) {
 			//반투명배경
@@ -32,6 +25,13 @@ class Window extends FlxSpriteGroup {
 			dimBG.cameras = [FlxG.camera];
 			add(dimBG);
 		}
+		
+		mainWin = new FlxSprite(0,0).loadGraphic(Paths.image(winImage));
+		mainWin.antialiasing = ClientPrefs.data.antialiasing;
+		mainWin.updateHitbox();
+		add(mainWin);
+		
+		posMap = new EasyJson('${winImage}Set');
 		
 		contents = new FlxSpriteGroup();
 		add(contents);
@@ -85,5 +85,8 @@ class Window extends FlxSpriteGroup {
 		var pos:Dynamic = posMap.get(name);
 		sprite.x = pos[0];
 		sprite.y = pos[1];
+	}
+	override function update(elapsed:Float) {
+		dimBG.screenCenter();
 	}
 }
