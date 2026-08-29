@@ -5,7 +5,7 @@ class Window extends FlxSpriteGroup {
 	// 변수들임.
 	var mainWin:FlxSprite;
 	var contents:FlxSpriteGroup;
-	var offset:Float;
+	var offsetT:Int;
 	var dimBG:FlxSprite;
 	var cam:FlxCamera;
 
@@ -14,10 +14,10 @@ class Window extends FlxSpriteGroup {
 	
 	var posMap:EasyJson;
 
-	public function new(winImage:String, offsetF:Float, autoMove:Bool, hasDimF:Bool) {
+	public function new(winImage:String, offsetF:Int, autoMove:Bool, hasDimF:Bool) {
 		super();
 
-		this.offset = offsetF;
+		this.offsetT = offsetF;
 		this.hasDim = hasDimF;
 
 		if (hasDim) {
@@ -49,19 +49,19 @@ class Window extends FlxSpriteGroup {
 		if (doAutoMove) {
 			screenCenter();
 			contents.x = mainWin.x + mainWin.width - contents.width;
-			contents.y = mainWin.y + offset;
+			contents.y = mainWin.y + offsetT;
 		}
 	}
 	public function refreshCam() {
 		if (cam != null) {
 			cam.zoom = cam.width / mainWin.width;
 			cam.x = mainWin.x;
-			cam.y = mainWin.y + offset;
+			cam.y = mainWin.y + offsetT;
 			cam.width = mainWin.width;
-			cam.height = mainWin.height - offset;
+			cam.height = mainWin.height - offsetT;
 		}
 		else {
-			cam = new FlxCamera(mainWin.x, mainWin.y + offset, mainWin.width, mainWin.height - offset);
+			cam = new FlxCamera(mainWin.x, mainWin.y + offsetT, mainWin.width, mainWin.height - offsetT);
 			cam.bgColor = 0x00000000; // 창 배경이 그대로 보이도록 투명 처리
 			FlxG.cameras.add(cam, false);
 		}
