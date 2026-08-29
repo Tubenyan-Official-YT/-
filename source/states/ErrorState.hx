@@ -21,7 +21,6 @@ class ErrorState extends MusicBeatState
 	override function create()
 	{
 		var win = new Window("errorWin", 75, true, true);
-		add(win);
 
 		errorText = new FlxText(0, 0, FlxG.width - 300, errorMsg, 32);
 		errorText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
