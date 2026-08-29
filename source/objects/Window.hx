@@ -29,6 +29,7 @@ class Window extends FlxSpriteGroup {
 		}
 		
 		mainWin = new FlxSprite(0,0).loadGraphic(Paths.image(winImage));
+		mainWin.screenCenter();
 		mainWin.antialiasing = ClientPrefs.data.antialiasing;
 		mainWin.updateHitbox();
 		add(mainWin);
@@ -85,7 +86,8 @@ class Window extends FlxSpriteGroup {
 	public function addItem(name:String, sprite:FlxSprite) {
 		contents.add(sprite);
 		if (name == "screenCenter") {
-			sprite.screenCenter();
+			sprite.x = mainWin.x + (mainWin.width - sprite.width) / 2;
+			sprite.y = mainWin.y + (mainWin.height - sprite.height) / 2 + offsetT;
 		}
 		else {
 			var pos:Dynamic = posMap.get(name);
