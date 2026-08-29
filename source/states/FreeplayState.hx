@@ -100,7 +100,7 @@ class FreeplayState extends MusicBeatState
 		{
 			FlxTransitionableState.skipNextTransIn = true;
 			persistentUpdate = false;
-			openSubState(new substates.ErrorSubstate(Language.getPharse("no_weeks", "NO WEEKS ADDED FOR FREEPLAY\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu."),
+			openSubState(new substates.ErrorSubstate(Language.getPhrase("no_weeks", "NO WEEKS ADDED FOR FREEPLAY\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu."),
 				function() MusicBeatState.switchState(new states.editors.WeekEditorState()),
 				function() MusicBeatState.switchState(new states.MainMenuState())));
 			return;
@@ -379,7 +379,7 @@ class FreeplayState extends MusicBeatState
 						EnergySystem.spendIt(Std.int(value));
 					}
 					else {
-						openSubState(new substates.ErrorSubstate(Language.getPharse("no_energy", "No Energy!")))
+						openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!")))
 						return;
 					}
 				}
@@ -619,7 +619,7 @@ class FreeplayState extends MusicBeatState
 					EnergySystem.spendIt(Std.int(value));
 				}
 				else {
-					openSubState(new substates.ErrorSubstate(Language.getPharse("no_energy", "No Energy!"));
+					openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!"));
 					return;
 				}
 			}
