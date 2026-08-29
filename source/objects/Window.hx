@@ -84,10 +84,16 @@ class Window extends FlxSpriteGroup {
 	
 	public function addItem(name:String, sprite:FlxSprite) {
 		contents.add(sprite);
-		var pos:Dynamic = posMap.get(name);
-		sprite.x = pos[0];
-		sprite.y = pos[1];
+		if (name == "screenCenter") {
+			sprite.screenCenter();
+		}
+		else {
+			var pos:Dynamic = posMap.get(name);
+			sprite.x = pos[0];
+			sprite.y = pos[1];
+		}
 	}
+	
 	override function update(elapsed:Float) {
 		if (hasDim && dimBG != null) dimBG.screenCenter();
 		super.update(elapsed);
