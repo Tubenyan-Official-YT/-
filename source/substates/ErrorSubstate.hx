@@ -1,7 +1,7 @@
-package states;
+package substates;
 import objects.Window;
 
-class ErrorState extends MusicBeatState
+class ErrorSubstate extends MusicBeatSubstate
 {
 	public var acceptCallback:Void->Void;
 	public var backCallback:Void->Void;
