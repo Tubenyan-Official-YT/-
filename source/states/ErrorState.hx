@@ -1,4 +1,5 @@
 package states;
+import objects.Window;
 
 class ErrorState extends MusicBeatState
 {
@@ -19,18 +20,14 @@ class ErrorState extends MusicBeatState
 	public var errorText:FlxText;
 	override function create()
 	{
-		var bg = new Window("errorWin", 100, true, 0.6);
-		bg.color = FlxColor.GRAY;
-		bg.antialiasing = ClientPrefs.data.antialiasing;
-		add(bg);
-		bg.screenCenter();
+		var win = new Window("errorWin", 75, true, 0.6);
+		add(win);
 
 		errorText = new FlxText(0, 0, FlxG.width - 300, errorMsg, 32);
 		errorText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		errorText.scrollFactor.set();
-		errorText.borderSize = 2;
-		errorText.screenCenter();
-		add(errorText);
+		
+		win.addItem(errorText);
+		add(win);
 		super.create();
 	}
 
