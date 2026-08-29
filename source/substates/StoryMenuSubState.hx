@@ -273,7 +273,7 @@ class StoryMenuSubState extends MusicBeatSubstate
                 			EnergySystem.spendIt(cost);
             			}
             			else {
-                			MusicBeatState.switchState(new states.ErrorState("통솔력이 부족해서 게임을 못 해요!",
+                			openSubState(new substates.ErrorSubstate("통솔력이 부족해서 게임을 못 해요!",
                     			function() MusicBeatState.switchState(new states.MainMenuState()),
                     			function() MusicBeatState.switchState(new states.MainMenuState())));
                 			return;
@@ -295,7 +295,7 @@ class StoryMenuSubState extends MusicBeatSubstate
 			}
 			catch(e:Dynamic)
 			{
-				MusicBeatState.switchState(new states.ErrorState("에러! : %e",
+				openSubState(new substates.ErrorSubstate("에러! : %e",
 					function() MusicBeatState.switchState(new states.MainMenuState()),
 					function() MusicBeatState.switchState(new states.MainMenuState())));
 				return;
