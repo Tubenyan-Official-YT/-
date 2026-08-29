@@ -57,11 +57,11 @@ class Window extends FlxSpriteGroup {
 			cam.zoom = cam.width / mainWin.width;
 			cam.x = mainWin.x;
 			cam.y = mainWin.y + offsetT;
-			cam.width = mainWin.width;
-			cam.height = mainWin.height - offsetT;
+			cam.width = Std.int(mainWin.width);
+			cam.height = Std.int(mainWin.height - offsetT);
 		}
 		else {
-			cam = new FlxCamera(mainWin.x, mainWin.y + offsetT, mainWin.width, mainWin.height - offsetT);
+			cam = new FlxCamera(mainWin.x, mainWin.y + offsetT, Std.int(mainWin.width), Std.int(mainWin.height - offsetT));
 			cam.bgColor = 0x00000000; // 창 배경이 그대로 보이도록 투명 처리
 			FlxG.cameras.add(cam, false);
 		}
