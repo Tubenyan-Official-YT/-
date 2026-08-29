@@ -8,17 +8,12 @@ class ErrorSubstate extends MusicBeatSubstate
 	public var errorMsg:String;
 	public var isFatal:Bool = false;
 
-	public function new(error:String, accept:Void->Void = null, back:Void->Void = null, itFatal:Bool->Bool = null)
+	public function new(error:String, accept:Void->Void = null, back:Void->Void = null, itFatal:Bool->Bool = false)
 	{
 		this.errorMsg = error;
 		this.acceptCallback = accept;
 		this.backCallback = back;
-		if (itFatal = null) {
-			isFatal = false;
-		}
-		else {
-			this.isFatal = itFatal;
-		}
+		this.isFatal = itFatal;
 		super();
 	}
 
