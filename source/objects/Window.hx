@@ -87,7 +87,7 @@ class Window extends FlxSpriteGroup {
 		contents.add(sprite);
 		if (name == "screenCenter") {
 			sprite.x = mainWin.x + (mainWin.width - sprite.width) / 2;
-			sprite.y = mainWin.y + (mainWin.height - sprite.height) / 2 + offsetT;
+			sprite.y = mainWin.y + (mainWin.height - sprite.height) / 2;
 		}
 		else {
 			var pos:Dynamic = posMap.get(name);
