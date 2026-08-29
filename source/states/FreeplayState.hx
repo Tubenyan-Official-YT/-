@@ -619,7 +619,7 @@ class FreeplayState extends MusicBeatState
 					EnergySystem.spendIt(Std.int(value));
 				}
 				else {
-					openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!"));
+					openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!")));
 					return;
 				}
 			}
