@@ -20,7 +20,7 @@ class ErrorState extends MusicBeatState
 	public var errorText:FlxText;
 	override function create()
 	{
-		var win = new Window("errorWin", 75, true, 0.6);
+		var win = new Window("errorWin", 75, true, true);
 		add(win);
 
 		errorText = new FlxText(0, 0, FlxG.width - 300, errorMsg, 32);
