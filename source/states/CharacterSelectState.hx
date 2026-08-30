@@ -131,7 +131,7 @@ class CharacterSelectState extends MusicBeatState
 
         charSprite.loadGraphic(Paths.image('charSelect/' + name));
         charSprite.screenCenter(X);
-        charSprite.y = bg.y + (bg.height - charSprite.height) / 2
+        charSprite.y = bg.y + (bg.height - charSprite.height) / 2;
         
         nameSprite.loadGraphic(Paths.image('charNames/' + name));
         nameSprite.screenCenter(X);
