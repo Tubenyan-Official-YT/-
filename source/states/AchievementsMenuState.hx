@@ -92,21 +92,14 @@ class AchievementsMenuState extends MusicBeatState
 		}
 		#if MODS_ALLOWED Mods.loadTopMod(); #end
 
-		var box:FlxSprite = new FlxSprite(0, -30).makeGraphic(1, 1, FlxColor.BLACK);
+		var box:FlxSprite = new FlxSprite(0, 0).makeGraphic(1, 1, FlxColor.BLACK);
 		box.scale.set(grpOptions.width + 60, grpOptions.height + 60);
 		box.updateHitbox();
 		box.alpha = 0.6;
-		box.scrollFactor.x = 0;
+		box.scrollFactor.set();
 		box.screenCenter(X);
 		add(box);
 		add(grpOptions);
-
-		var box:FlxSprite = new FlxSprite(0, 570).makeGraphic(1, 1, FlxColor.BLACK);
-		box.scale.set(FlxG.width, FlxG.height - box.y);
-		box.updateHitbox();
-		box.alpha = 0.6;
-		box.scrollFactor.set();
-		add(box);
 
 		progressBar = new Bar(0, -200);
 		progressBar.screenCenter(X);
