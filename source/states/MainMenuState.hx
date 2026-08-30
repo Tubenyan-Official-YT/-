@@ -389,7 +389,7 @@ class MainMenuState extends MusicBeatState
 					else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
 				}
 			}
-			#if debug
+			#if DEBUG
 			if (controls.justPressed('debug_1'))
 			{
 				selectedSomethin = true;
