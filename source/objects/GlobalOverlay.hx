@@ -16,8 +16,12 @@ class GlobalOverlay extends FlxBasic
 		instance = this;
 
 		// 표시할 오브젝트 생성 및 설정
-		sprite = new FlxSprite(10, 10).loadGraphic(Paths.image('logo')); // 원하는 이미지 경로 지정
+		sprite = new FlxSprite(0, 0).loadGraphic(Paths.image('overlay/topOverlay')); // 원하는 이미지 경로 지정
 		sprite.scrollFactor.set(0, 0); // 화면 고정
+
+		downSprite = new FlxSprite(0,0).loadGraphic(Paths.image('overlay/downOverlay'));
+		downSprite.y = FlxG.height - downSprite.height;
+		downsprite.scrollFactor.set(0, 0);
 	}
 
 	override public function update(elapsed:Float)
