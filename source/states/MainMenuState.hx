@@ -44,9 +44,6 @@ class MainMenuState extends MusicBeatState
 	static var showOutdatedWarning:Bool = true;
 	override function create()
 	{
-		FlxG.sound.music.stop();
-		FlxG.sound.playMusic(Paths.music('freakyMenu'));
-		
 		balloonText = new FlxText(730, 170, 530, "", 32);
 		balloonText.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
 		balloonText.scrollFactor.set(0, 0);
