@@ -6,6 +6,8 @@ import android.content.Context;
 
 import debug.FPSCounter;
 
+import objects.GlobalOverlay;
+
 import flixel.graphics.FlxGraphic;
 import flixel.FlxGame;
 import flixel.FlxState;
