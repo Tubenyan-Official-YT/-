@@ -9,6 +9,7 @@ class GlobalOverlay extends FlxBasic
 {
 	public static var instance:GlobalOverlay;
 	public var sprite:FlxSprite;
+	public var downSprite:FlxSprite;
 
 	public function new()
 	{
