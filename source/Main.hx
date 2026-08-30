@@ -209,6 +209,9 @@ class Main extends Sprite
 			if (FlxG.game != null)
 			resetSpriteCache(FlxG.game);
 		});
+		if (GlobalOverlay.instance == null) {
+    		FlxG.plugins.add(new GlobalOverlay());
+		}
 	}
 
 	static function resetSpriteCache(sprite:Sprite):Void {
