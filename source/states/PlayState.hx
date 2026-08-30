@@ -1710,7 +1710,7 @@ class PlayState extends MusicBeatState
 				openPauseMenu();
 			}
 		}
-
+		#if DEBUG
 		if(!endingSong && !inCutscene && allowDebugKeys)
 		{
 			if (controls.justPressed('debug_1'))
@@ -1718,7 +1718,7 @@ class PlayState extends MusicBeatState
 			else if (controls.justPressed('debug_2'))
 				openCharacterEditor();
 		}
-
+		#end
 		if (healthBar.bounds.max != null && health > healthBar.bounds.max)
 			health = healthBar.bounds.max;
 
