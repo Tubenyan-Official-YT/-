@@ -317,7 +317,7 @@ class TitleState extends MusicBeatState
 	function getIntroTextShit():Array<Array<String>>
 	{
 		#if MODS_ALLOWED
-		var firstArray:Array<String> = [Mods.me](https://Mods.me)rgeAllTextsNamed('data/introText.txt');
+		var firstArray:Array<String> = Mods.mergeAllTextsNamed('data/introText.txt');
 		#else
 		var fullText:String = Assets.getText(Paths.txt('introText'));
 		var firstArray:Array<String> = fullText.split('\n');
@@ -508,10 +508,10 @@ class TitleState extends MusicBeatState
 
 	function deleteCoolText()
 	{
-		while ([textGroup.me](https://textGroup.me)mbers.length > 0)
+		while (textGroup.members.length > 0)
 		{
-			credGroup.remove([textGroup.me](https://textGroup.me)mbers[0], true);
-			textGroup.remove([textGroup.me](https://textGroup.me)mbers[0], true);
+			credGroup.remove(textGroup.members[0], true);
+			textGroup.remove(textGroup.members[0], true);
 		}
 	}
 
