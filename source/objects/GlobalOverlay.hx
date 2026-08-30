@@ -22,7 +22,7 @@ class GlobalOverlay extends FlxBasic
 
 		downSprite = new FlxSprite(0,0).loadGraphic(Paths.image('overlay/downOverlay'));
 		downSprite.y = FlxG.height - downSprite.height;
-		downsprite.scrollFactor.set(0, 0);
+		downSprite.scrollFactor.set(0, 0);
 	}
 
 	override public function update(elapsed:Float)
