@@ -33,7 +33,7 @@ class CharacterSelectState extends MusicBeatState
         add(charSprite);
 
         // 3. 이름 이미지 스프라이트
-        nameSprite = new FlxSprite(0, 600);
+        nameSprite = new FlxSprite(0, 300);
         add(nameSprite);
 
         // 4. 왼쪽 화살표 (스패로우 시트)
@@ -130,8 +130,9 @@ class CharacterSelectState extends MusicBeatState
         bg.loadGraphic(Paths.image(data[1])); 
 
         charSprite.loadGraphic(Paths.image('charSelect/' + name));
-        charSprite.screenCenter();
-
+        charSprite.screenCenter(X);
+        charSprite.y = bg.y + (bg.height - charSprite.height) / 2
+        
         nameSprite.loadGraphic(Paths.image('charNames/' + name));
         nameSprite.screenCenter(X);
     }
