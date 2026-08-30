@@ -6,8 +6,6 @@ import android.content.Context;
 
 import debug.FPSCounter;
 
-import objects.GlobalOverlay;
-
 import flixel.graphics.FlxGraphic;
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -211,9 +209,6 @@ class Main extends Sprite
 			if (FlxG.game != null)
 			resetSpriteCache(FlxG.game);
 		});
-		if (GlobalOverlay.instance == null) {
-    		FlxG.plugins.add(new GlobalOverlay());
-		}
 	}
 
 	static function resetSpriteCache(sprite:Sprite):Void {
