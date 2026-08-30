@@ -10,8 +10,6 @@ import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
 import haxe.Json;
 
-import objects.GlobalOverlay;
-
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -98,7 +96,7 @@ class TitleState extends MusicBeatState
 			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
-		FlxG.mouse.visible = true;
+		FlxG.mouse.visible = false;
 		#if FREEPLAY
 		MusicBeatState.switchState(new FreeplayState());
 		#elseif CHARTING
@@ -117,10 +115,6 @@ class TitleState extends MusicBeatState
 		testEnergy.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		testEnergy.borderSize = 1.5; // 외곽선 두께 (1.2 ~ 2.0 권장)
 		add(testEnergy);
-
-		if (GlobalOverlay.instance == null) {
-    		FlxG.plugins.add(new GlobalOverlay());
-		}
 	}
 
 	var logoBl:FlxSprite;
@@ -133,7 +127,7 @@ class TitleState extends MusicBeatState
 	{
 		persistentUpdate = true;
 		if (!initialized && FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('nyankoIntro'), 0);
+			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 
 		loadJsonData();
 		#if TITLE_SCREEN_EASTER_EGG easterEggData(); #end
@@ -244,7 +238,7 @@ class TitleState extends MusicBeatState
 	var enterPosition:FlxPoint = FlxPoint.get(100, 20);
 	
 	var useIdle:Bool = false;
-	var musicBPM:Float = 120;
+	var musicBPM:Float = 102;
 	var danceLeftFrames:Array<Int> = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
 	var danceRightFrames:Array<Int> = [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -323,7 +317,7 @@ class TitleState extends MusicBeatState
 	function getIntroTextShit():Array<Array<String>>
 	{
 		#if MODS_ALLOWED
-		var firstArray:Array<String> = Mods.mergeAllTextsNamed('data/introText.txt');
+		var firstArray:Array<String> = [Mods.me](https://Mods.me)rgeAllTextsNamed('data/introText.txt');
 		#else
 		var fullText:String = Assets.getText(Paths.txt('introText'));
 		var firstArray:Array<String> = fullText.split('\n');
@@ -514,10 +508,10 @@ class TitleState extends MusicBeatState
 
 	function deleteCoolText()
 	{
-		while (textGroup.members.length > 0)
+		while ([textGroup.me](https://textGroup.me)mbers.length > 0)
 		{
-			credGroup.remove(textGroup.members[0], true);
-			textGroup.remove(textGroup.members[0], true);
+			credGroup.remove([textGroup.me](https://textGroup.me)mbers[0], true);
+			textGroup.remove([textGroup.me](https://textGroup.me)mbers[0], true);
 		}
 	}
 
@@ -550,7 +544,7 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					//FlxG.sound.music.stop();
-					FlxG.sound.playMusic(Paths.music('nyankoIntro'), 0);
+					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
 					createCoolText(['프나펑 냥코대전쟁:전설의 시작'], 40);
@@ -580,8 +574,6 @@ class TitleState extends MusicBeatState
 					addMoreText(': 전설의 시작'); // credTextShit.text += '\nFunkin';
 
 				case 17:
-					FlxG.sound.music.stop();
-					FlxG.sound.playMusic(Paths.music('nyankoMain'));
 					skipIntro();
 			}
 		}
