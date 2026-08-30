@@ -10,6 +10,8 @@ import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
 import haxe.Json;
 
+import objects.GlobalOverlay;
+
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -115,6 +117,10 @@ class TitleState extends MusicBeatState
 		testEnergy.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		testEnergy.borderSize = 1.5; // 외곽선 두께 (1.2 ~ 2.0 권장)
 		add(testEnergy);
+
+		if (GlobalOverlay.instance == null) {
+    		FlxG.plugins.add(new GlobalOverlay());
+		}
 	}
 
 	var logoBl:FlxSprite;
