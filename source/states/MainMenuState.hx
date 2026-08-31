@@ -15,7 +15,7 @@ enum MainMenuColumn {
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '1.0'; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = 'Alpha V6'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 	public static var gamever:String = 'ALPHA 6';
 	public static var curColumn:MainMenuColumn = LEFT;
