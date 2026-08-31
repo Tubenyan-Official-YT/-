@@ -33,13 +33,7 @@ enum abstract AchievementOp(String)
 class Achievements {
 	public static function init()
 	{
-		createAchievement('friday_night_play',		{name: "Friday night에 Friday night funkin 플레이하기", description: "금요일 밤에.... 플레이하기.", hidden: true});
-		createAchievement('ur_bad',					{name: "이게 뭔 재앙이냐?", description: "정확도 20%보다 더 떨어지게 곡 끝내기"});
-		createAchievement('ur_good',				{name: "완벽주의자", description: "100% 정확도로 곡 끝내기"});
-		createAchievement('oversinging', 			{name: "과도한 발성..??", description: "기본 상태로 안 돌아가고 10초동안 화살표 누르고 있기"});
-		createAchievement('hype',					{name: "Hyperactive", description: "노래 부르는 상태에서 곡 끝내기"});
-		createAchievement('two_keys',				{name: "Just the Two of Us", description: "두개의 키를 누른 상태에서 곡 끝내기"});
-		
+		createAchievement('friday_night_play',		{name: "Friday night에 Friday night funkin 플레이하기", description: "\n금요일 밤에.... 플레이하기.", hidden: true});
 		#if BASE_GAME_FILES
 		createAchievement('debugger',				{name: "디버거", description: "Test 곡을 차트에디터에서 플레이하기", hidden: true});
 		#end
