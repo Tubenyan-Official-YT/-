@@ -1,6 +1,5 @@
 package options;
 
-import objects.AttachedText;
 import objects.CheckboxThingie;
 
 import options.Option.OptionType;
@@ -10,9 +9,16 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	private var curSelected:Int = 0;
 	private var optionsArray:Array<Dynamic> = [];
 
-	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpOptions:FlxTypedGroup<FlxText>;
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
-	private var grpTexts:FlxTypedGroup<AttachedText>;
+	private var grpTexts:FlxTypedGroup<FlxText>;
+
+	private var optionBaseX:Array<Float> = [];
+
+	static inline var BASE_X:Float = 150;
+	static inline var BASE_Y:Float = 360;
+	static inline var STEP_X:Float = 20;
+	static inline var STEP_Y:Float = 1.3 * 120;
 
 	private var curOption(get, never):GameplayOption;
 	function get_curOption() return optionsArray[curSelected]; //shorter lol
@@ -82,39 +88,66 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		return null;
 	}
 
+	function targetXFor(i:Int):Float
+		return optionBaseX[i] + (i - curSelected) * STEP_X;
+
+	function targetYFor(i:Int):Float
+		return BASE_Y + (i - curSelected) * STEP_Y;
+
+	function makeOptionText(str:String):FlxText
+	{
+		var txt:FlxText = new FlxText(0, 0, 0, str);
+		txt.setFormat(Paths.font('font.ttf'), 56, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		txt.borderSize = 5;
+		try txt.antialiasing = ClientPrefs.data.antialiasing catch(e:Dynamic) txt.antialiasing = true;
+		txt.scale.set(0.8, 0.8);
+		txt.updateHitbox();
+		return txt;
+	}
+
+	function makeValueText(str:String):FlxText
+	{
+		var txt:FlxText = new FlxText(0, 0, 0, str);
+		txt.setFormat(Paths.font('font.ttf'), 36, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		txt.borderSize = 3;
+		try txt.antialiasing = ClientPrefs.data.antialiasing catch(e:Dynamic) txt.antialiasing = true;
+		txt.scale.set(0.8, 0.8);
+		txt.updateHitbox();
+		return txt;
+	}
+
 	public function new()
 	{
 		super();
-		
+
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0.6;
 		add(bg);
 
-		// avoids lagspikes while scrolling through menus!
-		grpOptions = new FlxTypedGroup<Alphabet>();
+		grpOptions = new FlxTypedGroup<FlxText>();
 		add(grpOptions);
 
-		grpTexts = new FlxTypedGroup<AttachedText>();
+		grpTexts = new FlxTypedGroup<FlxText>();
 		add(grpTexts);
 
 		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
 		add(checkboxGroup);
-		
+
 		getOptions();
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(150, 360, optionsArray[i].name, true);
-			optionText.isMenuItem = true;
-			optionText.setScale(0.8);
-			optionText.targetY = i;
+			optionBaseX.push(BASE_X);
+
+			var optionText:FlxText = makeOptionText(optionsArray[i].name);
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == BOOL)
 			{
-				optionText.x += 60;
-				optionText.startPosition.x += 60;
-				optionText.snapToPosition();
+				optionBaseX[i] += 60;
+				optionText.x = targetXFor(i);
+				optionText.y = targetYFor(i);
+
 				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
 				checkbox.sprTracker = optionText;
 				checkbox.offsetX -= 20;
@@ -124,10 +157,12 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 			}
 			else
 			{
-				optionText.snapToPosition();
-				var valueText:AttachedText = new AttachedText(Std.string(optionsArray[i].getValue()), optionText.width + 40, 0, true, 0.8);
-				valueText.sprTracker = optionText;
-				valueText.copyAlpha = true;
+				optionText.x = targetXFor(i);
+				optionText.y = targetYFor(i);
+
+				var valueText:FlxText = makeValueText(Std.string(optionsArray[i].getValue()));
+				valueText.x = optionText.x + optionText.width + 40;
+				valueText.y = optionText.y;
 				valueText.ID = i;
 				grpTexts.add(valueText);
 				optionsArray[i].setChild(valueText);
@@ -215,7 +250,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 									curOption.curOption = num;
 									curOption.setValue(curOption.options[num]); //lol
-									
+
 									if (curOption.name == "Scroll Type")
 									{
 										var oOption:GameplayOption = getOptionByName("Scroll Speed");
@@ -251,7 +286,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 							{
 								case INT:
 									curOption.setValue(Math.round(holdValue));
-								
+
 								case FLOAT, PERCENT:
 									var blah:Float = Math.max(curOption.minValue, Math.min(curOption.maxValue, holdValue + curOption.changeValue - (holdValue % curOption.changeValue)));
 									curOption.setValue(FlxMath.roundDecimal(blah, curOption.decimals));
@@ -303,6 +338,24 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		if(nextAccept > 0) {
 			nextAccept -= 1;
 		}
+
+		var lerpVal:Float = Math.exp(-elapsed * 9.6);
+		for (num => item in grpOptions.members)
+		{
+			item.x = FlxMath.lerp(targetXFor(num), item.x, lerpVal);
+			item.y = FlxMath.lerp(targetYFor(num), item.y, lerpVal);
+		}
+		for (text in grpTexts.members)
+		{
+			var tracker:FlxText = grpOptions.members[text.ID];
+			if(tracker != null)
+			{
+				text.x = tracker.x + tracker.width + 40;
+				text.y = tracker.y;
+				text.alpha = tracker.alpha;
+			}
+		}
+
 		super.update(elapsed);
 	}
 
@@ -321,15 +374,14 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		holdTime = 0;
 	}
-	
+
 	function changeSelection(change:Int = 0)
 	{
 		curSelected = FlxMath.wrap(curSelected + change, 0, optionsArray.length - 1);
 		for (num => item in grpOptions.members)
 		{
-			item.targetY = num - curSelected;
 			item.alpha = 0.6;
-			if (item.targetY == 0)
+			if (num == curSelected)
 				item.alpha = 1;
 		}
 		for (text in grpTexts)
@@ -350,7 +402,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 class GameplayOption
 {
-	private var child:Alphabet;
+	private var child:FlxText;
 	public var text(get, set):String;
 	public var onChange:Void->Void = null; //Pressed enter (on Bool type options) or pressed/held left/right (on other types)
 	public var type:OptionType = BOOL;
@@ -363,7 +415,7 @@ class GameplayOption
 
 	public var curOption:Int = 0; //Don't change this
 	public var options:Array<String> = null; //Only used in string type
-	public var changeValue:Dynamic = 1; //Only used in int/float/percent type, how much is changed when you PRESS
+	public var changeValue:Dynamic = 1; //Only used in int/float/percent type, how much is chang
 	public var minValue:Dynamic = null; //Only used in int/float/percent type
 	public var maxValue:Dynamic = null; //Only used in int/float/percent type
 	public var decimals:Int = 1; //Only used in float/percent type
@@ -434,7 +486,7 @@ class GameplayOption
 	public function setValue(value:Dynamic)
 		ClientPrefs.data.gameplaySettings.set(variable, value);
 
-	public function setChild(child:Alphabet)
+	public function setChild(child:FlxText)
 		this.child = child;
 
 	var _name:String = null;
