@@ -593,7 +593,9 @@ class PlayState extends MusicBeatState
 
 		// SONG SPECIFIC SCRIPTS
 		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
-		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'data/$songName/'))
+		// 오디오트랙명(songName) 대신 실제 차트 폴더(loadedSongName) 기준으로 스크립트를 로드함
+		var chartFolderName:String = Paths.formatToSongPath(Song.loadedSongName);
+		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'data/$chartFolderName/'))
 			for (file in FileSystem.readDirectory(folder))
 			{
 				#if LUA_ALLOWED
