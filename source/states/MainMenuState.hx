@@ -107,7 +107,7 @@ class MainMenuState extends MusicBeatState
 			{
         		item.y -= 15; 
     		}
-			if (option == 'freeplay' || option == 'charselect' || option == 'mission') 
+			if (option == 'freeplay' || option == 'charselect') 
 			{
         		if (Locking.isLocked(option)) item.color = FlxColor.GRAY;
     		}
@@ -118,6 +118,7 @@ class MainMenuState extends MusicBeatState
 		if (leftOption != null)
 		{
 			leftItem = createMenuItem(leftOption, 25, 425);
+			if (Locking.isLocked(leftOption)) leftItem.color = FlxColor.GRAY;
 		}
 		if (rightOption != null)
 		{
