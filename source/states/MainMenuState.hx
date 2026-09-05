@@ -16,17 +16,16 @@ enum MainMenuColumn {
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = 'Alpha V6'; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = 'Alpha V6';
 	public static var curSelected:Int = 0;
 	public static var gamever:String = 'ALPHA 6';
 	public static var curColumn:MainMenuColumn = LEFT;
-	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
+	var allowMouse:Bool = true;
 
 	var menuItems:FlxSpriteGroup;
 	var leftItem:FlxSprite;
 	var rightItem:FlxSprite;
 	var balloonText:FlxText;
-	//Centered/Text options
 	var optionShit:Array<String> = [
 		'story_mode',
 		'freeplay',
@@ -41,7 +40,7 @@ class MainMenuState extends MusicBeatState
 	var camFollow:FlxObject;
 
 	var bg:FlxSprite;
-	
+
 	static var showOutdatedWarning:Bool = true;
 	override function create()
 	{
@@ -49,7 +48,7 @@ class MainMenuState extends MusicBeatState
 		balloonText.setFormat(Paths.font('title.otf'), 32, FlxColor.WHITE, CENTER);
 		balloonText.scrollFactor.set(0, 0);
 		balloonText.antialiasing = ClientPrefs.data.antialiasing;
-		
+
 		super.create();
 
 		#if MODS_ALLOWED
@@ -58,7 +57,6 @@ class MainMenuState extends MusicBeatState
 		Mods.loadTopMod();
 
 		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
 		DiscordClient.changePresence("메인메뉴", null);
 		#end
 
@@ -87,7 +85,7 @@ class MainMenuState extends MusicBeatState
 
 		menuItems = new FlxSpriteGroup();
 		add(menuItems);
-		
+
 		var g = FlxG.random.getObject(getIntroTextShit());
 
 		var result:String = "";
@@ -96,25 +94,25 @@ class MainMenuState extends MusicBeatState
 		}
 		balloonText.text = result;
 		add(balloonText);
-		
-		WeekData.reloadWeekFiles(); // 잠금 상태 계산을 위해 최신 클리어 정보 로드
+
+		WeekData.reloadWeekFiles();
 
 		for (num => option in optionShit)
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
 			item.ID = num;
-			if (option == 'story_mode' || option == 'freeplay' || option == 'charselect' || option == 'credits') 
+			if (option == 'story_mode' || option == 'freeplay' || option == 'charselect' || option == 'credits')
 			{
-        		item.y -= 15; 
+        		item.y -= 15;
     		}
-			if (option == 'freeplay' || option == 'charselect') 
+			if (option == 'freeplay' || option == 'charselect')
 			{
         		if (Locking.isLocked(option)) item.color = FlxColor.GRAY;
     		}
-			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
+			item.y += (4 - optionShit.length) * 70;
 			item.x = 50;
 		}
-		
+
 		if (leftOption != null)
 		{
 			leftItem = createMenuItem(leftOption, 25, 425);
@@ -124,13 +122,13 @@ class MainMenuState extends MusicBeatState
 		{
 			rightItem = createMenuItem(rightOption, 250, 425);
 		}
-		
+
 		menuItems.scale.set(0.75, 0.75);
 		for (memb in menuItems)
 		{
-			memb.updateHitbox();        // 줄어든 스케일에 맞게 개별 충돌 박스 즉시 갱신
+			memb.updateHitbox();
 		}
-		
+
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 66, 0, Language.getPhrase('psychVer','Legend Engine Version: ') + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -146,7 +144,6 @@ class MainMenuState extends MusicBeatState
 		changeItem();
 
 		#if ACHIEVEMENTS_ALLOWED
-		// Unlocks "Freaky on a Friday Night" achievement if it's a Friday and between 18:00 PM and 23:59 PM
 		var leDate = Date.now();
 		if (leDate.getDay() == 5 && leDate.getHours() >= 18)
 			Achievements.unlock('friday_night_play');
@@ -164,7 +161,6 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-		// FlxG.camera.follow(camFollow, null, 0.15);
 		menuItems.y += 30;
 	}
 
@@ -176,7 +172,7 @@ class MainMenuState extends MusicBeatState
 		menuItem.animation.addByPrefix('selected', '$name selected', 24, true);
 		menuItem.animation.play('idle');
 		menuItem.updateHitbox();
-		
+
 		menuItem.antialiasing = ClientPrefs.data.antialiasing;
 		menuItem.scrollFactor.set();
 		menuItems.add(menuItem);
@@ -202,7 +198,7 @@ class MainMenuState extends MusicBeatState
     		}
     		return swagGoodArray;
 		}
-	
+
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)
@@ -217,7 +213,7 @@ class MainMenuState extends MusicBeatState
 				changeItem(1);
 
 			var allowMouse:Bool = allowMouse;
-			if (allowMouse && ((FlxG.mouse.deltaScreenX != 0 && FlxG.mouse.deltaScreenY != 0) || FlxG.mouse.justPressed)) //FlxG.mouse.deltaScreenX/Y checks is more accurate than FlxG.mouse.justMoved
+			if (allowMouse && ((FlxG.mouse.deltaScreenX != 0 && FlxG.mouse.deltaScreenY != 0) || FlxG.mouse.justPressed))
 			{
 				allowMouse = false;
 				FlxG.mouse.visible = true;
@@ -341,75 +337,73 @@ class MainMenuState extends MusicBeatState
 						option = rightOption;
 						item = rightItem;
 				}
-				else
+
+				FlxG.sound.play(Paths.sound('confirmMenu'));
+				selectedSomethin = true;
+				FlxG.mouse.visible = false;
+
+				if (ClientPrefs.data.flashing)
+					magenta.visible = true;
+
+				switch (option)
 				{
-					FlxG.sound.play(Paths.sound('confirmMenu'));
-					selectedSomethin = true;
-					FlxG.mouse.visible = false;
+					case 'story_mode':
+						openSubState(new substates.StoryMenuSubState());
+						FlxG.keys.reset();
 
-					if (ClientPrefs.data.flashing)
-						magenta.visible = true;
+					case 'freeplay':
+						if (Locking.isLocked("freeplay")) {
+							openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+						}
+						else {
+							MusicBeatState.switchState(new FreeplayState());
+						}
 
-					switch (option)
-					{
-						case 'story_mode':
-							openSubState(new substates.StoryMenuSubState());
-							FlxG.keys.reset();
-						
-						case 'freeplay':
-							if (Locking.isLocked("freeplay")) {
-								openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
-							}
-							else {
-								MusicBeatState.switchState(new FreeplayState());
-							}
+					#if MODS_ALLOWED
+					case 'charselect':
+						if (Locking.isLocked("charselect")) {
+							openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+						}
+						else {
+							MusicBeatState.switchState(new CharacterSelectState());
+						}
+					#end
 
-						#if MODS_ALLOWED
-						case 'charselect':
-							if (Locking.isLocked("charselect")) {
-								openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
-							}
-							else {
-								MusicBeatState.switchState(new CharacterSelectState());
-							}
-						#end
+					#if ACHIEVEMENTS_ALLOWED
+					case 'mission':
+						if (Locking.isLocked("mission")) {
+							openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+						}
+						else {
+							MusicBeatState.switchState(new AchievementsMenuState());
+						}
+					#end
 
-						#if ACHIEVEMENTS_ALLOWED
-						case 'mission':
-							if (Locking.isLocked("mission")) {
-								openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
-							}
-							else {
-								MusicBeatState.switchState(new AchievementsMenuState());
-							}
-						#end
+					case 'credits':
+						MusicBeatState.switchState(new CreditsState());
+					case 'options':
+    					options.OptionsState.onPlayState = false;
+    					openSubState(new options.OptionsSubState());
+    					if (PlayState.SONG != null)
+    					{
+        					PlayState.SONG.arrowSkin = null;
+        					PlayState.SONG.splashSkin = null;
+        					PlayState.stageUI = 'normal';
+    					}
+					case 'donate':
+						CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
+						selectedSomethin = false;
+						item.visible = true;
+					default:
+						trace('Menu Item ${option} doesn\'t do anything');
+						selectedSomethin = false;
+						item.visible = true;
+				}
 
-						case 'credits':
-							MusicBeatState.switchState(new CreditsState());
-						case 'options':
-    						options.OptionsState.onPlayState = false;
-    						openSubState(new options.OptionsSubState());
-    						if (PlayState.SONG != null)
-    						{
-        						PlayState.SONG.arrowSkin = null;
-        						PlayState.SONG.splashSkin = null;
-        						PlayState.stageUI = 'normal';
-    						}
-						case 'donate':
-							CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
-							selectedSomethin = false;
-							item.visible = true;
-						default:
-							trace('Menu Item ${option} doesn\'t do anything');
-							selectedSomethin = false;
-							item.visible = true;
-					}
-
-					for (memb in menuItems)
-					{
-						if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
-						else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
-					}
+				for (memb in menuItems)
+				{
+					if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
+					else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
 				}
 			}
 			#if DEBUG
@@ -449,6 +443,5 @@ class MainMenuState extends MusicBeatState
 		}
 		selectedItem.animation.play('selected');
 		selectedItem.centerOffsets();
-		// camFollow.y = selectedItem.getGraphicMidpoint().y;
 	}
 }
