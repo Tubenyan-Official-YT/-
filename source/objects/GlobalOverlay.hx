@@ -4,6 +4,8 @@ import openfl.display.Bitmap;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import flixel.FlxG;
+import sys.io.File;
+import sys.FileSystem;
 import states.TitleState;
 import states.PlayState;
 
@@ -15,27 +17,50 @@ class GlobalOverlay extends Sprite
 
 	var lastScale:Float = 1;
 
+
+	static function logMsg(msg:String)
+	{
+		try
+		{
+			File.append("globaloverlay_log.txt", true).writeString('[GlobalOverlay] $msg\n');
+		}
+		catch (e:Dynamic) {}
+	}
+
 	public function new()
 	{
 		super();
 		instance = this;
+		logMsg('constructor start');
 
 		var topGraphic = Paths.image('overlay/topOverlay');
+		logMsg('topGraphic = ' + topGraphic);
 		if (topGraphic != null)
 			addChild(topBitmap = new Bitmap(topGraphic.bitmap));
 
 		var downGraphic = Paths.image('overlay/downOverlay');
+		logMsg('downGraphic = ' + downGraphic);
 		if (downGraphic != null)
 		{
 			addChild(downBitmap = new Bitmap(downGraphic.bitmap));
 			downBitmap.y = FlxG.height - downBitmap.height;
 		}
 
-		FlxG.game.addChild(this);
+		logMsg('FlxG.game = ' + FlxG.game + ', FlxG.stage = ' + FlxG.stage);
 
-		FlxG.stage.addEventListener(Event.RESIZE, onResize);
+		if (FlxG.game != null)
+			FlxG.game.addChild(this);
+		else
+			logMsg('ERROR: FlxG.game is null!');
+
+		if (FlxG.stage != null)
+			FlxG.stage.addEventListener(Event.RESIZE, onResize);
+		else
+			logMsg('ERROR: FlxG.stage is null!');
+
 		addEventListener(Event.ENTER_FRAME, update);
 		onResize(null);
+		logMsg('constructor end, visible = ' + visible + ', x=' + x + ', y=' + y + ', scaleX=' + scaleX);
 	}
 
 	function update(e:Event)
