@@ -7,6 +7,7 @@ import states.editors.MasterEditorMenu;
 import options.OptionsState;
 import substates.StoryMenuSubState;
 import backend.WeekData;
+import backend.Locking;
 
 enum MainMenuColumn {
 	LEFT;
