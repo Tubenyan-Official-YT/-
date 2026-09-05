@@ -15,6 +15,7 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
 import shaders.ColorSwap;
+import sys.io.File;
 
 import states.StoryMenuState;
 import states.MainMenuState;
@@ -132,6 +133,7 @@ class TitleState extends MusicBeatState
 		loadJsonData();
 		#if TITLE_SCREEN_EASTER_EGG easterEggData(); #end
 		Conductor.bpm = musicBPM;
+		File.saveContent('bpm_log.txt', '[BPM DEBUG] musicBPM=' + musicBPM + ', Conductor.bpm=' + Conductor.bpm + ', crochet=' + Conductor.crochet + '\n');
 
 		logoBl = new FlxSprite(logoPosition.x, logoPosition.y);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
