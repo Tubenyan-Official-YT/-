@@ -30,15 +30,19 @@ class GlobalOverlay extends FlxBasic
 		super.update(elapsed);
 		if (sprite != null && sprite.active)
 			sprite.update(elapsed);
+		if (downSprite != null && downSprite.active)
+			downSprite.update(elapsed);
 	}
 
 	override public function draw()
 	{
 		super.draw();
 		// 현재 스테이트가 PlayState가 아닐 때만 화면에 출력
-		if (sprite != null && sprite.visible && !(FlxG.state is PlayState))
-		{
+		if (FlxG.state is PlayState) return;
+
+		if (sprite != null && sprite.visible)
 			sprite.draw();
-		}
+		if (downSprite != null && downSprite.visible)
+			downSprite.draw();
 	}
 }
