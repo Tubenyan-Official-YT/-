@@ -30,11 +30,11 @@ class MainMenuState extends MusicBeatState
 	var optionShit:Array<String> = [
 		'story_mode',
 		'freeplay',
-		#if MODS_ALLOWED 'mods', #end
+		#if MODS_ALLOWED 'charselect', #end
 		'credits'
 	];
 
-	var leftOption:String = #if ACHIEVEMENTS_ALLOWED 'achievements' #else null #end;
+	var leftOption:String = #if ACHIEVEMENTS_ALLOWED 'mission' #else null #end;
 	var rightOption:String = 'options';
 
 	var magenta:FlxSprite;
@@ -103,17 +103,16 @@ class MainMenuState extends MusicBeatState
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
 			item.ID = num;
-			if (option == 'story_mode' || option == 'freeplay' || option == 'mods' || option == 'credits') 
+			if (option == 'story_mode' || option == 'freeplay' || option == 'charselect' || option == 'credits') 
 			{
         		item.y -= 15; 
     		}
+			if (option == 'freeplay' || option == 'charselect' || option == 'mission') 
+			{
+        		if (Locking.isLocked(option)) item.color = FlxColor.GRAY;
+    		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
 			item.x = 50;
-
-			if (isMenuLocked(option))
-			{
-				item.color = 0xFF666666; // 잠긴 메뉴는 회색으로 표시
-			}
 		}
 		
 		if (leftOption != null)
@@ -341,12 +340,6 @@ class MainMenuState extends MusicBeatState
 						option = rightOption;
 						item = rightItem;
 				}
-
-				if (isMenuLocked(option))
-				{
-					FlxG.sound.play(Paths.sound('cancelMenu'));
-					balloonText.text = getLockedMessage(option);
-				}
 				else
 				{
 					FlxG.sound.play(Paths.sound('confirmMenu'));
@@ -361,17 +354,33 @@ class MainMenuState extends MusicBeatState
 						case 'story_mode':
 							openSubState(new substates.StoryMenuSubState());
 							FlxG.keys.reset();
+						
 						case 'freeplay':
-							MusicBeatState.switchState(new FreeplayState());
+							if (Locking.isLocked("freeplay")) {
+								openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+							}
+							else {
+								MusicBeatState.switchState(new FreeplayState());
+							}
 
 						#if MODS_ALLOWED
-						case 'mods':
-							MusicBeatState.switchState(new CharacterSelectState());
+						case 'charselect':
+							if (Locking.isLocked("charselect")) {
+								openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+							}
+							else {
+								MusicBeatState.switchState(new CharacterSelectState());
+							}
 						#end
 
 						#if ACHIEVEMENTS_ALLOWED
-						case 'achievements':
-							MusicBeatState.switchState(new AchievementsMenuState());
+						case 'mission':
+							if (Locking.isLocked("mission")) {
+								openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+							}
+							else {
+								MusicBeatState.switchState(new AchievementsMenuState());
+							}
 						#end
 
 						case 'credits':
@@ -413,37 +422,6 @@ class MainMenuState extends MusicBeatState
 		}
 
 		super.update(elapsed);
-	}
-
-	/** 세계편 클리어 진행도에 따라 메뉴가 잠겨있는지 체크. 필요에 맞게 매핑 조정하면 됨 */
-	function isMenuLocked(option:String):Bool
-	{
-		return switch(option)
-		{
-			case 'freeplay': !isWeekCleared('tutorial'); // 튜토리얼 클리어 전까지 모든 곡 잠금
-			case 'mods': !isWeekCleared('world'); // 세계편 클리어 전까지 캐릭터 편성 잠금
-			default: false;
-		}
-	}
-
-	function isWeekCleared(weekKeyword:String):Bool
-	{
-		for (key in WeekData.weeksList)
-		{
-			if (key.toLowerCase().indexOf(weekKeyword) != -1)
-				return StoryMenuSubState.weekCompleted.exists(key) && StoryMenuSubState.weekCompleted.get(key);
-		}
-		return false;
-	}
-
-	function getLockedMessage(option:String):String
-	{
-		return switch(option)
-		{
-			case 'freeplay': '스토리모드에서 튜토리얼을 클리어하면 열립니다!';
-			case 'mods': '스토리모드에서 세계편을 클리어하면 열립니다!';
-			default: '아직 잠겨있습니다!';
-		}
 	}
 
 	function changeItem(change:Int = 0)
