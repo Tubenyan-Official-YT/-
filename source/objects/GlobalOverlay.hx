@@ -67,6 +67,10 @@ class GlobalOverlay extends Sprite
 	{
 		// 발전과제 팝업 원리: 매 프레임 현재 스테이트 체크해서 타이틀/플레이스테이트만 제외하고 표시
 		visible = !(Std.isOfType(FlxG.state, TitleState) || Std.isOfType(FlxG.state, PlayState));
+
+		// Flixel이 내부적으로 추가하는 캔버스/카메라 자식들에 가려지지 않도록 매 프레임 맨 위로 유지
+		if (FlxG.game != null && FlxG.game.numChildren > 0 && FlxG.game.getChildIndex(this) != FlxG.game.numChildren - 1)
+			FlxG.game.setChildIndex(this, FlxG.game.numChildren - 1);
 	}
 
 	function onResize(e:Event)
