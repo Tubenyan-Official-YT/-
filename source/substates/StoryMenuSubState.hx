@@ -270,7 +270,7 @@ class StoryMenuSubState extends MusicBeatSubstate
             			var cost:Int = Std.parseInt(Std.string(value));
             
             			if (EnergySystem.canSpend(cost)) {
-                			EnergySystem.spendIt(cost);
+                			PlayState.pendingEnergyCost = cost; // start10sec.lua에서 첫 곡 진입 10초 후 소비, 이후 곡은 0으로 리셋됨
             			}
             			else {
                 			openSubState(new substates.ErrorSubstate("통솔력이 부족해서 게임을 못 해요!",

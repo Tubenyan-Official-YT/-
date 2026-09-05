@@ -377,6 +377,7 @@ class FreeplayState extends MusicBeatState
 				if (value != null) {
 					if (EnergySystem.canSpend(Std.int(value))) {
 						MusicBeatState.getVariables().set('energyCost', Std.int(value));
+						states.PlayState.pendingEnergyCost = Std.int(value);
 					}
 					else {
 						openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!")));
@@ -617,6 +618,7 @@ class FreeplayState extends MusicBeatState
 			if (value != null) {
 				if (EnergySystem.canSpend(Std.int(value))) {
 					MusicBeatState.getVariables().set('energyCost', Std.int(value));
+					states.PlayState.pendingEnergyCost = Std.int(value);
 				}
 				else {
 					openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!")));

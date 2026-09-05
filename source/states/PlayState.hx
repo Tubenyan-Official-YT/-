@@ -140,6 +140,7 @@ class PlayState extends MusicBeatState
 		return stageUI == "pixel" || stageUI.endsWith("-pixel");
 
 	public static var SONG:SwagSong = null;
+	public static var pendingEnergyCost:Int = 0; // Freeplay/StoryMode에서 선택한 곡의 통솔력 코스트, PlayState 인스턴스 생성 시 variables로 복원됨
 	public static var isStoryMode:Bool = false;
 	public static var storyWeek:Int = 0;
 	public static var storyPlaylist:Array<String> = [];
@@ -435,6 +436,10 @@ class PlayState extends MusicBeatState
 			add(boyfriendGroup);
 		}
 		
+		// FreeplayState/StoryMode -> PlayState 인스턴스 전환 시 사라지는 energyCost 복원
+		variables.set('energyCost', pendingEnergyCost);
+		pendingEnergyCost = 0; // 소비 후 리셋 (스토리모드 연속곡에서 중복 차감 방지, 첫 곡에만 적용됨)
+
 		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
 		// "SCRIPTS FOLDER" SCRIPTS
 		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/'))
