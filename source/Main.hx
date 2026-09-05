@@ -164,7 +164,7 @@ class Main extends Sprite
 		ClientPrefs.loadDefaultKeys();
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
-		FlxG.plugins.add(objects.GlobalOverlay.instance = new objects.GlobalOverlay());
+		addChild(objects.GlobalOverlay.instance = new objects.GlobalOverlay());
 
 		#if !mobile
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
