@@ -31,6 +31,7 @@ class GlobalOverlay extends Sprite
 	{
 		super();
 		instance = this;
+		try { if (FileSystem.exists("globaloverlay_log.txt")) FileSystem.deleteFile("globaloverlay_log.txt"); } catch (e:Dynamic) {}
 		logMsg('constructor start');
 
 		var topGraphic = Paths.image('overlay/topOverlay');
@@ -63,6 +64,8 @@ class GlobalOverlay extends Sprite
 		logMsg('constructor end, visible = ' + visible + ', x=' + x + ', y=' + y + ', scaleX=' + scaleX);
 	}
 
+	var frameCount:Int = 0;
+
 	function update(e:Event)
 	{
 		// 발전과제 팝업 원리: 매 프레임 현재 스테이트 체크해서 타이틀/플레이스테이트만 제외하고 표시
@@ -71,6 +74,18 @@ class GlobalOverlay extends Sprite
 		// Flixel이 내부적으로 추가하는 캔버스/카메라 자식들에 가려지지 않도록 매 프레임 맨 위로 유지
 		if (FlxG.game != null && FlxG.game.numChildren > 0 && FlxG.game.getChildIndex(this) != FlxG.game.numChildren - 1)
 			FlxG.game.setChildIndex(this, FlxG.game.numChildren - 1);
+
+		frameCount++;
+		if (frameCount % 60 == 0)
+		{
+			logMsg('tick, onStage=' + (stage != null)
+				+ ', parent=' + parent
+				+ ', parentNumChildren=' + (parent != null ? parent.numChildren : -1)
+				+ ', myIndex=' + (parent != null ? parent.getChildIndex(this) : -1)
+				+ ', visible=' + visible + ', alpha=' + alpha
+				+ ', numChildren=' + numChildren
+				+ ', topBitmap=' + topBitmap + ', downBitmap=' + downBitmap);
+		}
 	}
 
 	function onResize(e:Event)
