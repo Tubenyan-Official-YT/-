@@ -2,6 +2,7 @@ package states;
 
 import backend.WeekData;
 import backend.EnergySystem;
+import backend.Locking;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -78,6 +79,7 @@ class TitleState extends MusicBeatState
 			ClientPrefs.loadPrefs();
 			Language.reloadPhrases();
 			EnergySystem.init();
+			Locking.init();
 		}
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
