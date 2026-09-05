@@ -13,7 +13,7 @@ import flixel.util.FlxColor;
  */
 class GlobalOverlay extends FlxCamera
 {
-	public static inline var BAR_SIZE:Float = 60;
+	public static inline var BAR_SIZE:Float = 100;
 
 	public function new()
 	{
