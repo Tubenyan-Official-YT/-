@@ -145,7 +145,7 @@ class FreeplayState extends MusicBeatState
 		{
 			Mods.currentModDirectory = songs[i].folder;
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
-			var songImage:FlxSprite = new FlxSprite(0, 20);
+			var songImage:FlxSprite = new FlxSprite(0, 60);
 
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
 			var baseDiff:String = 'normal';
@@ -343,7 +343,7 @@ class FreeplayState extends MusicBeatState
 		
 		if (FlxG.mouse.overlaps(charSelectBtn)) { 
 			if (charSelectBtn.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
-			charSelectBtn.scale.set(0.7, 0.7);
+			charSelectBtn.scale.set(0.61, 0.6);
 			charSelectBtn.updateHitbox();
 			if (charSelectBtn.animation.curAnim.name != 'selected') {
 				charSelectBtn.animation.play('selected');
@@ -362,7 +362,7 @@ class FreeplayState extends MusicBeatState
 		
 		if (FlxG.mouse.overlaps(startButton)) { 
 			if (startButton.scale.x == 0.6) FlxG.sound.play(Paths.sound('scrollMenu'));
-			startButton.scale.set(0.7, 0.7);
+			startButton.scale.set(0.61, 0.6);
 			startButton.updateHitbox();
 			if (startButton.animation.curAnim.name != 'selected') {
 				startButton.animation.play('selected');
