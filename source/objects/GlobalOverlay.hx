@@ -34,10 +34,19 @@ class GlobalOverlay extends Sprite
 		try { if (FileSystem.exists("globaloverlay_log.txt")) FileSystem.deleteFile("globaloverlay_log.txt"); } catch (e:Dynamic) {}
 		logMsg('constructor start');
 
+		// 디버그용: 이미지 로딩 문제인지 렌더링/z-order 문제인지 구분하려고 강제로 그리는 테스트 사각형
+		graphics.beginFill(0xFFFF00FF, 1);
+		graphics.drawRect(0, 0, FlxG.width, 40);
+		graphics.endFill();
+		logMsg('debug rect drawn: ' + FlxG.width + 'x40');
+
 		var topGraphic = Paths.image('overlay/topOverlay');
 		logMsg('topGraphic = ' + topGraphic);
 		if (topGraphic != null)
+		{
 			addChild(topBitmap = new Bitmap(topGraphic.bitmap));
+			logMsg('topBitmap size = ' + topBitmap.width + 'x' + topBitmap.height);
+		}
 
 		var downGraphic = Paths.image('overlay/downOverlay');
 		logMsg('downGraphic = ' + downGraphic);
@@ -45,6 +54,7 @@ class GlobalOverlay extends Sprite
 		{
 			addChild(downBitmap = new Bitmap(downGraphic.bitmap));
 			downBitmap.y = FlxG.height - downBitmap.height;
+			logMsg('downBitmap size = ' + downBitmap.width + 'x' + downBitmap.height + ', y=' + downBitmap.y);
 		}
 
 		logMsg('FlxG.game = ' + FlxG.game + ', FlxG.stage = ' + FlxG.stage);
