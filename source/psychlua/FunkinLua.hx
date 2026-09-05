@@ -442,6 +442,16 @@ class FunkinLua {
 			EnergySystem.addcurEnergy(howmuch);
 		});
 		
+		Lua_helper.add_callback(lua, "lockState", function(what:String) {
+			Locking.setLock(what, true);
+		});
+		Lua_helper.add_callback(lua, "unlockState", function(what:String) {
+			Locking.setLock(what, false);
+		});
+		Lua_helper.add_callback(lua, "setLock", function(what:String, how:Bool) {
+			Locking.setLock(what, how);
+		});
+		
 		Lua_helper.add_callback(lua, "loadMultipleFrames", function(variable:String, images:Array<String>) {
 			var split:Array<String> = variable.split('.');
 			var spr:FlxSprite = LuaUtils.getObjectDirectly(split[0]);
