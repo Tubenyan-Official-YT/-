@@ -44,11 +44,11 @@ class NoteOffsetState extends MusicBeatState
 		// Cameras
 		camGame = initPsychCamera();
 
-		camHUD = new FlxCamera();
+		camHUD = new objects.GlobalOverlay();
 		camHUD.bgColor.alpha = 0;
 		FlxG.cameras.add(camHUD, false);
 
-		camOther = new FlxCamera();
+		camOther = new objects.GlobalOverlay();
 		camOther.bgColor.alpha = 0;
 		FlxG.cameras.add(camOther, false);
 

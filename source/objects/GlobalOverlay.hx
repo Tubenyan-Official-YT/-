@@ -1,106 +1,22 @@
 package objects;
 
-import openfl.display.Bitmap;
-import openfl.display.Sprite;
-import openfl.events.Event;
+import flixel.FlxCamera;
 import flixel.FlxG;
-import sys.io.File;
-import sys.FileSystem;
-import states.TitleState;
-import states.PlayState;
 
-class GlobalOverlay extends Sprite
+/**
+ * 화면 위/아래를 CROP_SIZE만큼 잘라내는 카메라.
+ * 풀스크린 보조 카메라(camHUD, camOther 등)를 새로 만들 때 `new FlxCamera()` 대신
+ * 이걸 쓰면 자동으로 위/아래가 잘린 뷰포트를 가지게 됨.
+ * (기본 카메라 크롭은 MusicBeatState.initPsychCamera()에서 cropOverlay 플래그로 처리)
+ */
+class GlobalOverlay extends FlxCamera
 {
-	public static var instance:GlobalOverlay;
-	public var topBitmap:Bitmap;
-	public var downBitmap:Bitmap;
+	public static inline var CROP_SIZE:Float = 60;
 
-	var lastScale:Float = 1;
-
-
-	static function logMsg(msg:String)
+	public function new(X:Int = 0, Y:Int = 0, Width:Int = 0, Height:Int = 0, Zoom:Float = 0)
 	{
-		#if DEBUG
-		try
-		{
-			File.append("globaloverlay_log.txt", true).writeString('[GlobalOverlay] $msg\n');
-		}
-		catch (e:Dynamic) {}
-		#end
-	}
-
-	public function new()
-	{
-		super();
-		instance = this;
-		#if DEBUG
-		try { if (FileSystem.exists("globaloverlay_log.txt")) FileSystem.deleteFile("globaloverlay_log.txt"); } catch (e:Dynamic) {}
-		#end
-		logMsg('constructor start');
-
-		#if DEBUG
-		// 디버그용: 이미지 로딩 문제인지 렌더링/z-order 문제인지 구분하려고 강제로 그리는 테스트 사각형
-		graphics.beginFill(0xFFFF00FF, 1);
-		graphics.drawRect(0, 0, FlxG.width, 40);
-		graphics.endFill();
-		logMsg('debug rect drawn: ' + FlxG.width + 'x40');
-		#end
-
-		// GPU 캐싱 우회 테스트 (allowGPU=false)
-		var topGraphic = Paths.image('overlay/topOverlay', null, false);
-		logMsg('topGraphic = ' + topGraphic + ', bitmap null? ' + (topGraphic != null ? Std.string(topGraphic.bitmap == null) : 'N/A'));
-		if (topGraphic != null && topGraphic.bitmap != null)
-		{
-			logMsg('topGraphic.bitmap raw size = ' + topGraphic.bitmap.width + 'x' + topGraphic.bitmap.height);
-			addChild(topBitmap = new Bitmap(topGraphic.bitmap));
-			logMsg('topBitmap size = ' + topBitmap.width + 'x' + topBitmap.height + ', alpha=' + topBitmap.alpha + ', visible=' + topBitmap.visible);
-		}
-
-		var downGraphic = Paths.image('overlay/downOverlay', null, false);
-		logMsg('downGraphic = ' + downGraphic + ', bitmap null? ' + (downGraphic != null ? Std.string(downGraphic.bitmap == null) : 'N/A'));
-		if (downGraphic != null && downGraphic.bitmap != null)
-		{
-			logMsg('downGraphic.bitmap raw size = ' + downGraphic.bitmap.width + 'x' + downGraphic.bitmap.height);
-			addChild(downBitmap = new Bitmap(downGraphic.bitmap));
-			downBitmap.y = FlxG.height - downBitmap.height;
-			logMsg('downBitmap size = ' + downBitmap.width + 'x' + downBitmap.height + ', y=' + downBitmap.y + ', alpha=' + downBitmap.alpha + ', visible=' + downBitmap.visible);
-		}
-
-		logMsg('FlxG.game = ' + FlxG.game + ', FlxG.stage = ' + FlxG.stage);
-		// Main.hx에서 addChild로 직접 붙여줌 (FlxG.game 안이 아니라 Main의 sibling으로 — fpsVar와 동일한 방식)
-
-		if (FlxG.stage != null)
-			FlxG.stage.addEventListener(Event.RESIZE, onResize);
-		else
-			logMsg('ERROR: FlxG.stage is null!');
-
-		addEventListener(Event.ENTER_FRAME, update);
-		onResize(null);
-		logMsg('constructor end, visible = ' + visible + ', x=' + x + ', y=' + y + ', scaleX=' + scaleX);
-	}
-
-	var frameCount:Int = 0;
-
-	function update(e:Event)
-	{
-		// 발전과제 팝업 원리: 매 프레임 현재 스테이트 체크해서 타이틀/플레이스테이트만 제외하고 표시
-		visible = !(Std.isOfType(FlxG.state, TitleState) || Std.isOfType(FlxG.state, PlayState));
-	}
-
-	function onResize(e:Event)
-	{
-		lastScale = FlxG.stage.stageHeight / FlxG.height;
-		scaleX = lastScale;
-		scaleY = lastScale;
-		x = (FlxG.stage.stageWidth - (FlxG.width * lastScale)) / 2;
-		y = 0;
-	}
-
-	public function destroy()
-	{
-		if (parent != null)
-			parent.removeChild(this);
-		FlxG.stage.removeEventListener(Event.RESIZE, onResize);
-		removeEventListener(Event.ENTER_FRAME, update);
+		var w:Int = (Width > 0) ? Width : FlxG.width;
+		var h:Int = (Height > 0) ? Height : FlxG.height;
+		super(X, Y + Std.int(CROP_SIZE), w, Std.int(h - CROP_SIZE * 2), Zoom);
 	}
 }

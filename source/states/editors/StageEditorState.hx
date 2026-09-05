@@ -67,6 +67,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEventHandler.Psy
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
+		cropOverlay = false; // 에디터는 오버레이로 안 자름
 		camGame = initPsychCamera();
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;

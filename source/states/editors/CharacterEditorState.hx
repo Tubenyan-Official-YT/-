@@ -71,6 +71,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		Paths.clearUnusedMemory();
 
 		FlxG.sound.music.stop();
+		cropOverlay = false; // 에디터는 오버레이로 안 자름
 		camEditor = initPsychCamera();
 
 		camHUD = new FlxCamera();

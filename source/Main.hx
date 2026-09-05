@@ -164,7 +164,6 @@ class Main extends Sprite
 		ClientPrefs.loadDefaultKeys();
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
-		addChild(objects.GlobalOverlay.instance = new objects.GlobalOverlay()); // fpsVar와 동일하게 Main의 sibling으로 추가 (FlxGame 내부 X)
 
 		#if !mobile
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
