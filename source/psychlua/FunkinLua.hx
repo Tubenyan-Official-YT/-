@@ -427,11 +427,13 @@ class FunkinLua {
 			EnergySystem.addLS(howmuch);
 			EnergySystem.save();
 		});
-		Lua_helper.add_callback(lua, "spendEnergy", function(howmuch:Int) {
-			// 통솔력 소비 -> 에너지 전환
-			EnergySystem.spendLS(howmuch);
+		Lua_helper.add_callback(lua, "canSpendEnergy", function(howmuch:Int) {
+			return EnergySystem.canSpend(howmuch);
 		});
-		
+		Lua_helper.add_callback(lua, "spendEnergy", function(howmuch:Int) {
+			// 통솔력(에너지) 소비, 기존 spendIt 그대로 사용
+			EnergySystem.spendIt(howmuch);
+		});
 		Lua_helper.add_callback(lua, "addMaxEnergy", function(howmuch:Int) {
 			EnergySystem.addMaxEnergy(howmuch);
 		});

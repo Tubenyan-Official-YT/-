@@ -375,13 +375,7 @@ class FreeplayState extends MusicBeatState
 				var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energy.json'));
 				var value:Dynamic = Reflect.field(energyData, poop);
 				if (value != null) {
-					if (EnergySystem.canSpend(Std.int(value))) {
-						EnergySystem.spendIt(Std.int(value));
-					}
-					else {
-						openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!")));
-						return;
-					}
+					MusicBeatState.getVariables().set('energyCost', Std.int(value));
 				}
 				
 				try {
@@ -615,13 +609,7 @@ class FreeplayState extends MusicBeatState
 			var energyData:Dynamic = haxe.Json.parse(Paths.getTextFromFile('data/energy.json'));
 			var value:Dynamic = Reflect.field(energyData, poop);
 			if (value != null) {
-				if (EnergySystem.canSpend(Std.int(value))) {
-					EnergySystem.spendIt(Std.int(value));
-				}
-				else {
-					openSubState(new substates.ErrorSubstate(Language.getPhrase("no_energy", "No Energy!")));
-					return;
-				}
+				MusicBeatState.getVariables().set('energyCost', Std.int(value));
 			}
 			
 			try
