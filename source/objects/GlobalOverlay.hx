@@ -48,7 +48,7 @@ class GlobalOverlay extends Sprite
 
 		// GPU 캐싱 우회 테스트 (allowGPU=false)
 		var topGraphic = Paths.image('overlay/topOverlay', null, false);
-		logMsg('topGraphic = ' + topGraphic + ', bitmap null? ' + (topGraphic != null ? (topGraphic.bitmap == null) : 'N/A'));
+		logMsg('topGraphic = ' + topGraphic + ', bitmap null? ' + (topGraphic != null ? Std.string(topGraphic.bitmap == null) : 'N/A'));
 		if (topGraphic != null && topGraphic.bitmap != null)
 		{
 			logMsg('topGraphic.bitmap raw size = ' + topGraphic.bitmap.width + 'x' + topGraphic.bitmap.height);
@@ -57,7 +57,7 @@ class GlobalOverlay extends Sprite
 		}
 
 		var downGraphic = Paths.image('overlay/downOverlay', null, false);
-		logMsg('downGraphic = ' + downGraphic + ', bitmap null? ' + (downGraphic != null ? (downGraphic.bitmap == null) : 'N/A'));
+		logMsg('downGraphic = ' + downGraphic + ', bitmap null? ' + (downGraphic != null ? Std.string(downGraphic.bitmap == null) : 'N/A'));
 		if (downGraphic != null && downGraphic.bitmap != null)
 		{
 			logMsg('downGraphic.bitmap raw size = ' + downGraphic.bitmap.width + 'x' + downGraphic.bitmap.height);
