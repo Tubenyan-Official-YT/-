@@ -427,8 +427,8 @@ class FunkinLua {
 			EnergySystem.addLS(howmuch);
 			EnergySystem.save();
 		});
-		Lua_helper.add_callback(lua, "spendLS", function(howmuch:Int) {
-			// 통솔력 소비
+		Lua_helper.add_callback(lua, "spendEnergy", function(howmuch:Int) {
+			// 통솔력 소비 -> 에너지 전환
 			EnergySystem.spendLS(howmuch);
 		});
 		
