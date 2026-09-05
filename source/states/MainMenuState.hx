@@ -63,6 +63,13 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
+		// 서브스테이트가 닫히면 메뉴 입력 잠금 해제 (섭스테이트 열고 닫으면 메뉴가 얼어버리는 문제 방지)
+		subStateClosed.add(function(_) {
+			selectedSomethin = false;
+			magenta.visible = false;
+			persistentUpdate = true;
+		});
+
 		var yScroll:Float = 0;
 		bg = new FlxSprite(0,0).loadGraphic(Paths.image('menuBG'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
@@ -355,6 +362,7 @@ class MainMenuState extends MusicBeatState
 					case 'freeplay':
 						if (Locking.isLocked("freeplay")) {
 							openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+							FlxG.keys.reset();
 						}
 						else {
 							MusicBeatState.switchState(new FreeplayState());
@@ -364,6 +372,7 @@ class MainMenuState extends MusicBeatState
 					case 'charselect':
 						if (Locking.isLocked("charselect")) {
 							openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+							FlxG.keys.reset();
 						}
 						else {
 							MusicBeatState.switchState(new CharacterSelectState());
@@ -374,6 +383,7 @@ class MainMenuState extends MusicBeatState
 					case 'mission':
 						if (Locking.isLocked("mission")) {
 							openSubState(new substates.ErrorSubstate(Language.getPhrase("blocked", "Menu blocked!!\nPlay game, and unlock menu~!")));
+							FlxG.keys.reset();
 						}
 						else {
 							MusicBeatState.switchState(new AchievementsMenuState());
@@ -385,6 +395,7 @@ class MainMenuState extends MusicBeatState
 					case 'options':
     					options.OptionsState.onPlayState = false;
     					openSubState(new options.OptionsSubState());
+    					FlxG.keys.reset();
     					if (PlayState.SONG != null)
     					{
         					PlayState.SONG.arrowSkin = null;
@@ -401,11 +412,6 @@ class MainMenuState extends MusicBeatState
 						item.visible = true;
 				}
 
-				for (memb in menuItems)
-				{
-					if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
-					else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
-				}
 			}
 			#if DEBUG
 			if (controls.justPressed('debug_1'))
