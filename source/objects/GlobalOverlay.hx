@@ -48,11 +48,7 @@ class GlobalOverlay extends Sprite
 		}
 
 		logMsg('FlxG.game = ' + FlxG.game + ', FlxG.stage = ' + FlxG.stage);
-
-		if (FlxG.game != null)
-			FlxG.game.addChild(this);
-		else
-			logMsg('ERROR: FlxG.game is null!');
+		// Main.hx에서 addChild로 직접 붙여줌 (FlxG.game 안이 아니라 Main의 sibling으로 — fpsVar와 동일한 방식)
 
 		if (FlxG.stage != null)
 			FlxG.stage.addEventListener(Event.RESIZE, onResize);
@@ -70,22 +66,6 @@ class GlobalOverlay extends Sprite
 	{
 		// 발전과제 팝업 원리: 매 프레임 현재 스테이트 체크해서 타이틀/플레이스테이트만 제외하고 표시
 		visible = !(Std.isOfType(FlxG.state, TitleState) || Std.isOfType(FlxG.state, PlayState));
-
-		// Flixel이 내부적으로 추가하는 캔버스/카메라 자식들에 가려지지 않도록 매 프레임 맨 위로 유지
-		if (FlxG.game != null && FlxG.game.numChildren > 0 && FlxG.game.getChildIndex(this) != FlxG.game.numChildren - 1)
-			FlxG.game.setChildIndex(this, FlxG.game.numChildren - 1);
-
-		frameCount++;
-		if (frameCount % 60 == 0)
-		{
-			logMsg('tick, onStage=' + (stage != null)
-				+ ', parent=' + parent
-				+ ', parentNumChildren=' + (parent != null ? parent.numChildren : -1)
-				+ ', myIndex=' + (parent != null ? parent.getChildIndex(this) : -1)
-				+ ', visible=' + visible + ', alpha=' + alpha
-				+ ', numChildren=' + numChildren
-				+ ', topBitmap=' + topBitmap + ', downBitmap=' + downBitmap);
-		}
 	}
 
 	function onResize(e:Event)
@@ -99,8 +79,8 @@ class GlobalOverlay extends Sprite
 
 	public function destroy()
 	{
-		if (FlxG.game.contains(this))
-			FlxG.game.removeChild(this);
+		if (parent != null)
+			parent.removeChild(this);
 		FlxG.stage.removeEventListener(Event.RESIZE, onResize);
 		removeEventListener(Event.ENTER_FRAME, update);
 	}
