@@ -1,6 +1,6 @@
 package backend.ui;
 
-class PsychUICheckBox extends FlxSpriteGroup
+class LegendUICheckBox extends FlxSpriteGroup
 {
 	public static final CLICK_EVENT = 'checkbox_click';
 
@@ -49,7 +49,7 @@ class PsychUICheckBox extends FlxSpriteGroup
 			{
 				checked = !checked;
 				if(onClick != null) onClick();
-				if(broadcastCheckBoxEvent) PsychUIEventHandler.event(CLICK_EVENT, this);
+				if(broadcastCheckBoxEvent) LegendUIEventHandler.event(CLICK_EVENT, this);
 			}
 		}
 	}

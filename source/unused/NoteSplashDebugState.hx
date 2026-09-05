@@ -4,7 +4,7 @@ import objects.Note;
 import objects.StrumNote;
 import objects.NoteSplash;
 
-class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class NoteSplashDebugState extends MusicBeatState implements LegendUIEventHandler.LegendUIEvent
 {
 	var config:NoteSplashConfig;
 	var forceFrame:Int = -1;
@@ -15,10 +15,10 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 	var notes:FlxTypedGroup<StrumNote>;
 	var splashes:FlxTypedGroup<FlxSprite>;
 	
-	var imageInputText:PsychUIInputText;
-	var nameInputText:PsychUIInputText;
-	var stepperMinFps:PsychUINumericStepper;
-	var stepperMaxFps:PsychUINumericStepper;
+	var imageInputText:LegendUIInputText;
+	var nameInputText:LegendUIInputText;
+	var stepperMinFps:LegendUINumericStepper;
+	var stepperMaxFps:LegendUINumericStepper;
 
 	var offsetsText:FlxText;
 	var curFrameText:FlxText;
@@ -67,7 +67,7 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 		var imageName:FlxText = new FlxText(txtx, txty - 120, 'Image Name:', 16);
 		add(imageName);
 
-		imageInputText = new PsychUIInputText(txtx, txty - 100, 360, defaultTexture, 16);
+		imageInputText = new LegendUIInputText(txtx, txty - 100, 360, defaultTexture, 16);
 		imageInputText.onPressEnter = function(e)
 		{
 			textureName = imageInputText.text;
@@ -93,14 +93,14 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 					missingTextBG.visible = false;
 				});
 			}
-			PsychUIInputText.focusOn = null;
+			LegendUIInputText.focusOn = null;
 		}
 		add(imageInputText);
 
 		var animName:FlxText = new FlxText(txtx, txty, 'Animation Name:', 16);
 		add(animName);
 
-		nameInputText = new PsychUIInputText(txtx, txty + 20, 360, '', 16);
+		nameInputText = new LegendUIInputText(txtx, txty + 20, 360, '', 16);
 		nameInputText.onChange = function(oldText:String, curText:String)
 		{
 			trace('changed anim name to $curText');
@@ -112,11 +112,11 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 		add(nameInputText);
 
 		add(new FlxText(txtx, txty - 50, 0, 'Min/Max Framerate:', 16));
-		stepperMinFps = new PsychUINumericStepper(txtx, txty - 30, 1, 22, 1, 60, 0);
+		stepperMinFps = new LegendUINumericStepper(txtx, txty - 30, 1, 22, 1, 60, 0);
 		stepperMinFps.name = 'min_fps';
 		add(stepperMinFps);
 
-		stepperMaxFps = new PsychUINumericStepper(txtx + 60, txty - 30, 1, 26, 1, 60, 0);
+		stepperMaxFps = new LegendUINumericStepper(txtx + 60, txty - 30, 1, 26, 1, 60, 0);
 		stepperMaxFps.name = 'max_fps';
 		add(stepperMaxFps);
 
@@ -172,7 +172,7 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 	var pressEnterToSave:Float = 0;
 	override function update(elapsed:Float)
 	{
-		var notTyping:Bool = (PsychUIInputText.focusOn == null);
+		var notTyping:Bool = (LegendUIInputText.focusOn == null);
 		if(controls.BACK && notTyping)
 		{
 			MusicBeatState.switchState(new MasterEditorMenu());
@@ -341,9 +341,9 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 	
 	public function UIEvent(id:String, sender:Dynamic)
 	{
-		if (id == PsychUINumericStepper.CHANGE_EVENT && (sender is PsychUINumericStepper))
+		if (id == LegendUINumericStepper.CHANGE_EVENT && (sender is LegendUINumericStepper))
 		{
-			var nums:PsychUINumericStepper = cast sender;
+			var nums:LegendUINumericStepper = cast sender;
 			var wname = nums.name;
 			switch(wname)
 			{

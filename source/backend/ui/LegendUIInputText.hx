@@ -32,14 +32,14 @@ enum abstract CaseMode(Int) from Int from UInt to Int to UInt
 	var LOWER_CASE:Int = 2;
 }
 
-class PsychUIInputText extends FlxSpriteGroup
+class LegendUIInputText extends FlxSpriteGroup
 {
 	public static final CHANGE_EVENT = "inputtext_change";
 
 	static final KEY_TILDE = 126;
 	static final KEY_ACUTE = 180;
 
-	public static var focusOn(default, set):PsychUIInputText = null;
+	public static var focusOn(default, set):LegendUIInputText = null;
 
 	public var name:String;
 	public var bg:FlxSprite;
@@ -136,7 +136,7 @@ class PsychUIInputText extends FlxSpriteGroup
 					text = text.substring(0, caretIndex) + Clipboard.text + text.substring(caretIndex);
 					caretIndex += Clipboard.text.length;
 					if(onChange != null) onChange(lastText, text);
-					if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+					if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 
 				case BACKSPACE:
 					if(selectIndex < 0 || selectIndex == caretIndex)
@@ -158,7 +158,7 @@ class PsychUIInputText extends FlxSpriteGroup
 						}
 						selectIndex = -1;
 						if(onChange != null) onChange(lastText, text);
-						if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+						if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 					}
 					else deleteSelection();
 
@@ -183,7 +183,7 @@ class PsychUIInputText extends FlxSpriteGroup
 						}
 						else text = text.substr(0, caretIndex);
 						if(onChange != null) onChange(lastText, text);
-						if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+						if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 					}
 					else deleteSelection();
 
@@ -274,7 +274,7 @@ class PsychUIInputText extends FlxSpriteGroup
 					text = text.substring(0, caretIndex-1) + text.substring(caretIndex);
 					caretIndex--;
 					if(onChange != null) onChange(lastText, text);
-					if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+					if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 				}
 				_nextAccent = NONE;
 
@@ -297,7 +297,7 @@ class PsychUIInputText extends FlxSpriteGroup
 				if(caretIndex >= text.length) caretIndex = text.length;
 				
 				if(onChange != null) onChange(lastText, text);
-				if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+				if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 			
 			case SPACE: //space or last accent pressed
 				if(_nextAccent != NONE) _typeLetter(getAccentCharCode(_nextAccent));
@@ -379,7 +379,7 @@ class PsychUIInputText extends FlxSpriteGroup
 		focusOn = null;
 
 	public var unfocus:Void->Void;
-	public static function set_focusOn(v:PsychUIInputText)
+	public static function set_focusOn(v:LegendUIInputText)
 	{
 		if(focusOn != null && focusOn != v && focusOn.exists)
 		{
@@ -534,7 +534,7 @@ class PsychUIInputText extends FlxSpriteGroup
 		}
 		selectIndex = -1;
 		if(onChange != null) onChange(lastText, text);
-		if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+		if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 	}
 
 	override public function destroy()
@@ -592,7 +592,7 @@ class PsychUIInputText extends FlxSpriteGroup
 		v = Std.int(Math.max(0, v));
 		if(v > 0 && text.length > v) text = text.substr(0, v);
 		if(onChange != null) onChange(lastText, text);
-		if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+		if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 		return (maxLength = v);
 	}
 
@@ -671,7 +671,7 @@ class PsychUIInputText extends FlxSpriteGroup
 
 			caretIndex += letter.length;
 			if(onChange != null) onChange(lastText, text);
-			if(broadcastInputTextEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+			if(broadcastInputTextEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 		}
 		_caretTime = 0;
 	}

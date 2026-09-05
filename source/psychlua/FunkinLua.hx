@@ -17,7 +17,7 @@ import flixel.FlxState;
 import flixel.addons.display.FlxRuntimeShader;
 #end
 
-import cutscenes.DialogueBoxPsych;
+import cutscenes.DialogueBoxLegend;
 
 import objects.StrumNote;
 import objects.Note;
@@ -1280,7 +1280,7 @@ class FunkinLua {
 			if(Assets.exists(path, TEXT))
 			#end
 			{
-				var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
+				var shit:DialogueFile = DialogueBoxLegend.parseDialogue(path);
 				if(shit.dialogue.length > 0)
 				{
 					game.startDialogue(shit, music);

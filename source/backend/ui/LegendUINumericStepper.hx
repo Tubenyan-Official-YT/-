@@ -1,6 +1,6 @@
 package backend.ui;
 
-class PsychUINumericStepper extends PsychUIInputText
+class LegendUINumericStepper extends LegendUIInputText
 {
 	public static final CHANGE_EVENT = "numericstepper_change";
 
@@ -195,7 +195,7 @@ class PsychUINumericStepper extends PsychUIInputText
 	function _internalOnChange()
 	{
 		if(onValueChange != null) onValueChange();
-		if(broadcastStepperEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+		if(broadcastStepperEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 	}
 
 	override function setGraphicSize(width:Float = 0, height:Float = 0)

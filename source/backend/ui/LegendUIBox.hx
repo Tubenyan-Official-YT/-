@@ -6,15 +6,15 @@ typedef UIStyleData = {
 	var bgAlpha:Float;
 }
 
-class PsychUIBox extends FlxSpriteGroup
+class LegendUIBox extends FlxSpriteGroup
 {
 	public static final CLICK_EVENT = "uibox_click";
 	public static final MINIMIZE_EVENT = "uibox_minimize"; //called on both minimizing and maximizing
 	public static final DRAG_EVENT = "uibox_drag";
 	public static final DROP_EVENT = "uibox_drop";
-	public var tabs(default, null):Array<PsychUITab> = [];
+	public var tabs(default, null):Array<LegendUITab> = [];
 	
-	public var selectedTab(default, set):PsychUITab = null;
+	public var selectedTab(default, set):LegendUITab = null;
 	public var selectedIndex(default, set):Int = -1;
 	public var selectedName(default, set):String = null;
 
@@ -54,7 +54,7 @@ class PsychUIBox extends FlxSpriteGroup
 		{
 			for (tab in tabs)
 			{
-				var createdTab:PsychUITab = new PsychUITab(tab);
+				var createdTab:LegendUITab = new LegendUITab(tab);
 				this.tabs.push(createdTab);
 				add(createdTab);
 			}
@@ -69,7 +69,7 @@ class PsychUIBox extends FlxSpriteGroup
 	var _draggingPoint:FlxPoint;
 	var _pressedBox:Bool = false;
 	var _draggingBox:Bool = false;
-	var _lastTab:PsychUITab;
+	var _lastTab:LegendUITab;
 	var _lastClick:Float = 0;
 
 	public var forceCheckNext:Bool = false;
@@ -95,7 +95,7 @@ class PsychUIBox extends FlxSpriteGroup
 				if(_pressedBox) forceCheckNext = true;
 				_pressedBox = false;
 			}
-			if(wasDragging && broadcastBoxEvents) PsychUIEventHandler.event(DROP_EVENT, this);
+			if(wasDragging && broadcastBoxEvents) LegendUIEventHandler.event(DROP_EVENT, this);
 		}
 
 		for (tab in tabs)
@@ -124,7 +124,7 @@ class PsychUIBox extends FlxSpriteGroup
 						_draggingPos = FlxPoint.weak(x, y);
 						_draggingPoint = FlxG.mouse.getPositionInCameraView(camera);
 						_draggingBox = true;
-						if(broadcastBoxEvents) PsychUIEventHandler.event(DRAG_EVENT, this);
+						if(broadcastBoxEvents) LegendUIEventHandler.event(DRAG_EVENT, this);
 					}
 					
 					if(FlxG.mouse.justReleased && canMinimize && _lastClick < 0.15 && selectedTab == tab && _lastTab == selectedTab)
@@ -145,7 +145,7 @@ class PsychUIBox extends FlxSpriteGroup
 						_lastTab = selectedTab;
 						selectedTab = tab;
 						_lastClick = 0;
-						if(broadcastBoxEvents) PsychUIEventHandler.event(CLICK_EVENT, this);
+						if(broadcastBoxEvents) LegendUIEventHandler.event(CLICK_EVENT, this);
 					}
 					else if(selectedTab != tab) continue;
 				}
@@ -160,7 +160,7 @@ class PsychUIBox extends FlxSpriteGroup
 		if(_ignoreTabUpdate)
 		{
 			if(broadcastBoxEvents)
-				PsychUIEventHandler.event(MINIMIZE_EVENT, this);
+				LegendUIEventHandler.event(MINIMIZE_EVENT, this);
 		}
 		else if(selectedTab != null && !isMinimized)
 			selectedTab.updateMenu(this, elapsed);
@@ -169,7 +169,7 @@ class PsychUIBox extends FlxSpriteGroup
 		{
 			isMinimized = true;
 			if(broadcastBoxEvents)
-				PsychUIEventHandler.event(MINIMIZE_EVENT, this);
+				LegendUIEventHandler.event(MINIMIZE_EVENT, this);
 		}
 	}
 
@@ -202,7 +202,7 @@ class PsychUIBox extends FlxSpriteGroup
 
 	public function addTab(name:String)
 	{
-		var createdTab:PsychUITab = new PsychUITab(name);
+		var createdTab:LegendUITab = new LegendUITab(name);
 		tabs.push(createdTab);
 		add(createdTab);
 		updateTabs();
@@ -232,7 +232,7 @@ class PsychUIBox extends FlxSpriteGroup
 		updateTabs();
 	}
 
-	private function set_selectedTab(v:PsychUITab)
+	private function set_selectedTab(v:LegendUITab)
 	{
 		if(v != null)
 		{

@@ -19,7 +19,7 @@ import openfl.utils.Assets as OpenFlAssets;
 import openfl.events.KeyboardEvent;
 import haxe.Json;
 
-import cutscenes.DialogueBoxPsych;
+import cutscenes.DialogueBoxLegend;
 
 import states.StoryMenuState;
 import states.FreeplayState;
@@ -908,8 +908,8 @@ class PlayState extends MusicBeatState
 	}
 
 	var dialogueCount:Int = 0;
-	public var psychDialogue:DialogueBoxPsych;
-	//You don't have to add a song, just saying. You can just do "startDialogue(DialogueBoxPsych.parseDialogue(Paths.json(songName + '/dialogue')))" and it should load dialogue.json
+	public var psychDialogue:DialogueBoxLegend;
+	//You don't have to add a song, just saying. You can just do "startDialogue(DialogueBoxLegend.parseDialogue(Paths.json(songName + '/dialogue')))" and it should load dialogue.json
 	public function startDialogue(dialogueFile:DialogueFile, ?song:String = null):Void
 	{
 		// TO DO: Make this more flexible, maybe?
@@ -917,7 +917,7 @@ class PlayState extends MusicBeatState
 
 		if(dialogueFile.dialogue.length > 0) {
 			inCutscene = true;
-			psychDialogue = new DialogueBoxPsych(dialogueFile, song);
+			psychDialogue = new DialogueBoxLegend(dialogueFile, song);
 			psychDialogue.scrollFactor.set();
 			if(endingSong) {
 				psychDialogue.finishThing = function() {

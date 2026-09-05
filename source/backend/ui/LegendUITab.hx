@@ -3,7 +3,7 @@ package backend.ui;
 import flixel.util.FlxDestroyUtil;
 import flixel.math.FlxPoint;
 
-class PsychUITab extends FlxSprite
+class LegendUITab extends FlxSprite
 {
 	public var name(default, set):String;
 	public var text:FlxText;
@@ -40,7 +40,7 @@ class PsychUITab extends FlxSprite
 		super.destroy();
 	}
 	
-	public function updateMenu(parent:PsychUIBox, elapsed:Float)
+	public function updateMenu(parent:LegendUIBox, elapsed:Float)
 	{
 		if(menu != null && menu.exists && menu.active)
 		{
@@ -49,7 +49,7 @@ class PsychUITab extends FlxSprite
 		}
 	}
 
-	public function drawMenu(parent:PsychUIBox)
+	public function drawMenu(parent:LegendUIBox)
 	{
 		if(menu != null && menu.exists && menu.visible)
 		{

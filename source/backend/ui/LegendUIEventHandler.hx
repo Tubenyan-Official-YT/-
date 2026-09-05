@@ -1,6 +1,6 @@
 package backend.ui;
 
-class PsychUIEventHandler
+class LegendUIEventHandler
 {
 	public static function event(id:String, sender:Dynamic)
 	{
@@ -15,6 +15,6 @@ class PsychUIEventHandler
 	}
 }
 
-interface PsychUIEvent {
+interface LegendUIEvent {
 	public function UIEvent(id:String, sender:Dynamic):Void;
 }

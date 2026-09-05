@@ -1,8 +1,8 @@
 package backend.ui;
 
-import backend.ui.PsychUIBox.UIStyleData;
+import backend.ui.LegendUIBox.UIStyleData;
 
-class PsychUIButton extends FlxSpriteGroup
+class LegendUIButton extends FlxSpriteGroup
 {
 	public static final CLICK_EVENT = 'button_click';
 
@@ -91,7 +91,7 @@ class PsychUIButton extends FlxSpriteGroup
 				bg.alpha = clickStyle.bgAlpha;
 				text.color = clickStyle.textColor;
 				if(onClick != null) onClick();
-				if(broadcastButtonEvent) PsychUIEventHandler.event(CLICK_EVENT, this);
+				if(broadcastButtonEvent) LegendUIEventHandler.event(CLICK_EVENT, this);
 			}
 		}
 	}

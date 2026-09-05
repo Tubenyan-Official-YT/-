@@ -1,7 +1,7 @@
 package backend;
 
 import flixel.FlxState;
-import backend.PsychCamera;
+import backend.LegendCamera;
 
 class MusicBeatState extends FlxState
 {
@@ -43,9 +43,9 @@ class MusicBeatState extends FlxState
 		timePassedOnState = 0;
 	}
 
-	public function initPsychCamera():PsychCamera
+	public function initPsychCamera():LegendCamera
 	{
-		var camera = new PsychCamera();
+		var camera = new LegendCamera();
 		FlxG.cameras.reset(camera);
 		FlxG.cameras.setDefaultDrawTarget(camera, true);
 		_psychCameraInitialized = true;

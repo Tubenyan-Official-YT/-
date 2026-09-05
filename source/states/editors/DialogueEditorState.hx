@@ -8,11 +8,11 @@ import haxe.Json;
 
 import objects.TypedAlphabet;
 
-import cutscenes.DialogueBoxPsych;
+import cutscenes.DialogueBoxLegend;
 import cutscenes.DialogueCharacter;
 import states.editors.content.Prompt;
 
-class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class DialogueEditorState extends MusicBeatState implements LegendUIEventHandler.LegendUIEvent
 {
 	var character:DialogueCharacter;
 	var box:FlxSprite;
@@ -79,42 +79,42 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 		animText.scrollFactor.set();
 		add(animText);
 		
-		daText = new TypedAlphabet(DialogueBoxPsych.DEFAULT_TEXT_X, DialogueBoxPsych.DEFAULT_TEXT_Y, DEFAULT_TEXT);
+		daText = new TypedAlphabet(DialogueBoxLegend.DEFAULT_TEXT_X, DialogueBoxLegend.DEFAULT_TEXT_Y, DEFAULT_TEXT);
 		daText.setScale(0.7);
 		add(daText);
 		changeText();
 		super.create();
 	}
 
-	var UI_box:PsychUIBox;
+	var UI_box:LegendUIBox;
 	function addEditorBox()
 	{
-		UI_box = new PsychUIBox(FlxG.width - 260, 10, 250, 210, ['Dialogue Line']);
+		UI_box = new LegendUIBox(FlxG.width - 260, 10, 250, 210, ['Dialogue Line']);
 		UI_box.scrollFactor.set();
 		addDialogueLineUI();
 		add(UI_box);
 	}
 
-	var characterInputText:PsychUIInputText;
-	var lineInputText:PsychUIInputText;
-	var angryCheckbox:PsychUICheckBox;
-	var speedStepper:PsychUINumericStepper;
-	var soundInputText:PsychUIInputText;
+	var characterInputText:LegendUIInputText;
+	var lineInputText:LegendUIInputText;
+	var angryCheckbox:LegendUICheckBox;
+	var speedStepper:LegendUINumericStepper;
+	var soundInputText:LegendUIInputText;
 	function addDialogueLineUI() {
 		var tab_group = UI_box.getTab('Dialogue Line').menu;
 
-		characterInputText = new PsychUIInputText(10, 20, 80, DialogueCharacter.DEFAULT_CHARACTER, 8);
-		speedStepper = new PsychUINumericStepper(10, characterInputText.y + 40, 0.005, 0.05, 0, 0.5, 3);
+		characterInputText = new LegendUIInputText(10, 20, 80, DialogueCharacter.DEFAULT_CHARACTER, 8);
+		speedStepper = new LegendUINumericStepper(10, characterInputText.y + 40, 0.005, 0.05, 0, 0.5, 3);
 
-		angryCheckbox = new PsychUICheckBox(speedStepper.x + 120, speedStepper.y, "Angry Textbox", 200);
+		angryCheckbox = new LegendUICheckBox(speedStepper.x + 120, speedStepper.y, "Angry Textbox", 200);
 		angryCheckbox.onClick = function()
 		{
 			updateTextBox();
 			dialogueFile.dialogue[curSelected].boxState = (angryCheckbox.checked ? 'angry' : 'normal');
 		};
 
-		soundInputText = new PsychUIInputText(10, speedStepper.y + 40, 150, '', 8);
-		lineInputText = new PsychUIInputText(10, soundInputText.y + 35, 200, DEFAULT_TEXT, 8);
+		soundInputText = new LegendUIInputText(10, speedStepper.y + 40, 150, '', 8);
+		lineInputText = new LegendUIInputText(10, soundInputText.y + 35, 200, DEFAULT_TEXT, 8);
 		lineInputText.onPressEnter = function(e)
 		{
 			if(e.shiftKey)
@@ -122,13 +122,13 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 				lineInputText.text += '\n';
 				lineInputText.caretIndex++;
 			}
-			else PsychUIInputText.focusOn = null;
+			else LegendUIInputText.focusOn = null;
 		};
 
-		var loadButton:PsychUIButton = new PsychUIButton(20, lineInputText.y + 25, "Load Dialogue", function() {
+		var loadButton:LegendUIButton = new LegendUIButton(20, lineInputText.y + 25, "Load Dialogue", function() {
 			loadDialogue();
 		});
-		var saveButton:PsychUIButton = new PsychUIButton(loadButton.x + 120, loadButton.y, "Save Dialogue", function() {
+		var saveButton:LegendUIButton = new LegendUIButton(loadButton.x + 120, loadButton.y, "Save Dialogue", function() {
 			saveDialogue();
 		});
 
@@ -173,7 +173,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 				}
 		}
 		box.animation.play(anim, true);
-		DialogueBoxPsych.updateBoxOffsets(box);
+		DialogueBoxLegend.updateBoxOffsets(box);
 	}
 
 	function reloadCharacter() {
@@ -182,12 +182,12 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 		character.reloadAnimations();
 		character.setGraphicSize(Std.int(character.width * DialogueCharacter.DEFAULT_SCALE * character.jsonFile.scale));
 		character.updateHitbox();
-		character.x = DialogueBoxPsych.LEFT_CHAR_X;
-		character.y = DialogueBoxPsych.DEFAULT_CHAR_Y;
+		character.x = DialogueBoxLegend.LEFT_CHAR_X;
+		character.y = DialogueBoxLegend.DEFAULT_CHAR_Y;
 
 		switch(character.jsonFile.dialogue_pos) {
 			case 'right':
-				character.x = FlxG.width - character.width + DialogueBoxPsych.RIGHT_CHAR_X;
+				character.x = FlxG.width - character.width + DialogueBoxLegend.RIGHT_CHAR_X;
 			
 			case 'center':
 				character.x = FlxG.width / 2;
@@ -224,8 +224,8 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 			characterAnimSpeed();
 		}
 
-		daText.y = DialogueBoxPsych.DEFAULT_TEXT_Y;
-		if(daText.rows > 2) daText.y -= DialogueBoxPsych.LONG_TEXT_ADD;
+		daText.y = DialogueBoxLegend.DEFAULT_TEXT_Y;
+		if(daText.rows > 2) daText.y -= DialogueBoxLegend.LONG_TEXT_ADD;
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
@@ -237,10 +237,10 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 	}
 
 	public function UIEvent(id:String, sender:Dynamic) {
-		if(id == PsychUICheckBox.CLICK_EVENT)
+		if(id == LegendUICheckBox.CLICK_EVENT)
 			unsavedProgress = true;
 
-		if(id == PsychUIInputText.CHANGE_EVENT && (sender is PsychUIInputText)) {
+		if(id == LegendUIInputText.CHANGE_EVENT && (sender is LegendUIInputText)) {
 			if (sender == characterInputText)
 			{
 				character.reloadCharacterJson(characterInputText.text);
@@ -275,7 +275,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 				if(daText.sound == null) daText.sound = '';
 			}
 			unsavedProgress = true;
-		} else if(id == PsychUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
+		} else if(id == LegendUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
 			dialogueFile.dialogue[curSelected].speed = speedStepper.value;
 			if(Math.isNaN(dialogueFile.dialogue[curSelected].speed) || dialogueFile.dialogue[curSelected].speed == null || dialogueFile.dialogue[curSelected].speed < 0.001) {
 				dialogueFile.dialogue[curSelected].speed = 0.0;
@@ -305,7 +305,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 			}
 		}
 
-		if(PsychUIInputText.focusOn == null)
+		if(LegendUIInputText.focusOn == null)
 		{
 			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.SPACE) {

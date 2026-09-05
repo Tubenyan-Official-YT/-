@@ -26,9 +26,9 @@ class NoteSplashEditorState extends MusicBeatState
     static var imageSkin:String = null;
     var splash:NoteSplash;
 
-    var UI:PsychUIBox;
-    var properUI:PsychUIBox;
-    var shaderUI:PsychUIBox;
+    var UI:LegendUIBox;
+    var properUI:LegendUIBox;
+    var shaderUI:LegendUIBox;
 
     override function create()
     {
@@ -50,13 +50,13 @@ class NoteSplashEditorState extends MusicBeatState
         bg.color = 0xFF505050;
         add(bg);      
 
-        UI = new PsychUIBox(0, 0, 0, 0, ["Animation"]);
+        UI = new LegendUIBox(0, 0, 0, 0, ["Animation"]);
         UI.canMove = UI.canMinimize = false;
         UI.y += 20;
         UI.x = FlxG.width - 300;
         UI.resize(290, 240);
 
-        properUI = new PsychUIBox(0, 0, 0, 0, ["Properties"]);
+        properUI = new LegendUIBox(0, 0, 0, 0, ["Properties"]);
         properUI.canMove = properUI.canMinimize = false;
         properUI.resize(280, 210);
         properUI.y += 20;
@@ -64,7 +64,7 @@ class NoteSplashEditorState extends MusicBeatState
         add(properUI);
         add(UI);
 
-        shaderUI = new PsychUIBox(0, 0, 0, 0, ["Shader"]);
+        shaderUI = new LegendUIBox(0, 0, 0, 0, ["Shader"]);
         shaderUI.canMove = shaderUI.canMinimize = false;
         shaderUI.resize(160, 180);
         shaderUI.x = FlxG.width - shaderUI.width - 10;
@@ -120,43 +120,43 @@ class NoteSplashEditorState extends MusicBeatState
         super.create();
     }
 
-    var animDropDown:PsychUIDropDownMenu;
+    var animDropDown:LegendUIDropDownMenu;
     var curAnim:String;
-    var addButton:PsychUIButton;
+    var addButton:LegendUIButton;
     var curAnimText = null;
-    var numericStepperData:PsychUINumericStepper;
-    var templateButton:PsychUIButton;
+    var numericStepperData:LegendUINumericStepper;
+    var templateButton:LegendUIButton;
     function addAnimTab()
     {
         var UI = UI.getTab("Animation").menu;
 
         UI.add(new FlxText(20, 20, 0, "Animation Name:", 8));
-        var name_input:PsychUIInputText = new PsychUIInputText(20, 37.5, 100, "", 8);
+        var name_input:LegendUIInputText = new LegendUIInputText(20, 37.5, 100, "", 8);
         name_input.name = "name_input";
         curAnimText = name_input;
         UI.add(name_input);
 
         UI.add(new FlxText(name_input.x, name_input.y + 30, 0, "Animation Prefix:", 8));
-        var prefix_input:PsychUIInputText = new PsychUIInputText(20, name_input.y + 47.5, 100, "", 8);
+        var prefix_input:LegendUIInputText = new LegendUIInputText(20, name_input.y + 47.5, 100, "", 8);
         UI.add(prefix_input);
 
         UI.add(new FlxText(150, 20, 0, "Note Data:"));
-        numericStepperData = new PsychUINumericStepper(150, 37.5, 1, .0, .0, 999, 0);
+        numericStepperData = new LegendUINumericStepper(150, 37.5, 1, .0, .0, 999, 0);
         UI.add(numericStepperData);
 
         UI.add(new FlxText(150, name_input.y + 30, 0, "Indices (OPTIONAL):"));
-        var indices_input:PsychUIInputText = new PsychUIInputText(150, name_input.y + 47.5, 100, "", 8);
+        var indices_input:LegendUIInputText = new LegendUIInputText(150, name_input.y + 47.5, 100, "", 8);
         UI.add(indices_input);
 
         UI.add(new FlxText(20, 110, 0, "Minimum FPS:"));
-        var minFps:PsychUINumericStepper = new PsychUINumericStepper(20, 127.5, 1, 22, 1, 120);
+        var minFps:LegendUINumericStepper = new LegendUINumericStepper(20, 127.5, 1, 22, 1, 120);
         UI.add(minFps);
 
         UI.add(new FlxText(150, 110, 0, "Maximum FPS:"));
-        var maxFps:PsychUINumericStepper = new PsychUINumericStepper(150, 127.5, 1, 26, 1, 120);
+        var maxFps:LegendUINumericStepper = new LegendUINumericStepper(150, 127.5, 1, 26, 1, 120);
         UI.add(maxFps);
 
-        animDropDown = new PsychUIDropDownMenu(-155, 57, [""], function(id:Int, name:String)
+        animDropDown = new LegendUIDropDownMenu(-155, 57, [""], function(id:Int, name:String)
         {
             if (config != null && name.length > 0)
             {
@@ -217,7 +217,7 @@ class NoteSplashEditorState extends MusicBeatState
             changeShader.onSelect(0, "Red");
         }
 
-        addButton = new PsychUIButton(20, 185, "Add/Update", function()
+        addButton = new LegendUIButton(20, 185, "Add/Update", function()
         {       
             var indices:Array<Int> = [];
             if (indices_input.text.split(',').length > 1)
@@ -251,7 +251,7 @@ class NoteSplashEditorState extends MusicBeatState
         }); 
         UI.add(addButton);
 
-        var removeButton:PsychUIButton = new PsychUIButton(185, 185, "Remove", function()
+        var removeButton:LegendUIButton = new LegendUIButton(185, 185, "Remove", function()
         {
             if (config != null)
             {
@@ -318,40 +318,40 @@ class NoteSplashEditorState extends MusicBeatState
         }
     }
 
-    var imageInputText:PsychUIInputText;
-    var scaleNumericStepper:PsychUINumericStepper;
+    var imageInputText:LegendUIInputText;
+    var scaleNumericStepper:LegendUINumericStepper;
     function addPropertiesTab()
     {
         var ui = properUI.getTab("Properties").menu;
 
         ui.add(new FlxText(20, 10, 0, "Image:"));
-        imageInputText = new PsychUIInputText(60, 10, 120, imageSkin, 8);
+        imageInputText = new LegendUIInputText(60, 10, 120, imageSkin, 8);
         ui.add(imageInputText);
 
-        var reloadButton:PsychUIButton = new PsychUIButton(185, 6.8, "Reload Image", function()
+        var reloadButton:LegendUIButton = new LegendUIButton(185, 6.8, "Reload Image", function()
         {
             reloadImage();
         });
         ui.add(reloadButton);
 
         ui.add(new FlxText(20, 40, "Scale:"));
-        scaleNumericStepper = new PsychUINumericStepper(20, 57.5, 0.1, 1, 0, 4, 2, 60);
+        scaleNumericStepper = new LegendUINumericStepper(20, 57.5, 0.1, 1, 0, 4, 2, 60);
         ui.add(scaleNumericStepper);
 
         scaleNumericStepper.value = config != null ? config.scale : 1;
 
         ui.add(new FlxText(130, 40, "Animations:"));
 
-        var saveButton:PsychUIButton = new PsychUIButton(20, 130, "Save", saveSplash);
+        var saveButton:LegendUIButton = new LegendUIButton(20, 130, "Save", saveSplash);
         ui.add(saveButton);
 
-        templateButton = new PsychUIButton(20, 155, "Template");
+        templateButton = new LegendUIButton(20, 155, "Template");
         ui.add(templateButton);
 
-        var loadButton:PsychUIButton = new PsychUIButton(180, 155, "Convert TXT", loadTxt);
+        var loadButton:LegendUIButton = new LegendUIButton(180, 155, "Convert TXT", loadTxt);
         ui.add(loadButton);
 
-        var allowRGBCheck:PsychUICheckBox = new PsychUICheckBox(20, 105, "", 1);
+        var allowRGBCheck:LegendUICheckBox = new LegendUICheckBox(20, 105, "", 1);
         function check()
         {
             if (config != null)
@@ -367,7 +367,7 @@ class NoteSplashEditorState extends MusicBeatState
 
         ui.add(allowRGBCheck);
 
-        var allowPixelCheck:PsychUICheckBox = new PsychUICheckBox(allowRGBCheck.x + 110, allowRGBCheck.y, "", 1);
+        var allowPixelCheck:LegendUICheckBox = new LegendUICheckBox(allowRGBCheck.x + 110, allowRGBCheck.y, "", 1);
         function check()
         {
             if (config != null)
@@ -390,8 +390,8 @@ class NoteSplashEditorState extends MusicBeatState
     var redShader:Array<Int> = [0, 0, 0];
     var greenShader:Array<Int> = [0, 0, 0];
     var blueShader:Array<Int> = [0, 0, 0];
-    var changeShader:PsychUIDropDownMenu;
-    var defaultButton:PsychUICheckBox;
+    var changeShader:LegendUIDropDownMenu;
+    var defaultButton:LegendUICheckBox;
     function addShadersTab()
     {
         var tab = shaderUI.getTab("Shader").menu;
@@ -401,7 +401,7 @@ class NoteSplashEditorState extends MusicBeatState
         tab.add(new FlxText(25, 50, "Green:"));
         tab.add(new FlxText(25, 70, "Blue:"));
 
-        var red = new PsychUINumericStepper(60, 30, 1, redShader[0], 0, 255, 0);
+        var red = new LegendUINumericStepper(60, 30, 1, redShader[0], 0, 255, 0);
         red.onValueChange = () -> {
             var shader = switch (changeShader.selectedLabel)
             {
@@ -413,7 +413,7 @@ class NoteSplashEditorState extends MusicBeatState
         };
         tab.add(red);
 
-        var green = new PsychUINumericStepper(60, 50, 1, redShader[1], 0, 255, 0);
+        var green = new LegendUINumericStepper(60, 50, 1, redShader[1], 0, 255, 0);
         green.onValueChange = () -> {
             var shader = switch (changeShader.selectedLabel)
             {
@@ -425,7 +425,7 @@ class NoteSplashEditorState extends MusicBeatState
         };
         tab.add(green);
 
-        var blue = new PsychUINumericStepper(60, 70, 1, redShader[2], 0, 255, 0);
+        var blue = new LegendUINumericStepper(60, 70, 1, redShader[2], 0, 255, 0);
         blue.onValueChange = () -> {
             var shader = switch (changeShader.selectedLabel)
             {
@@ -456,7 +456,7 @@ class NoteSplashEditorState extends MusicBeatState
         }
 
         add(new FlxText(shaderUI.x + 20, shaderUI.y + 135, 0, "Color to Replace:"));
-        changeShader = new PsychUIDropDownMenu(shaderUI.x + 20, shaderUI.y + 150, ["Red", "Green", "Blue"], function(id:Int, name:String)
+        changeShader = new LegendUIDropDownMenu(shaderUI.x + 20, shaderUI.y + 150, ["Red", "Green", "Blue"], function(id:Int, name:String)
         {
             var shader = switch (name)
             {
@@ -479,7 +479,7 @@ class NoteSplashEditorState extends MusicBeatState
         });
         add(changeShader);
         
-        defaultButton = new PsychUICheckBox(shaderUI.x + 30, shaderUI.y + 115, "Do not replace", 100, () -> onCheck());
+        defaultButton = new LegendUICheckBox(shaderUI.x + 30, shaderUI.y + 115, "Do not replace", 100, () -> onCheck());
         defaultButton.text.y += 2.5;
         add(defaultButton);
 
@@ -521,7 +521,7 @@ class NoteSplashEditorState extends MusicBeatState
             config.scale = scaleNumericStepper.value;
         }
         
-        var blockInput:Bool = PsychUIInputText.focusOn != null;
+        var blockInput:Bool = LegendUIInputText.focusOn != null;
         if (!blockInput && config != null && config.animations != null && config.animations.exists(curAnim) && curAnim != null && curAnim.length > 0)
         {
             function splash()

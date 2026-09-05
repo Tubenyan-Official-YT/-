@@ -9,9 +9,9 @@ import haxe.Json;
 import objects.MenuCharacter;
 
 import states.editors.content.Prompt;
-import states.editors.content.PsychJsonPrinter;
+import states.editors.content.LegendJsonPrinter;
 
-class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class MenuCharacterEditorState extends MusicBeatState implements LegendUIEventHandler.LegendUIEvent
 {
 	var grpWeekCharacters:FlxTypedGroup<MenuCharacter>;
 	var characterFile:MenuCharacterFile = null;
@@ -67,28 +67,28 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 		super.create();
 	}
 
-	var UI_typebox:PsychUIBox;
-	var UI_mainbox:PsychUIBox;
+	var UI_typebox:LegendUIBox;
+	var UI_mainbox:LegendUIBox;
 	function addEditorBox() {
-		UI_typebox = new PsychUIBox(100, FlxG.height - 230, 120, 180, ['Character Type']);
+		UI_typebox = new LegendUIBox(100, FlxG.height - 230, 120, 180, ['Character Type']);
 		UI_typebox.scrollFactor.set();
 		addTypeUI();
 		add(UI_typebox);
 
 		
-		UI_mainbox = new PsychUIBox(FlxG.width - 340, FlxG.height - 265, 240, 215, ['Character']);
+		UI_mainbox = new LegendUIBox(FlxG.width - 340, FlxG.height - 265, 240, 215, ['Character']);
 		UI_mainbox.scrollFactor.set();
 		addCharacterUI();
 		add(UI_mainbox);
 
-		var loadButton:PsychUIButton = new PsychUIButton(0, 480, "Load Character", function() {
+		var loadButton:LegendUIButton = new LegendUIButton(0, 480, "Load Character", function() {
 			loadCharacter();
 		});
 		loadButton.screenCenter(X);
 		loadButton.x -= 60;
 		add(loadButton);
 	
-		var saveButton:PsychUIButton = new PsychUIButton(0, 480, "Save Character", function() {
+		var saveButton:LegendUIButton = new LegendUIButton(0, 480, "Save Character", function() {
 			saveCharacter();
 		});
 		saveButton.screenCenter(X);
@@ -96,37 +96,37 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 		add(saveButton);
 	}
 
-	var characterTypeRadio:PsychUIRadioGroup;
+	var characterTypeRadio:LegendUIRadioGroup;
 	function addTypeUI() {
 		var tab_group = UI_typebox.getTab('Character Type').menu;
 
-		characterTypeRadio = new PsychUIRadioGroup(10, 20, ['Opponent', 'Boyfriend', 'Girlfriend'], 40);
+		characterTypeRadio = new LegendUIRadioGroup(10, 20, ['Opponent', 'Boyfriend', 'Girlfriend'], 40);
 		characterTypeRadio.checked = 0;
 		characterTypeRadio.onClick = updateCharacters;
 		tab_group.add(characterTypeRadio);
 	}
 
-	var imageInputText:PsychUIInputText;
-	var idleInputText:PsychUIInputText;
-	var confirmInputText:PsychUIInputText;
-	var scaleStepper:PsychUINumericStepper;
-	var flipXCheckbox:PsychUICheckBox;
-	var antialiasingCheckbox:PsychUICheckBox;
+	var imageInputText:LegendUIInputText;
+	var idleInputText:LegendUIInputText;
+	var confirmInputText:LegendUIInputText;
+	var scaleStepper:LegendUINumericStepper;
+	var flipXCheckbox:LegendUICheckBox;
+	var antialiasingCheckbox:LegendUICheckBox;
 	function addCharacterUI() {
 		var tab_group = UI_mainbox.getTab('Character').menu;
 		
-		imageInputText = new PsychUIInputText(10, 20, 80, characterFile.image, 8);
-		idleInputText = new PsychUIInputText(10, imageInputText.y + 35, 100, characterFile.idle_anim, 8);
-		confirmInputText = new PsychUIInputText(10, idleInputText.y + 35, 100, characterFile.confirm_anim, 8);
+		imageInputText = new LegendUIInputText(10, 20, 80, characterFile.image, 8);
+		idleInputText = new LegendUIInputText(10, imageInputText.y + 35, 100, characterFile.idle_anim, 8);
+		confirmInputText = new LegendUIInputText(10, idleInputText.y + 35, 100, characterFile.confirm_anim, 8);
 
-		flipXCheckbox = new PsychUICheckBox(10, confirmInputText.y + 30, "Flip X", 100);
+		flipXCheckbox = new LegendUICheckBox(10, confirmInputText.y + 30, "Flip X", 100);
 		flipXCheckbox.onClick = function()
 		{
 			grpWeekCharacters.members[characterTypeRadio.checked].flipX = flipXCheckbox.checked;
 			characterFile.flipX = flipXCheckbox.checked;
 		};
 
-		antialiasingCheckbox = new PsychUICheckBox(10, flipXCheckbox.y + 30, "Antialiasing", 100);
+		antialiasingCheckbox = new LegendUICheckBox(10, flipXCheckbox.y + 30, "Antialiasing", 100);
 		antialiasingCheckbox.checked = grpWeekCharacters.members[characterTypeRadio.checked].antialiasing;
 		antialiasingCheckbox.onClick = function()
 		{
@@ -134,11 +134,11 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 			characterFile.antialiasing = antialiasingCheckbox.checked;
 		};
 
-		var reloadImageButton:PsychUIButton = new PsychUIButton(140, confirmInputText.y + 30, "Reload Char", function() {
+		var reloadImageButton:LegendUIButton = new LegendUIButton(140, confirmInputText.y + 30, "Reload Char", function() {
 			reloadSelectedCharacter();
 		});
 		
-		scaleStepper = new PsychUINumericStepper(140, imageInputText.y, 0.05, 1, 0.1, 30, 2);
+		scaleStepper = new LegendUINumericStepper(140, imageInputText.y, 0.05, 1, 0.1, 30, 2);
 
 		var confirmDescText = new FlxText(10, confirmInputText.y - 18, 0, 'Start Press animation on the .XML:');
 		tab_group.add(new FlxText(10, imageInputText.y - 18, 0, 'Image file name:'));
@@ -185,10 +185,10 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 	}
 
 	public function UIEvent(id:String, sender:Dynamic) {
-		if(id == PsychUICheckBox.CLICK_EVENT)
+		if(id == LegendUICheckBox.CLICK_EVENT)
 			unsavedProgress = true;
 
-		if(id == PsychUIInputText.CHANGE_EVENT && (sender is PsychUIInputText)) {
+		if(id == LegendUIInputText.CHANGE_EVENT && (sender is LegendUIInputText)) {
 			if(sender == imageInputText) {
 				characterFile.image = imageInputText.text;
 				unsavedProgress = true;
@@ -199,7 +199,7 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 				characterFile.confirm_anim = confirmInputText.text;
 				unsavedProgress = true;
 			}
-		} else if(id == PsychUINumericStepper.CHANGE_EVENT && (sender is PsychUINumericStepper)) {
+		} else if(id == LegendUINumericStepper.CHANGE_EVENT && (sender is LegendUINumericStepper)) {
 			if (sender == scaleStepper) {
 				characterFile.scale = scaleStepper.value;
 				reloadSelectedCharacter();
@@ -209,7 +209,7 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 	}
 
 	override function update(elapsed:Float) {
-		if(PsychUIInputText.focusOn == null)
+		if(LegendUIInputText.focusOn == null)
 		{
 			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.ESCAPE) {
@@ -333,7 +333,7 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 	}
 
 	function saveCharacter() {
-		var data:String = PsychJsonPrinter.print(characterFile, ['position']);
+		var data:String = LegendJsonPrinter.print(characterFile, ['position']);
 		if (data.length > 0)
 		{
 			var splittedImage:Array<String> = imageInputText.text.trim().split('_');

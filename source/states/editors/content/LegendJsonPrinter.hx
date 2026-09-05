@@ -8,12 +8,12 @@ import haxe.format.JsonPrinter;
   *      -Shadow Mario
   */
 
-class PsychJsonPrinter extends JsonPrinter
+class LegendJsonPrinter extends JsonPrinter
 {
 	var _ignoreTab:Array<String> = [];
 	public static function print(o:Dynamic, ?ignoreTab:Array<String>):String
 	{
-		var printer = new PsychJsonPrinter(null, '\t');
+		var printer = new LegendJsonPrinter(null, '\t');
 		if(ignoreTab != null) printer._ignoreTab = ignoreTab;
 		printer.write("", o);
 		return printer.buf.toString();

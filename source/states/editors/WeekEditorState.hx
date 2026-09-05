@@ -17,7 +17,7 @@ import objects.MenuItem;
 import states.editors.MasterEditorMenu;
 import states.editors.content.Prompt;
 
-class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class WeekEditorState extends MusicBeatState implements LegendUIEventHandler.LegendUIEvent
 {
 	var txtWeekTitle:FlxText;
 	var bgSprite:FlxSprite;
@@ -102,9 +102,9 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 		super.create();
 	}
 
-	var UI_box:PsychUIBox;
+	var UI_box:LegendUIBox;
 	function addEditorBox() {
-		UI_box = new PsychUIBox(FlxG.width, FlxG.height, 250, 375, ['Other', 'Week']);
+		UI_box = new LegendUIBox(FlxG.width, FlxG.height, 250, 375, ['Other', 'Week']);
 		UI_box.x -= UI_box.width;
 		UI_box.y -= UI_box.height;
 		UI_box.scrollFactor.set();
@@ -115,51 +115,51 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 		UI_box.selectedName = 'Week';
 		add(UI_box);
 
-		var loadWeekButton:PsychUIButton = new PsychUIButton(0, 650, "Load Week", function() loadWeek());
+		var loadWeekButton:LegendUIButton = new LegendUIButton(0, 650, "Load Week", function() loadWeek());
 		loadWeekButton.screenCenter(X);
 		loadWeekButton.x -= 120;
 		add(loadWeekButton);
 		
-		var freeplayButton:PsychUIButton = new PsychUIButton(0, 650, "Freeplay", function() MusicBeatState.switchState(new WeekEditorFreeplayState(weekFile)));
+		var freeplayButton:LegendUIButton = new LegendUIButton(0, 650, "Freeplay", function() MusicBeatState.switchState(new WeekEditorFreeplayState(weekFile)));
 		freeplayButton.screenCenter(X);
 		add(freeplayButton);
 	
-		var saveWeekButton:PsychUIButton = new PsychUIButton(0, 650, "Save Week", function() saveWeek(weekFile));
+		var saveWeekButton:LegendUIButton = new LegendUIButton(0, 650, "Save Week", function() saveWeek(weekFile));
 		saveWeekButton.screenCenter(X);
 		saveWeekButton.x += 120;
 		add(saveWeekButton);
 	}
 
-	var songsInputText:PsychUIInputText;
-	var backgroundInputText:PsychUIInputText;
-	var displayNameInputText:PsychUIInputText;
-	var weekNameInputText:PsychUIInputText;
-	var weekFileInputText:PsychUIInputText;
+	var songsInputText:LegendUIInputText;
+	var backgroundInputText:LegendUIInputText;
+	var displayNameInputText:LegendUIInputText;
+	var weekNameInputText:LegendUIInputText;
+	var weekFileInputText:LegendUIInputText;
 	
-	var opponentInputText:PsychUIInputText;
-	var boyfriendInputText:PsychUIInputText;
-	var girlfriendInputText:PsychUIInputText;
+	var opponentInputText:LegendUIInputText;
+	var boyfriendInputText:LegendUIInputText;
+	var girlfriendInputText:LegendUIInputText;
 
-	var hideCheckbox:PsychUICheckBox;
+	var hideCheckbox:LegendUICheckBox;
 
 	public static var weekFileName:String = 'week1';
 	
 	function addWeekUI() {
 		var tab_group = UI_box.getTab('Week').menu;
 
-		songsInputText = new PsychUIInputText(10, 30, 200, '', 8);
+		songsInputText = new LegendUIInputText(10, 30, 200, '', 8);
 
-		opponentInputText = new PsychUIInputText(10, songsInputText.y + 40, 70, '', 8);
-		boyfriendInputText = new PsychUIInputText(opponentInputText.x + 75, opponentInputText.y, 70, '', 8);
-		girlfriendInputText = new PsychUIInputText(boyfriendInputText.x + 75, opponentInputText.y, 70, '', 8);
+		opponentInputText = new LegendUIInputText(10, songsInputText.y + 40, 70, '', 8);
+		boyfriendInputText = new LegendUIInputText(opponentInputText.x + 75, opponentInputText.y, 70, '', 8);
+		girlfriendInputText = new LegendUIInputText(boyfriendInputText.x + 75, opponentInputText.y, 70, '', 8);
 
-		backgroundInputText = new PsychUIInputText(10, opponentInputText.y + 40, 120, '', 8);
-		displayNameInputText = new PsychUIInputText(10, backgroundInputText.y + 60, 200, '', 8);
-		weekNameInputText = new PsychUIInputText(10, displayNameInputText.y + 60, 150, '', 8);
-		weekFileInputText = new PsychUIInputText(10, weekNameInputText.y + 40, 100, '', 8);
+		backgroundInputText = new LegendUIInputText(10, opponentInputText.y + 40, 120, '', 8);
+		displayNameInputText = new LegendUIInputText(10, backgroundInputText.y + 60, 200, '', 8);
+		weekNameInputText = new LegendUIInputText(10, displayNameInputText.y + 60, 150, '', 8);
+		weekFileInputText = new LegendUIInputText(10, weekNameInputText.y + 40, 100, '', 8);
 		reloadWeekThing();
 
-		hideCheckbox = new PsychUICheckBox(10, weekFileInputText.y + 40, "Hide Week from Story Mode?", 100);
+		hideCheckbox = new LegendUICheckBox(10, weekFileInputText.y + 40, "Hide Week from Story Mode?", 100);
 		hideCheckbox.onClick = function()
 		{
 			weekFile.hideStoryMode = hideCheckbox.checked;
@@ -185,15 +185,15 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 		tab_group.add(hideCheckbox);
 	}
 
-	var weekBeforeInputText:PsychUIInputText;
-	var difficultiesInputText:PsychUIInputText;
-	var lockedCheckbox:PsychUICheckBox;
-	var hiddenUntilUnlockCheckbox:PsychUICheckBox;
+	var weekBeforeInputText:LegendUIInputText;
+	var difficultiesInputText:LegendUIInputText;
+	var lockedCheckbox:LegendUICheckBox;
+	var hiddenUntilUnlockCheckbox:LegendUICheckBox;
 
 	function addOtherUI() {
 		var tab_group = UI_box.getTab('Other').menu;
 
-		lockedCheckbox = new PsychUICheckBox(10, 30, "Week starts Locked", 100);
+		lockedCheckbox = new LegendUICheckBox(10, 30, "Week starts Locked", 100);
 		lockedCheckbox.onClick = function()
 		{
 			weekFile.startUnlocked = !lockedCheckbox.checked;
@@ -202,7 +202,7 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 			unsavedProgress = true;
 		};
 
-		hiddenUntilUnlockCheckbox = new PsychUICheckBox(10, lockedCheckbox.y + 25, "Hidden until Unlocked", 110);
+		hiddenUntilUnlockCheckbox = new LegendUICheckBox(10, lockedCheckbox.y + 25, "Hidden until Unlocked", 110);
 		hiddenUntilUnlockCheckbox.onClick = function()
 		{
 			weekFile.hiddenUntilUnlocked = hiddenUntilUnlockCheckbox.checked;
@@ -210,8 +210,8 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 		};
 		hiddenUntilUnlockCheckbox.alpha = 0.4;
 
-		weekBeforeInputText = new PsychUIInputText(10, hiddenUntilUnlockCheckbox.y + 55, 100, '', 8);
-		difficultiesInputText = new PsychUIInputText(10, weekBeforeInputText.y + 60, 200, '', 8);
+		weekBeforeInputText = new LegendUIInputText(10, hiddenUntilUnlockCheckbox.y + 55, 100, '', 8);
+		difficultiesInputText = new LegendUIInputText(10, weekBeforeInputText.y + 60, 200, '', 8);
 		
 		tab_group.add(new FlxText(weekBeforeInputText.x, weekBeforeInputText.y - 28, 0, 'Week File name of the Week you have\nto finish for Unlocking:'));
 		tab_group.add(new FlxText(difficultiesInputText.x, difficultiesInputText.y - 20, 0, 'Difficulties:'));
@@ -328,10 +328,10 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 	}
 	
 	public function UIEvent(id:String, sender:Dynamic) {
-		if(id == PsychUICheckBox.CLICK_EVENT)
+		if(id == LegendUICheckBox.CLICK_EVENT)
 			unsavedProgress = true;
 
-		if(id == PsychUIInputText.CHANGE_EVENT && (sender is PsychUIInputText)) {
+		if(id == LegendUIInputText.CHANGE_EVENT && (sender is LegendUIInputText)) {
 			if(sender == weekFileInputText) {
 				weekFileName = weekFileInputText.text.trim();
 				unsavedProgress = true;
@@ -395,7 +395,7 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 			reloadAllShit();
 		}
 
-		if(PsychUIInputText.focusOn == null)
+		if(LegendUIInputText.focusOn == null)
 		{
 			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.ESCAPE)
@@ -540,7 +540,7 @@ class WeekEditorState extends MusicBeatState implements PsychUIEventHandler.Psyc
 	}
 }
 
-class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class WeekEditorFreeplayState extends MusicBeatState implements LegendUIEventHandler.LegendUIEvent
 {
 	var weekFile:WeekFile = null;
 	public function new(weekFile:WeekFile = null)
@@ -591,12 +591,12 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 		super.create();
 	}
 	
-	var UI_box:PsychUIBox;
+	var UI_box:LegendUIBox;
 	function addEditorBox() {
 		var tabs = [
 			{name: 'Freeplay', label: 'Freeplay'},
 		];
-		UI_box = new PsychUIBox(FlxG.width, FlxG.height, 250, 200, ['Freeplay']);
+		UI_box = new LegendUIBox(FlxG.width, FlxG.height, 250, 200, ['Freeplay']);
 		UI_box.x -= UI_box.width + 100;
 		UI_box.y -= UI_box.height + 60;
 		UI_box.scrollFactor.set();
@@ -607,21 +607,21 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 		blackBlack.alpha = 0.6;
 		add(blackBlack);
 
-		var loadWeekButton:PsychUIButton = new PsychUIButton(0, 685, "Load Week", function() {
+		var loadWeekButton:LegendUIButton = new LegendUIButton(0, 685, "Load Week", function() {
 			WeekEditorState.loadWeek();
 		});
 		loadWeekButton.screenCenter(X);
 		loadWeekButton.x -= 120;
 		add(loadWeekButton);
 		
-		var storyModeButton:PsychUIButton = new PsychUIButton(0, 685, "Story Mode", function() {
+		var storyModeButton:LegendUIButton = new LegendUIButton(0, 685, "Story Mode", function() {
 			MusicBeatState.switchState(new WeekEditorState(weekFile));
 			
 		});
 		storyModeButton.screenCenter(X);
 		add(storyModeButton);
 	
-		var saveWeekButton:PsychUIButton = new PsychUIButton(0, 685, "Save Week", function() {
+		var saveWeekButton:LegendUIButton = new LegendUIButton(0, 685, "Save Week", function() {
 			WeekEditorState.saveWeek(weekFile);
 		});
 		saveWeekButton.screenCenter(X);
@@ -631,35 +631,35 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 	
 	public function UIEvent(id:String, sender:Dynamic)
 	{
-		if(id == PsychUICheckBox.CLICK_EVENT)
+		if(id == LegendUICheckBox.CLICK_EVENT)
 			WeekEditorState.unsavedProgress = true;
 
-		if(id == PsychUIInputText.CHANGE_EVENT && (sender is PsychUIInputText))
+		if(id == LegendUIInputText.CHANGE_EVENT && (sender is LegendUIInputText))
 		{
 			weekFile.songs[curSelected][1] = iconInputText.text;
 			iconArray[curSelected].changeIcon(iconInputText.text);
 		}
-		else if(id == PsychUINumericStepper.CHANGE_EVENT && (sender is PsychUINumericStepper))
+		else if(id == LegendUINumericStepper.CHANGE_EVENT && (sender is LegendUINumericStepper))
 		{
 			if(sender == bgColorStepperR || sender == bgColorStepperG || sender == bgColorStepperB)
 				updateBG();
 		}
 	}
 
-	var bgColorStepperR:PsychUINumericStepper;
-	var bgColorStepperG:PsychUINumericStepper;
-	var bgColorStepperB:PsychUINumericStepper;
-	var iconInputText:PsychUIInputText;
+	var bgColorStepperR:LegendUINumericStepper;
+	var bgColorStepperG:LegendUINumericStepper;
+	var bgColorStepperB:LegendUINumericStepper;
+	var iconInputText:LegendUIInputText;
 	function addFreeplayUI() {
 		var tab_group = UI_box.getTab('Freeplay').menu;
 
-		bgColorStepperR = new PsychUINumericStepper(10, 40, 20, 255, 0, 255, 0);
-		bgColorStepperG = new PsychUINumericStepper(80, 40, 20, 255, 0, 255, 0);
-		bgColorStepperB = new PsychUINumericStepper(150, 40, 20, 255, 0, 255, 0);
+		bgColorStepperR = new LegendUINumericStepper(10, 40, 20, 255, 0, 255, 0);
+		bgColorStepperG = new LegendUINumericStepper(80, 40, 20, 255, 0, 255, 0);
+		bgColorStepperB = new LegendUINumericStepper(150, 40, 20, 255, 0, 255, 0);
 
-		var copyColor:PsychUIButton = new PsychUIButton(10, bgColorStepperR.y + 25, "Copy Color", function() Clipboard.text = bg.color.red + ',' + bg.color.green + ',' + bg.color.blue);
+		var copyColor:LegendUIButton = new LegendUIButton(10, bgColorStepperR.y + 25, "Copy Color", function() Clipboard.text = bg.color.red + ',' + bg.color.green + ',' + bg.color.blue);
 
-		var pasteColor:PsychUIButton = new PsychUIButton(140, copyColor.y, "Paste Color", function()
+		var pasteColor:LegendUIButton = new LegendUIButton(140, copyColor.y, "Paste Color", function()
 		{
 			if(Clipboard.text != null)
 			{
@@ -686,9 +686,9 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 			}
 		});
 
-		iconInputText = new PsychUIInputText(10, bgColorStepperR.y + 70, 100, '', 8);
+		iconInputText = new LegendUIInputText(10, bgColorStepperR.y + 70, 100, '', 8);
 
-		var hideFreeplayCheckbox:PsychUICheckBox = new PsychUICheckBox(10, iconInputText.y + 30, "Hide Week from Freeplay?", 100);
+		var hideFreeplayCheckbox:LegendUICheckBox = new LegendUICheckBox(10, iconInputText.y + 30, "Hide Week from Freeplay?", 100);
 		hideFreeplayCheckbox.checked = weekFile.hideFreeplay;
 		hideFreeplayCheckbox.onClick = function()
 		{
@@ -750,7 +750,7 @@ class WeekEditorFreeplayState extends MusicBeatState implements PsychUIEventHand
 			return;
 		}
 		
-		if(PsychUIInputText.focusOn != null)
+		if(LegendUIInputText.focusOn != null)
 			ClientPrefs.toggleVolumeKeys(false);
 		else
 		{

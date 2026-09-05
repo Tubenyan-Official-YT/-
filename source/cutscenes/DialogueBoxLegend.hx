@@ -20,7 +20,7 @@ typedef DialogueLine = {
 }
 
 // TO DO: Clean code? Maybe? idk
-class DialogueBoxPsych extends FlxSpriteGroup
+class DialogueBoxLegend extends FlxSpriteGroup
 {
 	public static var DEFAULT_TEXT_X = 175;
 	public static var DEFAULT_TEXT_Y = 460;

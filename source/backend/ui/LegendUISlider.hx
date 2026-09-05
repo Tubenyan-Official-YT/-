@@ -1,6 +1,6 @@
 package backend.ui;
 
-class PsychUISlider extends FlxSpriteGroup
+class LegendUISlider extends FlxSpriteGroup
 {
 	public static final CHANGE_EVENT = "slider_change";
 	public var bar:FlxSprite;
@@ -77,7 +77,7 @@ class PsychUISlider extends FlxSpriteGroup
 				if(this.onChange != null && lastValue != value)
 				{
 					this.onChange(FlxMath.roundDecimal(value, decimals));
-					if(broadcastSliderEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
+					if(broadcastSliderEvent) LegendUIEventHandler.event(CHANGE_EVENT, this);
 				}
 			}
 		}
