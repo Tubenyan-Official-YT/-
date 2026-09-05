@@ -21,7 +21,7 @@ class MusicBeatState extends FlxState
 
 	var _psychCameraInitialized:Bool = false;
 
-	/** true면 initPsychCamera()로 만든 카메라 위/아래가 오버레이만큼 잘림. 타이틀/플레이스테이트/에디터류에서 false로 끔 */
+	/** true면 initPsychCamera()에서 위/아래에 오버레이 막대(GlobalOverlay)가 덮어씌워짐. 타이틀/플레이스테이트/에디터류에서 false로 끔 */
 	public var cropOverlay:Bool = true;
 
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -52,8 +52,7 @@ class MusicBeatState extends FlxState
 
 		if (cropOverlay)
 		{
-			camera.y = objects.GlobalOverlay.CROP_SIZE;
-			camera.setSize(FlxG.width, Std.int(FlxG.height - objects.GlobalOverlay.CROP_SIZE * 2));
+			FlxG.cameras.add(new objects.GlobalOverlay(), false); // 맨 위에 그려지도록 마지막에 추가
 		}
 		//trace('initialized psych camera ' + Sys.cpuTime());
 		return camera;
