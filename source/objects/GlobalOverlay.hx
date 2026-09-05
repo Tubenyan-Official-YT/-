@@ -20,41 +20,50 @@ class GlobalOverlay extends Sprite
 
 	static function logMsg(msg:String)
 	{
+		#if DEBUG
 		try
 		{
 			File.append("globaloverlay_log.txt", true).writeString('[GlobalOverlay] $msg\n');
 		}
 		catch (e:Dynamic) {}
+		#end
 	}
 
 	public function new()
 	{
 		super();
 		instance = this;
+		#if DEBUG
 		try { if (FileSystem.exists("globaloverlay_log.txt")) FileSystem.deleteFile("globaloverlay_log.txt"); } catch (e:Dynamic) {}
+		#end
 		logMsg('constructor start');
 
+		#if DEBUG
 		// 디버그용: 이미지 로딩 문제인지 렌더링/z-order 문제인지 구분하려고 강제로 그리는 테스트 사각형
 		graphics.beginFill(0xFFFF00FF, 1);
 		graphics.drawRect(0, 0, FlxG.width, 40);
 		graphics.endFill();
 		logMsg('debug rect drawn: ' + FlxG.width + 'x40');
+		#end
 
-		var topGraphic = Paths.image('overlay/topOverlay');
-		logMsg('topGraphic = ' + topGraphic);
-		if (topGraphic != null)
+		// GPU 캐싱 우회 테스트 (allowGPU=false)
+		var topGraphic = Paths.image('overlay/topOverlay', null, false);
+		logMsg('topGraphic = ' + topGraphic + ', bitmap null? ' + (topGraphic != null ? (topGraphic.bitmap == null) : 'N/A'));
+		if (topGraphic != null && topGraphic.bitmap != null)
 		{
+			logMsg('topGraphic.bitmap raw size = ' + topGraphic.bitmap.width + 'x' + topGraphic.bitmap.height);
 			addChild(topBitmap = new Bitmap(topGraphic.bitmap));
-			logMsg('topBitmap size = ' + topBitmap.width + 'x' + topBitmap.height);
+			logMsg('topBitmap size = ' + topBitmap.width + 'x' + topBitmap.height + ', alpha=' + topBitmap.alpha + ', visible=' + topBitmap.visible);
 		}
 
-		var downGraphic = Paths.image('overlay/downOverlay');
-		logMsg('downGraphic = ' + downGraphic);
-		if (downGraphic != null)
+		var downGraphic = Paths.image('overlay/downOverlay', null, false);
+		logMsg('downGraphic = ' + downGraphic + ', bitmap null? ' + (downGraphic != null ? (downGraphic.bitmap == null) : 'N/A'));
+		if (downGraphic != null && downGraphic.bitmap != null)
 		{
+			logMsg('downGraphic.bitmap raw size = ' + downGraphic.bitmap.width + 'x' + downGraphic.bitmap.height);
 			addChild(downBitmap = new Bitmap(downGraphic.bitmap));
 			downBitmap.y = FlxG.height - downBitmap.height;
-			logMsg('downBitmap size = ' + downBitmap.width + 'x' + downBitmap.height + ', y=' + downBitmap.y);
+			logMsg('downBitmap size = ' + downBitmap.width + 'x' + downBitmap.height + ', y=' + downBitmap.y + ', alpha=' + downBitmap.alpha + ', visible=' + downBitmap.visible);
 		}
 
 		logMsg('FlxG.game = ' + FlxG.game + ', FlxG.stage = ' + FlxG.stage);
