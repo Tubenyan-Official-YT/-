@@ -6,6 +6,7 @@ import lime.app.Application;
 import states.editors.MasterEditorMenu;
 import options.OptionsState;
 import substates.StoryMenuSubState;
+import backend.WeekData;
 
 enum MainMenuColumn {
 	LEFT;
@@ -96,6 +97,8 @@ class MainMenuState extends MusicBeatState
 		balloonText.text = result;
 		add(balloonText);
 		
+		WeekData.reloadWeekFiles(); // 잠금 상태 계산을 위해 최신 클리어 정보 로드
+
 		for (num => option in optionShit)
 		{
 			var item:FlxSprite = createMenuItem(option, 0, (num * 100) + 30);
@@ -106,6 +109,11 @@ class MainMenuState extends MusicBeatState
     		}
 			item.y += (4 - optionShit.length) * 70; // Offsets for when you have anything other than 4 items
 			item.x = 50;
+
+			if (isMenuLocked(option))
+			{
+				item.color = 0xFF666666; // 잠긴 메뉴는 회색으로 표시
+			}
 		}
 		
 		if (leftOption != null)
@@ -316,16 +324,9 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.ACCEPT || (FlxG.mouse.justPressed && allowMouse))
 			{
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-				selectedSomethin = true;
-				FlxG.mouse.visible = false;
-
-				if (ClientPrefs.data.flashing)
-					magenta.visible = true;
-					
 				var item:FlxSprite;
 				var option:String;
-					
+
 				switch(curColumn)
 				{
 					case CENTER:
@@ -340,50 +341,65 @@ class MainMenuState extends MusicBeatState
 						option = rightOption;
 						item = rightItem;
 				}
-						
-				switch (option)
+
+				if (isMenuLocked(option))
 				{
-					case 'story_mode':
-						openSubState(new substates.StoryMenuSubState());
-						FlxG.keys.reset();
-					case 'freeplay':
-						MusicBeatState.switchState(new FreeplayState());
-
-					#if MODS_ALLOWED
-					case 'mods':
-						MusicBeatState.switchState(new CharacterSelectState());
-					#end
-
-					#if ACHIEVEMENTS_ALLOWED
-					case 'achievements':
-						MusicBeatState.switchState(new AchievementsMenuState());
-					#end
-
-					case 'credits':
-						MusicBeatState.switchState(new CreditsState());
-					case 'options':
-    					options.OptionsState.onPlayState = false;
-    					openSubState(new options.OptionsSubState());
-    					if (PlayState.SONG != null)
-    					{
-        					PlayState.SONG.arrowSkin = null;
-        					PlayState.SONG.splashSkin = null;
-        					PlayState.stageUI = 'normal';
-    					}
-					case 'donate':
-						CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
-						selectedSomethin = false;
-						item.visible = true;
-					default:
-						trace('Menu Item ${option} doesn\'t do anything');
-						selectedSomethin = false;
-						item.visible = true;
+					FlxG.sound.play(Paths.sound('cancelMenu'));
+					balloonText.text = getLockedMessage(option);
 				}
-				
-				for (memb in menuItems)
+				else
 				{
-					if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
-					else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					selectedSomethin = true;
+					FlxG.mouse.visible = false;
+
+					if (ClientPrefs.data.flashing)
+						magenta.visible = true;
+
+					switch (option)
+					{
+						case 'story_mode':
+							openSubState(new substates.StoryMenuSubState());
+							FlxG.keys.reset();
+						case 'freeplay':
+							MusicBeatState.switchState(new FreeplayState());
+
+						#if MODS_ALLOWED
+						case 'mods':
+							MusicBeatState.switchState(new CharacterSelectState());
+						#end
+
+						#if ACHIEVEMENTS_ALLOWED
+						case 'achievements':
+							MusicBeatState.switchState(new AchievementsMenuState());
+						#end
+
+						case 'credits':
+							MusicBeatState.switchState(new CreditsState());
+						case 'options':
+    						options.OptionsState.onPlayState = false;
+    						openSubState(new options.OptionsSubState());
+    						if (PlayState.SONG != null)
+    						{
+        						PlayState.SONG.arrowSkin = null;
+        						PlayState.SONG.splashSkin = null;
+        						PlayState.stageUI = 'normal';
+    						}
+						case 'donate':
+							CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
+							selectedSomethin = false;
+							item.visible = true;
+						default:
+							trace('Menu Item ${option} doesn\'t do anything');
+							selectedSomethin = false;
+							item.visible = true;
+					}
+
+					for (memb in menuItems)
+					{
+						if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
+						else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
+					}
 				}
 			}
 			#if DEBUG
@@ -397,6 +413,37 @@ class MainMenuState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+	}
+
+	/** 세계편 클리어 진행도에 따라 메뉴가 잠겨있는지 체크. 필요에 맞게 매핑 조정하면 됨 */
+	function isMenuLocked(option:String):Bool
+	{
+		return switch(option)
+		{
+			case 'freeplay': !isWeekCleared('tutorial'); // 튜토리얼 클리어 전까지 모든 곡 잠금
+			case 'mods': !isWeekCleared('world'); // 세계편 클리어 전까지 캐릭터 편성 잠금
+			default: false;
+		}
+	}
+
+	function isWeekCleared(weekKeyword:String):Bool
+	{
+		for (key in WeekData.weeksList)
+		{
+			if (key.toLowerCase().indexOf(weekKeyword) != -1)
+				return StoryMenuSubState.weekCompleted.exists(key) && StoryMenuSubState.weekCompleted.get(key);
+		}
+		return false;
+	}
+
+	function getLockedMessage(option:String):String
+	{
+		return switch(option)
+		{
+			case 'freeplay': '스토리모드에서 튜토리얼을 클리어하면 열립니다!';
+			case 'mods': '스토리모드에서 세계편을 클리어하면 열립니다!';
+			default: '아직 잠겨있습니다!';
+		}
 	}
 
 	function changeItem(change:Int = 0)
