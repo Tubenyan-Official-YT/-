@@ -11,7 +11,8 @@ class EnemyListGroup extends FlxSpriteGroup {
 		}
 	}
 	public function beatHit():Void {
-    	for (enemy in members) if (enemy != null) enemy.beatHit();
+    	for (enemy in members) if (enemy != null) cast(enemy, EnemyListCharacter).beatHit();
 	}
+
 
 }
