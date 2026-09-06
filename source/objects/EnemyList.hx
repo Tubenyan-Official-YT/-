@@ -6,7 +6,7 @@ class EnemyList extends Window {
 	public function new(paths:String) {
 		super("enemyListWin", 30, true, false);
 
-		image = new FlxSprite(0, 0).loadGraphic(Paths.image(paths));
+		image = new FlxSprite(0, 0).loadGraphic(Paths.currentTrackedAssets.get(paths));
 		addItem("screenCenter", image);
 	}
 
