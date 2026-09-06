@@ -6,6 +6,9 @@ import backend.Song;
 import backend.EnergySystem;
 import backend.Locking;
 
+import backend.EasyJson;
+import objects.EnemyList;
+
 import objects.HealthIcon;
 import objects.MusicPlayer;
 
