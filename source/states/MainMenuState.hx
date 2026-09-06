@@ -418,6 +418,15 @@ class MainMenuState extends MusicBeatState
 						item.visible = true;
 				}
 
+				// 잠긴 메뉴 제외, 해금된 메뉴 진입 시에만 항목 슬라이드
+				if (!Locking.isLocked(option))
+				{
+					for (memb in menuItems)
+					{
+						if (memb == leftItem || memb == rightItem || optionShit[memb.ID] == 'story_mode') FlxTween.tween(memb, {x: FlxG.width + memb.width + 50}, 2, {ease: FlxEase.quadOut});
+						else FlxTween.tween(memb, {x: bg.x - memb.width - 50}, 2, {ease: FlxEase.quadOut});
+					}
+				}
 			}
 			#if DEBUG
 			if (controls.justPressed('debug_1'))
