@@ -21,4 +21,8 @@ class EnemyList extends Window {
     	if (FlxG.state != null) FlxG.state.remove(this, true);
     	destroy();
 	}
+	public function beatHit():Void {
+    	list.beatHit();
+	}
+
 }
