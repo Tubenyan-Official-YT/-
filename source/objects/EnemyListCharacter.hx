@@ -13,7 +13,7 @@ class EnemyListCharacter extends FlxSprite {
 		this.frames = Paths.getSparrowAtlas(charJson.get('image'));
 		this.animation.addByPrefix("idle", "idle", idleAnim['fps'], idleAnim['loop']);
 		this.animation.play("idle");
-		this.setGraphicSize(80, 80);
+		this.setGraphicSize(80, 60);
 		this.updateHitbox();
 	}
 }
