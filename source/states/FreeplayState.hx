@@ -184,7 +184,7 @@ class FreeplayState extends MusicBeatState
 
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(0, 170, 0, "", 24);
+		scoreText = new FlxText(0, 80, 0, "", 24);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.YELLOW, CENTER);
 		scoreText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 5);
 		
@@ -862,8 +862,8 @@ function getEnemyList() {
 
 	private function positionHighscore()
 	{
-		scoreText.screenCenter(X);
-		scoreText.y = 170; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
+		scoreText.x = 150
+		scoreText.y = 80; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
 
 		scoreBG.scale.x = FlxG.width + 12;
 		scoreBG.x = -6;
@@ -893,7 +893,7 @@ function getEnemyList() {
 			var item:FlxSprite = grpSongs.members[i];
 			item.visible = item.active = true;
 			item.x = FlxG.width / 2 + (item.ID - lerpSelected) * (item.width + 30) - item.width / 2;
-			item.y = 110;
+			item.y = 80;
 			_lastVisibles.push(i);
 		}
 	}
