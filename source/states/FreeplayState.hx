@@ -217,8 +217,6 @@ class FreeplayState extends MusicBeatState
     	charSelectBtn.antialiasing = ClientPrefs.data.antialiasing;
     	freeplayUIGrp.add(charSelectBtn);
 
-		refreshDiffButtons(); // diffButtons는 내부에서 freeplayUIGrp에 추가됨
-
 		startButton = new FlxSprite(100, 0); // freeplayUIGrp 기준 상대좌표
     	startButton.frames = Paths.getSparrowAtlas('freeplayUI/battleStart');
     	startButton.animation.addByPrefix('idle', 'start idle', 24, true);
@@ -228,6 +226,8 @@ class FreeplayState extends MusicBeatState
 		startButton.scale.set(0.6, 0.6);
 		startButton.updateHitbox();
     	freeplayUIGrp.add(startButton);
+
+		refreshDiffButtons(); // diffButtons는 내부에서 freeplayUIGrp에 추가됨 (startButton 생성 후로 이동)
 
 		energyBox = new FlxSprite(0,0).loadGraphic(Paths.image('freeplayUI/energyBox'));
 		energyBox.scale.set(0.6,0.6);
