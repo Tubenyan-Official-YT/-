@@ -676,17 +676,27 @@ class FreeplayState extends MusicBeatState
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
-		for (i in min...max) {
-			var item:FlxSprite = grpSongs.members[i];
-			if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(item)) {
-				var enemyList = new EnemyList(item.graphic.key);
-				add(enemyList);
-			}
-		}
-
+		
+		getEnemyList();
+		
 		updateTexts(elapsed);
 		super.update(elapsed);
 	}
+	
+	function getEnemyList() {
+    	var item = grpSongs.members[curSelected];
+    	if (item == null) return;
+    	if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(item)) {
+        	var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
+        	var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
+        	var json = new EasyJson("data/enemyList.json");
+        	var value:Array<String> = json.get('$songName-$diffName');
+        	var enemyList = new EnemyList(value);
+        	add(enemyList);
+    	}
+	}
+
+
 	
 	function getVocalFromCharacter(char:String)
 	{
