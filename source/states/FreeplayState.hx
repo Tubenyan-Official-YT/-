@@ -145,7 +145,7 @@ class FreeplayState extends MusicBeatState
 		{
 			Mods.currentModDirectory = songs[i].folder;
 			var songName:String = Paths.formatToSongPath(songs[i].songName);
-			var songImage:FlxSprite = new FlxSprite(0, 60);
+			var songImage:FlxSprite = new FlxSprite(0, 120);
 
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[songs[i].week]);
 			var baseDiff:String = 'normal';
