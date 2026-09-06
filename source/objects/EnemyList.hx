@@ -3,7 +3,7 @@ package objects;
 class EnemyList extends Window {
 	var image:FlxSprite;
 	var list:EnemyListGroup;
-	public function new(name:String) {
+	public function new(name:Array<String>) {
 		super("enemyListWin", 30, true, false);
 		
 		list = new EnemyListGroup(name, 90);
