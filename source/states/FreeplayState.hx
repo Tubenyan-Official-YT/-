@@ -863,7 +863,7 @@ function getEnemyList() {
 	private function positionHighscore()
 	{
 		scoreText.x = 150;
-		scoreText.y = 80; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
+		scoreText.y = 90; // 이미지 y(20) + 이미지 높이(120) + 여백(10)
 
 		scoreBG.scale.x = FlxG.width + 12;
 		scoreBG.x = -6;
