@@ -692,7 +692,7 @@ class FreeplayState extends MusicBeatState
     	if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(item)) {
         	var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
         	var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
-        	var json = new EasyJson("data/enemyList.json");
+        	var json = new EasyJson(Paths.getPath('data/enemyList.json', TEXT));
         	var value:Array<String> = json.get('$songName-$diffName');
         	var enemyList = new EnemyList(value);
         	add(enemyList);
