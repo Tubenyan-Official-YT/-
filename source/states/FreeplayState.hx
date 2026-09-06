@@ -306,6 +306,7 @@ class FreeplayState extends MusicBeatState
 	var stopMusicPlay:Bool = false;
 	override function update(elapsed:Float)
 	{
+		Conductor.songPosition = FlxG.sound.music.time;
 		for (btn in diffButtons) {
     		if (FlxG.mouse.overlaps(btn) && FlxG.mouse.justPressed) {
         		changeDiff(btn.ID - curDifficulty);
@@ -904,7 +905,14 @@ function getEnemyList() {
 		FlxG.autoPause = ClientPrefs.data.autoPause;
 		if (!FlxG.sound.music.playing && !stopMusicPlay)
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
-	}	
+	}
+	override function beatHit() {
+    	super.beatHit();
+    	if (currentEnemyList != null && !currentEnemyList.closed) {
+        	currentEnemyList.beatHit();
+    	}
+	}
+
 }
 
 class SongMetadata
