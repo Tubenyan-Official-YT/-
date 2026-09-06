@@ -176,6 +176,11 @@ class MainMenuState extends MusicBeatState
 	{
 		var menuItem:FlxSprite = new FlxSprite(x, y);
 		menuItem.frames = Paths.getSparrowAtlas('mainmenu/menu_$name');
+		if (menuItem.frames == null) // 아틀라스 없으면 안 띄우기
+		{
+			FlxG.log.error('MainMenu: "menu_$name" 아틀라스를 찾을 수 없음');
+			return menuItem;
+		}
 		menuItem.animation.addByPrefix('idle', '$name idle', 24, true);
 		menuItem.animation.addByPrefix('selected', '$name selected', 24, true);
 		menuItem.animation.play('idle');
@@ -183,7 +188,8 @@ class MainMenuState extends MusicBeatState
 
 		menuItem.antialiasing = ClientPrefs.data.antialiasing;
 		menuItem.scrollFactor.set();
-		menuItems.add(menuItem);
+		if (menuItem.frames != null)
+			menuItems.add(menuItem);
 		return menuItem;
 	}
 

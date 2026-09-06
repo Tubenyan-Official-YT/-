@@ -390,15 +390,22 @@ class Paths
 		if(key.contains('psychic')) trace(key, parentFolder, allowGPU);
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
 		#if MODS_ALLOWED
-		var xmlExists:Bool = false;
-
+		// 1) 모드 폴더
 		var imgPath:String = getLocalizedImagePath(key);
 		if (imgPath.startsWith('images/')) imgPath = imgPath.substr(7);
 
 		var xml:String = modsXml(imgPath);
-		if(FileSystem.exists(xml)) xmlExists = true;
+		if(FileSystem.exists(xml))
+			return FlxAtlasFrames.fromSparrow(imageLoaded, File.getContent(xml));
 
-		return FlxAtlasFrames.fromSparrow(imageLoaded, (xmlExists ? File.getContent(xml) : getPath(getLocalizedImagePath(key) + '.xml', TEXT, parentFolder)));
+		// 2) 에셋 폴더
+		var assetXml:String = getPath(getLocalizedImagePath(key) + '.xml', TEXT, parentFolder);
+		if(FileSystem.exists(assetXml))
+			return FlxAtlasFrames.fromSparrow(imageLoaded, File.getContent(assetXml));
+
+		// 3) 없으면 에러 + null 반환 (띄우지 않음)
+		FlxG.log.error('getSparrowAtlas: "$key" XML을 찾을 수 없음');
+		return FlxAtlasFrames.fromSparrow(imageLoaded, null);
 		#else
 		return FlxAtlasFrames.fromSparrow(imageLoaded, getPath(getLocalizedImagePath(key) + '.xml', TEXT, parentFolder));
 		#end
