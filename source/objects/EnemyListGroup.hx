@@ -10,4 +10,8 @@ class EnemyListGroup extends FlxSpriteGroup {
 			add(enemy);
 		}
 	}
+	public function beatHit():Void {
+    	for (enemy in members) if (enemy != null) enemy.beatHit();
+	}
+
 }
