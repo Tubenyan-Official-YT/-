@@ -5,7 +5,7 @@ import backend.EasyJson;
 class EnemyListCharacter extends FlxSprite {
 	var charName:String;
 
-	public function new(characterName:String) 
+	public function new(characterName:String) {
 		super();
 		charName = characterName;
 
