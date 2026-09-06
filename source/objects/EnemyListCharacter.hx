@@ -15,7 +15,7 @@ class EnemyListCharacter extends FlxSprite {
 		var idleAnim:DynamicAccess<Dynamic> = Lambda.find(animations, a -> a['anim'] == 'idle');
 		if (idleAnim == null && animations.length > 0) idleAnim = animations[0];
 		this.frames = Paths.getSparrowAtlas(charJson.get('image'));
-		this.animation.addByPrefix("idle", "idle", idleAnim['fps'], idleAnim['loop']);
+		this.animation.addByPrefix("idle", "idle", idleAnim['fps'], false); // loop 끄기
 		this.animation.play("idle");
 
 		// --- 여기가 크기 맞추는 부분 ---
@@ -28,5 +28,8 @@ class EnemyListCharacter extends FlxSprite {
 		// 가로세로에 "같은 배수"를 곱해야 안 찌부러짐 (따로따로 하면 찌부됨)
 		this.scale.set(finalScale, finalScale);
 		this.updateHitbox();
+	}
+	public function beatHit():Void {
+    	this.animation.play("idle", true); // force restart
 	}
 }
