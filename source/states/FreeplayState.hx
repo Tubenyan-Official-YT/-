@@ -689,23 +689,40 @@ class FreeplayState extends MusicBeatState
 		super.update(elapsed);
 	}
 	
+// 현재 선택된 곡+난이도로 출현 캐릭터 창을 새로 엶
+function openEnemyListForCurrent() {
+    var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
+    var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
+    var json = new EasyJson(Paths.getPath('data/enemyList.json', TEXT));
+    var value:Array<String> = json.get('$songName-$diffName');
+    if (value == null) return;
+
+    currentEnemyList = new EnemyList(value);
+    add(currentEnemyList);
+}
+
+// 열려있는 출현 캐릭터 창이 있으면 닫음
+function closeEnemyListIfOpen() {
+    if (currentEnemyList != null && !currentEnemyList.closed) {
+        currentEnemyList.close();
+    }
+    currentEnemyList = null;
+}
+
+// 곡/난이도가 바뀌었을 때, 창이 열려있었다면 새 곡 기준으로 갈아끼움
+function refreshEnemyListOnChange() {
+    if (currentEnemyList != null && !currentEnemyList.closed) {
+        closeEnemyListIfOpen();
+        openEnemyListForCurrent();
+    }
+}
+
 function getEnemyList() {
     var item = grpSongs.members[curSelected];
     if (item == null) return;
     if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(item)) {
-        if (currentEnemyList != null && !currentEnemyList.closed) {
-            currentEnemyList.close();
-        }
-        currentEnemyList = null;
-
-        var songName:String = Paths.formatToSongPath(songs[curSelected].songName);
-        var diffName:String = Paths.formatToSongPath(Difficulty.list[curDifficulty]);
-        var json = new EasyJson(Paths.getPath('data/enemyList.json', TEXT));
-        var value:Array<String> = json.get('$songName-$diffName');
-        if (value == null) return;
-
-        currentEnemyList = new EnemyList(value);
-        add(currentEnemyList);
+        closeEnemyListIfOpen();
+        openEnemyListForCurrent();
     }
 }
 
@@ -800,6 +817,7 @@ function getEnemyList() {
 		missingText.visible = false;
 		missingTextBG.visible = false;
 		refreshDiffButtons();
+		refreshEnemyListOnChange();
 	}
 
 	function changeSelection(change:Int = 0, playSound:Bool = true)
