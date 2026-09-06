@@ -2,12 +2,12 @@ package objects;
 
 class EnemyList extends Window {
 	var image:FlxSprite;
-
-	public function new(paths:String) {
+	var list:EnemyListGroup;
+	public function new(name:String) {
 		super("enemyListWin", 30, true, false);
-
-		image = new FlxSprite(0, 0).loadGraphic(Paths.currentTrackedAssets.get(paths));
-		addItem("screenCenter", image);
+		
+		list = new EnemyListGroup(name, 90);
+		addItem("screenCenter", list);
 	}
 
 	override function update(elapsed:Float) {
