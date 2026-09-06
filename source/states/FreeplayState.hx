@@ -676,6 +676,13 @@ class FreeplayState extends MusicBeatState
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
+		for (i in min...max) {
+			var item:FlxSprite = grpSongs.members[i];
+			if (FlxG.mouse.justPressed && FlxG.mouse.overlaps(item)) {
+				var enemyList = new EnemyList(item.graphic.key);
+				add(enemyList);
+			}
+		}
 
 		updateTexts(elapsed);
 		super.update(elapsed);
