@@ -10,8 +10,8 @@ class EnemyListCharacter extends FlxSprite {
 		charName = characterName;
 
 		var charJson = new EasyJson(Paths.getPath('characters/$charName.json', TEXT));
-		var animations:Array<Dynamic> = charJson.get('animations');
-		var idleAnim:Dynamic = Lambda.find(animations, a -> a['anim'] == 'idle');
+		var animations:Array<Map<String, Dynamic>> = charJson.get('animations');
+		var idleAnim:Map<String, Dynamic> = Lambda.find(animations, a -> a['anim'] == 'idle');
 
 		this.frames = Paths.getSparrowAtlas(charJson.get('image'));
 		this.animation.addByPrefix("idle", "idle", idleAnim['fps'], idleAnim['loop']);
