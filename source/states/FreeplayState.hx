@@ -72,7 +72,7 @@ class FreeplayState extends MusicBeatState
 		for (i in 0...Difficulty.list.length) {
 			var diffName:String = Paths.formatToSongPath(Difficulty.list[i]);
 			var isSelected:Bool = (i == curDifficulty);
-			var btn:FlxSprite = new FlxSprite(i * spacing, btnY);
+			var btn:FlxSprite = new FlxSprite(startButton.x + startButton.width - i * spacing, btnY);
 			btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
 			btn.antialiasing = ClientPrefs.data.antialiasing;
 			btn.scrollFactor.set();
@@ -81,6 +81,7 @@ class FreeplayState extends MusicBeatState
 			diffButtons.push(btn);
 		}
 	}
+	
 	override function create()
 	{
 		freeplayUIGrp = new FlxSpriteGroup(800, 500);
@@ -842,7 +843,7 @@ class FreeplayState extends MusicBeatState
 			var item:FlxSprite = grpSongs.members[i];
 			item.visible = item.active = true;
 			item.x = FlxG.width / 2 + (item.ID - lerpSelected) * (item.width + 30) - item.width / 2;
-			item.y = 20;
+			item.y = 110;
 			_lastVisibles.push(i);
 		}
 	}
