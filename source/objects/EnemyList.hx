@@ -5,7 +5,7 @@ class EnemyList extends Window {
 	var list:EnemyListGroup;
 	public var closed:Bool = false;
 	public function new(name:Array<String>) {
-		super("enemyListWin", 60, true, false);
+		super("enemyListWin", 20, true, false);
 		list = new EnemyListGroup(name, 90);
 		addItem("screenCenter", list);
 	}
