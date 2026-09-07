@@ -78,10 +78,9 @@ class FreeplayState extends MusicBeatState
 		for (i in 0...Difficulty.list.length) {
 			var diffName:String = Paths.formatToSongPath(Difficulty.list[i]);
 			var isSelected:Bool = (i == curDifficulty);
-			// startButton.x/y는 이미 freeplayUIGrp.add()에서 그룹 오프셋이 한 번 적용된 절대좌표임.
-			// 여기서 freeplayUIGrp.add(btn)을 또 호출하면 오프셋이 중복 적용되니, 미리 빼서 상쇄시킴.
-			// btnY는 애초에 freeplayUIGrp 기준 순수 상대값이라 그대로 두면 add()에서 정상적으로 한 번 오프셋됨.
-			// startButton.x는 이미 add() 때 오프셋이 적용된 절대좌표라서 x만 미리 빼서 상쇄시킴.
+			// startButton.x는 이미 add() 때 그룹 오프셋이 적용된 절대좌표라서 x만 미리 빼서 상쇄시킴 (중복 오프셋 방지).
+			// btnY는 그룹 기준 순수 상대값이라 그대로 두면 add()에서 정상적으로 한 번 오프셋됨.
+			// i=0(맨 오른쪽 버튼)의 오른쪽 끝이 startButton의 리사이징된 오른쪽 끝과 맞도록 앵커.
 			var btn:FlxSprite = new FlxSprite(startButton.x + startButton.width - i * spacing - freeplayUIGrp.x, btnY);
 			btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
 			btn.antialiasing = ClientPrefs.data.antialiasing;
@@ -94,7 +93,7 @@ class FreeplayState extends MusicBeatState
 	
 	override function create()
 	{
-		freeplayUIGrp = new FlxSpriteGroup(800, 500);
+		freeplayUIGrp = new FlxSpriteGroup(800, 450); // 하단 오버레이에 안 걸리도록 위로 50px 올림
 		
 		if (FlxG.save.data.selectedSongGroup == null) {
 			FlxG.save.data.selectedSongGroup = "bf_songs";
@@ -508,16 +507,6 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 
-			if (controls.UI_UP_P)
-			{
-				changeDiff(1);
-				_updateSongLastDifficulty();
-			}
-			else if (controls.UI_DOWN_P)
-			{
-				changeDiff(-1);
-				_updateSongLastDifficulty();
-			}
 		}
 
 		if (controls.BACK)
