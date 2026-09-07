@@ -80,7 +80,9 @@ class FreeplayState extends MusicBeatState
 			var isSelected:Bool = (i == curDifficulty);
 			// startButton.x/y는 이미 freeplayUIGrp.add()에서 그룹 오프셋이 한 번 적용된 절대좌표임.
 			// 여기서 freeplayUIGrp.add(btn)을 또 호출하면 오프셋이 중복 적용되니, 미리 빼서 상쇄시킴.
-			var btn:FlxSprite = new FlxSprite(startButton.x + startButton.width - i * spacing - freeplayUIGrp.x, btnY - freeplayUIGrp.y);
+			// btnY는 애초에 freeplayUIGrp 기준 순수 상대값이라 그대로 두면 add()에서 정상적으로 한 번 오프셋됨.
+			// startButton.x는 이미 add() 때 오프셋이 적용된 절대좌표라서 x만 미리 빼서 상쇄시킴.
+			var btn:FlxSprite = new FlxSprite(startButton.x + startButton.width - i * spacing - freeplayUIGrp.x, btnY);
 			btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
 			btn.antialiasing = ClientPrefs.data.antialiasing;
 			btn.scrollFactor.set();
