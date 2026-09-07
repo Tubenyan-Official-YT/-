@@ -78,7 +78,9 @@ class FreeplayState extends MusicBeatState
 		for (i in 0...Difficulty.list.length) {
 			var diffName:String = Paths.formatToSongPath(Difficulty.list[i]);
 			var isSelected:Bool = (i == curDifficulty);
-			var btn:FlxSprite = new FlxSprite(startButton.x + startButton.width - i * spacing, btnY);
+			// startButton.x/y는 이미 freeplayUIGrp.add()에서 그룹 오프셋이 한 번 적용된 절대좌표임.
+			// 여기서 freeplayUIGrp.add(btn)을 또 호출하면 오프셋이 중복 적용되니, 미리 빼서 상쇄시킴.
+			var btn:FlxSprite = new FlxSprite(startButton.x + startButton.width - i * spacing - freeplayUIGrp.x, btnY - freeplayUIGrp.y);
 			btn.loadGraphic(Paths.image('freeplayDiff/$diffName-${isSelected ? "true" : "false"}'));
 			btn.antialiasing = ClientPrefs.data.antialiasing;
 			btn.scrollFactor.set();
